@@ -1,0 +1,86 @@
+name: flutter_pos
+description: flutter_pos overhaul
+version: 2.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.4.1
+  riverpod_annotation:
+
+  animations: ^2.0.8
+  cupertino_icons: ^1.0.3
+  easy_dynamic_theme: ^2.2.0
+  liquid_swipe: ^3.1.0
+  json_annotation: ^4.8.1
+  tuple: ^2.0.2
+
+  drift: ^2.13.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.8.3
+  syncfusion_flutter_core: ^23.1.43
+  syncfusion_flutter_charts: ^23.1.43
+  syncfusion_flutter_sliders: ^23.1.43
+  dotted_border: ^2.1.0
+
+  custom_lint_builder:
+  flutter_webrtc: ^0.9.46
+  http: ^1.1.0
+  bonsoir: ^5.0.3
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+  drift_dev: ^2.13.0
+  build_runner: ^2.4.6
+  riverpod_generator:
+  custom_lint:
+  riverpod_lint:
+  lints:
+    path: ./lib/pages/lints
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter_icons:
+  android: 'launcher_icon'
+  image_path_android: 'assets/icon/icon-legacy.png'
+  adaptive_icon_foreground: 'assets/icon/icon-adaptive.png'
+  adaptive_icon_background: '#fafafa'
+
+  ios: true
+  image_path_ios: 'assets/icon/icon-ios.png'
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/fonts/
+    - assets/food/
+    - assets/icon/
+
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik/Rubik-Regular.ttf
+        - asset: assets/fonts/Rubik/Rubik-Medium.ttf
+        - asset: assets/fonts/Rubik/Rubik-Bold.ttf
+        - asset: assets/fonts/Rubik/Rubik-Italic.ttf
+          style: italic
+
+    - family: RobotoMono
+      fonts:
+        - asset: assets/fonts/RobotoMono/RobotoMono-Regular.ttf
+        - asset: assets/fonts/RobotoMono/RobotoMono-Medium.ttf
+        - asset: assets/fonts/RobotoMono/RobotoMono-Bold.ttf
+
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand/Quicksand-Regular.ttf
+        - asset: assets/fonts/Quicksand/Quicksand-Medium.ttf
+        - asset: assets/fonts/Quicksand/Quicksand-Bold.ttf

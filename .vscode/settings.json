@@ -1,0 +1,14 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always",
+        "source.sortMembers": "explicit",
+    },
+    "editor.rulers": [
+        80,
+    ],
+    "editor.formatOnSave": true,
+    "files.exclude": {
+        "**/*.g.dart": true,
+        "**/*.freezed.dart": true,
+    },
+}
