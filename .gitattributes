@@ -1,0 +1,3 @@
+# hide generated files
+*.g.dart
+*.freezed.dart

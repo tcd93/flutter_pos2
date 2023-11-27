@@ -1,0 +1,70 @@
+import '../image_type.dart';
+
+/*
+Don't use DEFAULT here, set defaults in data model layer to avoid confusions
+*/
+
+CREATE TABLE cardItems (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    pageID INT NOT NULL,
+    title TEXT NOT NULL
+);
+
+CREATE TABLE dishes (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    price REAL NOT NULL,
+    name TEXT NOT NULL,
+    imageType ENUM(ImageType) NOT NULL,
+    imagePath TEXT,
+    imageData BLOB
+) AS Dish;
+
+CREATE TABLE pages (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    asset TEXT
+) AS Page;
+
+CREATE TABLE servings (
+    cardID INT NOT NULL REFERENCES cardItems(id),
+    dishID INT NOT NULL REFERENCES dishes(id),
+    portion INT NOT NULL,
+    PRIMARY KEY (cardID, dishID)
+);
+
+CREATE TABLE servings_note (
+    cardID INT NOT NULL PRIMARY KEY REFERENCES cardItems(id),
+    note TEXT
+);
+
+CREATE TABLE transactions (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    cardID INT NOT NULL REFERENCES cardItems(id),
+    date DATETIME NOT NULL, /*only the date part (YYYY-MM-DD)*/
+    time INT, /*seconds elapsed since midnight*/
+    price REAL,
+    note TEXT,
+    UNIQUE (date, time)
+);
+
+getPriceByDate: SELECT date, SUM(price) priceByDate FROM transactions WHERE date BETWEEN :from AND :to GROUP BY date;
+
+CREATE TABLE transaction_details (
+    transId INT NOT NULL REFERENCES transactions(id),
+    dishID INT NOT NULL REFERENCES dishes(id),
+    portion INT NOT NULL,
+    PRIMARY KEY (transId, dishID)
+);
+
+CREATE TRIGGER insert_transaction_details 
+    AFTER INSERT 
+    ON transactions
+BEGIN
+    INSERT INTO transaction_details (transid, dishID, portion)
+    SELECT new.id, servings.dishID, servings.portion
+    FROM servings
+    WHERE servings.cardID = new.cardID;
+
+    DELETE FROM servings WHERE cardID = new.cardID;
+    DELETE FROM servings_note WHERE cardID = new.cardID;
+END;
