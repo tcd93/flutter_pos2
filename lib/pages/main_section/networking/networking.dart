@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/p2p/channel.dart';
+import 'package:flutter_pos/p2p/receiver.dart';
+import 'package:flutter_pos/p2p/signaler.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,15 +22,15 @@ class Networking extends ConsumerWidget {
       children: [
         Consumer(
           builder: (context, ref, icon) {
-            final signaler = ref.read(signalServiceProvider);
             final hosting = ref.watch(hostStatusProvider);
 
             return ListTile(
               title: hosting ? Text('Stop hosting') : Text('Create host'),
               leading: icon,
               onTap: () async {
+                ref.read(roleProvider.notifier).set(Profile.signaler);
+                final signaler = ref.read(serviceProvider) as Signaler;
                 if (!hosting) {
-                  ref.read(roleProvider.notifier).set(Profile.signaler);
                   await signaler.startServer();
                 } else {
                   await signaler.closeServer();
@@ -41,7 +43,6 @@ class Networking extends ConsumerWidget {
         // connect button
         Consumer(
           builder: (context, ref, icon) {
-            final receiver = ref.read(receiverServiceProvider);
             final hosting = ref.watch(hostStatusProvider);
             final state = ref.watch(peerConnectionStateProvider);
             final label = ref.watch(labelProvider);
@@ -62,6 +63,7 @@ class Networking extends ConsumerWidget {
                   ref.read(roleProvider.notifier).set(Profile.receiver);
                   try {
                     final label = 'channel-${_idGenerator()}';
+                    final receiver = ref.read(serviceProvider) as Receiver;
                     await receiver.createChannel(ip, label);
                   } catch (ex) {
                     _showSnackBar(context, ex.toString());
@@ -77,21 +79,22 @@ class Networking extends ConsumerWidget {
         Consumer(
           builder: (context, ref, icon) {
             final state = ref.watch(peerConnectionStateProvider);
-            final receiver = ref.read(receiverServiceProvider);
-            final signaler = ref.read(signalServiceProvider);
+            final label = ref.watch(labelProvider);
 
             return ListTile(
               enabled: state ==
-                  RTCPeerConnectionState.RTCPeerConnectionStateConnected,
+                      RTCPeerConnectionState.RTCPeerConnectionStateConnected &&
+                  label != null,
               title: Text('Disconnect'),
               leading: icon,
               onTap: () async {
                 // WebRTC events are not fired in the caller side
                 // set states manually
                 ref.read(peerConnectionStateProvider.notifier).set(
-                    RTCPeerConnectionState.RTCPeerConnectionStateDisconnected);
-                signaler.disconnect();
-                receiver.disconnect();
+                      RTCPeerConnectionState.RTCPeerConnectionStateDisconnected,
+                    );
+                final service = ref.read(serviceProvider);
+                service?.disconnect();
               },
             );
           },

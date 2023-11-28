@@ -19,12 +19,7 @@ class HostStatus extends _$HostStatus {
 class Label extends _$Label {
   @override
   String? build() {
-    final role = ref.watch(roleProvider);
-    return switch (role) {
-      Profile.signaler => ref.read(signalServiceProvider).displayLabel,
-      Profile.receiver => ref.read(receiverServiceProvider).displayLabel,
-      _ => null,
-    };
+    return ref.watch(serviceProvider)?.displayLabel;
   }
 }
 
@@ -36,7 +31,28 @@ class PeerConnectionState extends _$PeerConnectionState {
 }
 
 @Riverpod(keepAlive: true)
-class ReceiverService extends _$ReceiverService {
+class Role extends _$Role {
+  @override
+  Profile build() => Profile.none;
+
+  set(Profile profile) => state = profile;
+}
+
+@Riverpod(keepAlive: true)
+class Service extends _$Service {
+  @override
+  Channel? build() {
+    final role = ref.watch(roleProvider);
+    return switch (role) {
+      Profile.signaler => ref.read(_signalServiceProvider),
+      Profile.receiver => ref.read(_receiverServiceProvider),
+      _ => null,
+    };
+  }
+}
+
+@Riverpod(keepAlive: true)
+class _ReceiverService extends _$ReceiverService {
   @override
   Receiver build() {
     return Receiver(
@@ -52,15 +68,7 @@ class ReceiverService extends _$ReceiverService {
 }
 
 @Riverpod(keepAlive: true)
-class Role extends _$Role {
-  @override
-  Profile build() => Profile.none;
-
-  set(Profile profile) => state = profile;
-}
-
-@Riverpod(keepAlive: true)
-class SignalService extends _$SignalService {
+class _SignalService extends _$SignalService {
   @override
   Signaler build() {
     final bonjour = Bonjour();

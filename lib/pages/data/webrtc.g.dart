@@ -20,7 +20,7 @@ final hostStatusProvider = NotifierProvider<HostStatus, bool>.internal(
 );
 
 typedef _$HostStatus = Notifier<bool>;
-String _$labelHash() => r'9968b77d727ab2d25410c16551e6944c5e0b1cce';
+String _$labelHash() => r'2f4dde966b037ddcbc376b9b5eee64a9e66fdaac';
 
 /// See also [Label].
 @ProviderFor(Label)
@@ -51,22 +51,6 @@ final peerConnectionStateProvider =
 );
 
 typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
-String _$receiverServiceHash() => r'3e125e2cae3b97780ade09a9b1962fa2aaa7228a';
-
-/// See also [ReceiverService].
-@ProviderFor(ReceiverService)
-final receiverServiceProvider =
-    NotifierProvider<ReceiverService, Receiver>.internal(
-  ReceiverService.new,
-  name: r'receiverServiceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$receiverServiceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$ReceiverService = Notifier<Receiver>;
 String _$roleHash() => r'c497fe4ca3f49cf73e5c6eb479907d1d3627a939';
 
 /// See also [Role].
@@ -81,14 +65,44 @@ final roleProvider = NotifierProvider<Role, Profile>.internal(
 );
 
 typedef _$Role = Notifier<Profile>;
-String _$signalServiceHash() => r'0476e42cd53876c0a437e0277a1d124e5a506b02';
+String _$serviceHash() => r'007fe47f57c181669789c2a1f6d69156812d487e';
 
-/// See also [SignalService].
-@ProviderFor(SignalService)
-final signalServiceProvider =
-    NotifierProvider<SignalService, Signaler>.internal(
-  SignalService.new,
-  name: r'signalServiceProvider',
+/// See also [Service].
+@ProviderFor(Service)
+final serviceProvider = NotifierProvider<Service, Channel?>.internal(
+  Service.new,
+  name: r'serviceProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$serviceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$Service = Notifier<Channel?>;
+String _$receiverServiceHash() => r'3bd85c6fac2f91e98622b1d4474ca89dfc45382c';
+
+/// See also [_ReceiverService].
+@ProviderFor(_ReceiverService)
+final _receiverServiceProvider =
+    NotifierProvider<_ReceiverService, Receiver>.internal(
+  _ReceiverService.new,
+  name: r'_receiverServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$receiverServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ReceiverService = Notifier<Receiver>;
+String _$signalServiceHash() => r'05fb291fe9c497ded37d4312d319e04fabbab8bd';
+
+/// See also [_SignalService].
+@ProviderFor(_SignalService)
+final _signalServiceProvider =
+    NotifierProvider<_SignalService, Signaler>.internal(
+  _SignalService.new,
+  name: r'_signalServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$signalServiceHash,
