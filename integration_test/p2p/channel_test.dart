@@ -54,6 +54,20 @@ void main() {
         reason: 'channel should be named "${label}"',
       );
     });
+
+    test('disconnect successfully from Signaler', () async {
+      await signaler.disconnect();
+
+      expect(signaler.connections, isEmpty);
+      expect(receiver.dc, isNull);
+    });
+
+    test('disconnect successfully from Receiver', () async {
+      await receiver.disconnect();
+
+      expect(signaler.connections, isEmpty);
+      expect(receiver.dc, isNull);
+    });
   });
 
   group('end-to-end (3 peers)', () {
