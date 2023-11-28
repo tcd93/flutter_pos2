@@ -6,8 +6,10 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 typedef Role = Profile;
 
-abstract class Channel {
+mixin Channel {
   List<RTCPeerConnection> _peers = [];
+
+  String? get displayLabel;
 
   /// Label must match channel name when calling [Receiver.createChannel]
   Future<RTCPeerConnection> createPeer(String label) async {
@@ -21,16 +23,16 @@ abstract class Channel {
     peer.setConfiguration(config);
     _peers.add(peer);
     peer.onConnectionState = (s) async {
-      onPeerConnectionState(s);
       if (s == RTCPeerConnectionState.RTCPeerConnectionStateDisconnected) {
         _peers.remove(peer);
       }
+      onPeerConnectionState(s);
     };
     return peer;
   }
 
-  @mustCallSuper
-  @protected
+  Future<void> disconnect();
+
   Future<void> disconnectPeer(String label) async {
     final peer = validatePeer(label);
     await peer.close();

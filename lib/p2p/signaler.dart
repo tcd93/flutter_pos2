@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 class ServerAlreadyRunningException implements Exception {
@@ -14,7 +14,7 @@ class ServerAlreadyRunningException implements Exception {
 }
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
-class Signaler extends Channel {
+class Signaler with Channel {
   void Function(RTCPeerConnectionState state)? onConnectionState;
   void Function(RTCDataChannel dc)? onChannelState;
   void Function(bool status)? onHosting;
@@ -33,6 +33,11 @@ class Signaler extends Channel {
   })  : _port = port,
         onConnectionState = onPeerConnectionState;
 
+  @override
+  String? get displayLabel {
+    return connections.map((c) => c.label).join('; ');
+  }
+
   bool get hosting => _server != null;
 
   Future<void> closeServer() async {
@@ -41,6 +46,7 @@ class Signaler extends Channel {
     onHosting?.call(false);
   }
 
+  @override
   Future<void> disconnect() async {
     for (final dc in connections) {
       final label = dc.label;

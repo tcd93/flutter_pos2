@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
-class Receiver extends Channel {
+class Receiver with Channel {
   void Function(RTCPeerConnectionState state)? onConnectionState;
-  void Function(RTCDataChannelState state)? onChannelState;
+  void Function(RTCDataChannel state)? onChannelState;
 
   @visibleForTesting
   RTCDataChannel? dc;
@@ -18,6 +18,11 @@ class Receiver extends Channel {
     void Function(RTCPeerConnectionState state)? onPeerConnectionState,
     this.onChannelState,
   }) : onConnectionState = onPeerConnectionState;
+
+  @override
+  String? get displayLabel {
+    return dc?.label;
+  }
 
   Future<void> createChannel(String host, String label) async {
     final peer = await createPeer(label);
@@ -29,7 +34,7 @@ class Receiver extends Channel {
           if (state == RTCDataChannelState.RTCDataChannelClosed) {
             dc = null;
           }
-          onChannelState?.call(state);
+          onChannelState?.call(channel);
         };
         channel.onMessage = (message) {
           print(
@@ -55,10 +60,11 @@ class Receiver extends Channel {
     await peer.setLocalDescription(answer);
   }
 
+  @override
   Future<void> disconnect() async {
     if (dc != null) {
       await dc!.close();
-      await super.disconnectPeer(dc!.label!);
+      await disconnectPeer(dc!.label!);
       dc = null;
     }
   }

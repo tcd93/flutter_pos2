@@ -8,14 +8,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'webrtc.g.dart';
 
 @Riverpod(keepAlive: true)
-class ConnectionState extends _$ConnectionState {
-  @override
-  RTCDataChannelState? build() => null;
-
-  set(RTCDataChannelState newState) => state = newState;
-}
-
-@Riverpod(keepAlive: true)
 class HostStatus extends _$HostStatus {
   @override
   bool build() => false;
@@ -26,9 +18,21 @@ class HostStatus extends _$HostStatus {
 @Riverpod(keepAlive: true)
 class Label extends _$Label {
   @override
-  String? build() => null;
+  String? build() {
+    final role = ref.watch(roleProvider);
+    return switch (role) {
+      Profile.signaler => ref.read(signalServiceProvider).displayLabel,
+      Profile.receiver => ref.read(receiverServiceProvider).displayLabel,
+      _ => null,
+    };
+  }
+}
 
-  set(String? label) => state = label;
+@Riverpod(keepAlive: true)
+class PeerConnectionState extends _$PeerConnectionState {
+  @override
+  RTCPeerConnectionState? build() => null;
+  set(RTCPeerConnectionState newState) => state = newState;
 }
 
 @Riverpod(keepAlive: true)
@@ -36,9 +40,12 @@ class ReceiverService extends _$ReceiverService {
   @override
   Receiver build() {
     return Receiver(
-      onChannelState: (state) {
-        print('Receiver: onChannelState: $state');
-        ref.read(connectionStateProvider.notifier).set(state);
+      onChannelState: (dc) {
+        // recalculate labels on channel state change
+        ref.invalidate(labelProvider);
+      },
+      onPeerConnectionState: (state) {
+        ref.read(peerConnectionStateProvider.notifier).set(state);
       },
     );
   }
@@ -59,8 +66,11 @@ class SignalService extends _$SignalService {
     final bonjour = Bonjour();
     return Signaler(
       onChannelState: (dc) {
-        print('Signaler: onChannelState for channel ${dc.label}: ${dc.state}');
-        ref.read(connectionStateProvider.notifier).set(dc.state!);
+        // recalculate labels on channel state change
+        ref.invalidate(labelProvider);
+      },
+      onPeerConnectionState: (state) {
+        ref.read(peerConnectionStateProvider.notifier).set(state);
       },
       onHosting: (hosting) {
         ref.read(hostStatusProvider.notifier).set(hosting);

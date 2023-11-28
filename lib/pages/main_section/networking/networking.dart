@@ -1,7 +1,7 @@
-import 'package:flutter_pos/p2p/channel.dart';
-import 'package:flutter_pos/pages/data/webrtc.dart' hide ConnectionState;
-import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/p2p/channel.dart';
+import 'package:flutter_pos/pages/data/webrtc.dart';
+import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -38,18 +38,20 @@ class Networking extends ConsumerWidget {
           },
           child: Icon(Icons.computer),
         ),
+        // connect button
         Consumer(
           builder: (context, ref, icon) {
             final receiver = ref.read(receiverServiceProvider);
             final hosting = ref.watch(hostStatusProvider);
-            final state = ref.watch(connectionStateProvider);
+            final state = ref.watch(peerConnectionStateProvider);
             final label = ref.watch(labelProvider);
 
             return ListTile(
-              enabled:
-                  !hosting && state != RTCDataChannelState.RTCDataChannelOpen,
+              enabled: !hosting &&
+                  state !=
+                      RTCPeerConnectionState.RTCPeerConnectionStateConnected,
               title: Text(
-                state == RTCDataChannelState.RTCDataChannelOpen
+                state == RTCPeerConnectionState.RTCPeerConnectionStateConnected
                     ? 'Linked to $label'
                     : 'Link to host',
               ),
@@ -60,7 +62,6 @@ class Networking extends ConsumerWidget {
                   ref.read(roleProvider.notifier).set(Profile.receiver);
                   try {
                     final label = 'channel-${_idGenerator()}';
-                    ref.read(labelProvider.notifier).set(label);
                     await receiver.createChannel(ip, label);
                   } catch (ex) {
                     _showSnackBar(context, ex.toString());
@@ -72,25 +73,25 @@ class Networking extends ConsumerWidget {
           },
           child: Icon(Icons.sync),
         ),
+        // disconnect button
         Consumer(
           builder: (context, ref, icon) {
-            final state = ref.watch(connectionStateProvider);
+            final state = ref.watch(peerConnectionStateProvider);
             final receiver = ref.read(receiverServiceProvider);
             final signaler = ref.read(signalServiceProvider);
 
             return ListTile(
-              enabled: state == RTCDataChannelState.RTCDataChannelOpen,
+              enabled: state ==
+                  RTCPeerConnectionState.RTCPeerConnectionStateConnected,
               title: Text('Disconnect'),
               leading: icon,
               onTap: () async {
-                receiver.disconnect();
+                // WebRTC events are not fired in the caller side
+                // set states manually
+                ref.read(peerConnectionStateProvider.notifier).set(
+                    RTCPeerConnectionState.RTCPeerConnectionStateDisconnected);
                 signaler.disconnect();
-                // for some reason event is not fired for the caller side
-                // had to set manually
-                ref
-                    .read(connectionStateProvider.notifier)
-                    .set(RTCDataChannelState.RTCDataChannelClosed);
-                ref.read(labelProvider.notifier).set(null);
+                receiver.disconnect();
               },
             );
           },
@@ -112,11 +113,11 @@ class Networking extends ConsumerWidget {
   }
 
   void _showSnackBarOnStateChanges(BuildContext context, WidgetRef ref) {
-    ref.listen(connectionStateProvider, (prev, next) {
+    ref.listen(peerConnectionStateProvider, (prev, next) {
       switch (next) {
-        case RTCDataChannelState.RTCDataChannelClosed:
+        case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
           _showSnackBar(context, 'Disconnected');
-        case RTCDataChannelState.RTCDataChannelOpen:
+        case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
           _showSnackBar(context, 'Connected');
         default:
           return;

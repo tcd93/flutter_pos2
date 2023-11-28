@@ -6,22 +6,6 @@ part of 'webrtc.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$connectionStateHash() => r'd86c972b367b45fbec35bc6786551cee816c6f83';
-
-/// See also [ConnectionState].
-@ProviderFor(ConnectionState)
-final connectionStateProvider =
-    NotifierProvider<ConnectionState, RTCDataChannelState?>.internal(
-  ConnectionState.new,
-  name: r'connectionStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$connectionStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$ConnectionState = Notifier<RTCDataChannelState?>;
 String _$hostStatusHash() => r'e6208c3572caa8de1f4b2d236ed7e3a655c29077';
 
 /// See also [HostStatus].
@@ -36,7 +20,7 @@ final hostStatusProvider = NotifierProvider<HostStatus, bool>.internal(
 );
 
 typedef _$HostStatus = Notifier<bool>;
-String _$labelHash() => r'5989b963d73f58a88e2412c76c9cdc7657cc3b55';
+String _$labelHash() => r'9968b77d727ab2d25410c16551e6944c5e0b1cce';
 
 /// See also [Label].
 @ProviderFor(Label)
@@ -50,7 +34,24 @@ final labelProvider = NotifierProvider<Label, String?>.internal(
 );
 
 typedef _$Label = Notifier<String?>;
-String _$receiverServiceHash() => r'8a212dedb1365c14781db92d12e07412e279e56e';
+String _$peerConnectionStateHash() =>
+    r'52e2de4b5e2d8d34e52a9da5664cfd2d330a8575';
+
+/// See also [PeerConnectionState].
+@ProviderFor(PeerConnectionState)
+final peerConnectionStateProvider =
+    NotifierProvider<PeerConnectionState, RTCPeerConnectionState?>.internal(
+  PeerConnectionState.new,
+  name: r'peerConnectionStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$peerConnectionStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
+String _$receiverServiceHash() => r'3e125e2cae3b97780ade09a9b1962fa2aaa7228a';
 
 /// See also [ReceiverService].
 @ProviderFor(ReceiverService)
@@ -80,7 +81,7 @@ final roleProvider = NotifierProvider<Role, Profile>.internal(
 );
 
 typedef _$Role = Notifier<Profile>;
-String _$signalServiceHash() => r'4a7cf8e6eaf976659832284c790a00e418f05119';
+String _$signalServiceHash() => r'0476e42cd53876c0a437e0277a1d124e5a506b02';
 
 /// See also [SignalService].
 @ProviderFor(SignalService)

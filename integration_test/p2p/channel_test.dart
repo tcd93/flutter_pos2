@@ -18,10 +18,9 @@ void main() {
 
     setUp(() async {
       signaler = Signaler();
-      receiver = Receiver(onChannelState: (state) {
-        print('onChannelState $state');
+      receiver = Receiver(onChannelState: (dc) {
         if (!channelStateCompleter.isCompleted)
-          channelStateCompleter.complete(state);
+          channelStateCompleter.complete(dc.state);
       });
     });
 
@@ -82,17 +81,15 @@ void main() {
     setUp(() async {
       signaler = Signaler();
       receiver1 = Receiver(
-        onChannelState: (state) {
-          print('receiver1 onChannelState $state');
+        onChannelState: (dc) {
           if (!channelStateCompleter1.isCompleted)
-            channelStateCompleter1.complete(state);
+            channelStateCompleter1.complete(dc.state);
         },
       );
       receiver2 = Receiver(
-        onChannelState: (state) {
-          print('receiver2 onChannelState $state');
+        onChannelState: (dc) {
           if (!channelStateCompleter2.isCompleted)
-            channelStateCompleter2.complete(state);
+            channelStateCompleter2.complete(dc.state);
         },
       );
     });
