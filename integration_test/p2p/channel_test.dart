@@ -1,7 +1,12 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart' as d;
+import 'package:flutter_pos/database/drift_database.dart';
+import 'package:flutter_pos/database/drift_database_test.dart';
+import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_pos/p2p/receiver.dart';
 import 'package:flutter_pos/p2p/signaler.dart';
+import 'package:flutter_pos/p2p/syncer.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:integration_test/integration_test.dart';
@@ -137,6 +142,59 @@ void main() {
         label2,
         reason: 'channel should be named "${label2}"',
       );
+    });
+  });
+
+  group('cross device data sync', () {
+    const String label = 'channel';
+    late Signaler signaler;
+    late Receiver receiver;
+    late TestingDriftDB memdb;
+    final syncer = Syncer(type: Profile.receiver);
+    Completer<RTCDataChannelState> channelStateCompleter = Completer();
+    Completer<void> insertCompleter = Completer();
+
+    setUp(() async {
+      memdb = TestingDriftDB();
+      signaler = Signaler();
+      receiver = Receiver(
+        onChannelState: (dc) {
+          if (!channelStateCompleter.isCompleted)
+            channelStateCompleter.complete(dc.state);
+        },
+        onMessage: (message) async {
+          await syncer.sync(Profile.receiver, memdb, message);
+          if (!insertCompleter.isCompleted) insertCompleter.complete();
+        },
+      );
+      await signaler.startServer();
+      await receiver.createChannel('localhost', label);
+      await channelStateCompleter.future;
+
+      await memdb.into(memdb.cardItems).insert(
+          CardItemsCompanion.insert(id: d.Value(0), pageID: 0, title: 'test'));
+    });
+
+    tearDown(() async {
+      await signaler.disconnect();
+      await memdb.close();
+    });
+
+    test('send signal to insert new transaction in receiver', () async {
+      final trx = Transaction(
+        id: 100,
+        cardID: 0,
+        date: DateTime(2023, 30, 11),
+        price: 100,
+      );
+
+      await signaler.send(label, syncer.wrap(trx));
+      await insertCompleter.future;
+
+      final query = memdb.select(memdb.transactions)
+        ..where((r) => r.id.equals(100));
+      final row = await query.getSingle();
+      expect(row, trx);
     });
   });
 }

@@ -41,9 +41,9 @@ mixin Channel {
 
   void onPeerConnectionState(RTCPeerConnectionState state);
 
-  Future<void> ping(String channelName) {
+  Future<void> send(String channelName, String message) {
     final dc = validateChannel(channelName);
-    return dc.send(RTCDataChannelMessage('Ping!'));
+    return dc.send(RTCDataChannelMessage(message));
   }
 
   @protected

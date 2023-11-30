@@ -17,6 +17,7 @@ class ServerAlreadyRunningException implements Exception {
 class Signaler with Channel {
   void Function(RTCPeerConnectionState state)? onConnectionState;
   void Function(RTCDataChannel dc)? onChannelState;
+  void Function(RTCDataChannel dc, String message)? onMessage;
   void Function(bool status)? onHosting;
   @visibleForTesting
   List<RTCDataChannel> connections = [];
@@ -29,6 +30,7 @@ class Signaler with Channel {
     int port = 50001,
     void Function(RTCPeerConnectionState state)? onPeerConnectionState,
     this.onChannelState,
+    this.onMessage,
     this.onHosting,
   })  : _port = port,
         onConnectionState = onPeerConnectionState;
@@ -121,7 +123,7 @@ class Signaler with Channel {
       onChannelState?.call(dc);
     };
     dc.onMessage = (message) {
-      print('Signaler: data channel $label received ${message.text}');
+      this.onMessage?.call(dc, message.text);
     };
 
     final offer = await peer.createOffer();

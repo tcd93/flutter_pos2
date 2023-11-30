@@ -15,7 +15,7 @@ double? price(PriceRef ref, int cardID) {
 @riverpod
 Future<List<({DateTime dateTime, double? price})>> priceByDate(
     PriceByDateRef ref, DateTimeRange range) {
-  final db = ref.read(_dbProvider);
+  final db = ref.read(dbProvider);
   return db
       .getPriceByDate(
         DateUtils.dateOnly(range.start),
@@ -28,7 +28,7 @@ Future<List<({DateTime dateTime, double? price})>> priceByDate(
 @riverpod
 class CardID extends _$CardID {
   Future<dynamic> addCard(String title) async {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final newID = await db
         .into(db.cardItems)
         .insert(CardItemsCompanion.insert(pageID: pageID, title: title));
@@ -38,7 +38,7 @@ class CardID extends _$CardID {
 
   @override
   Future<List<int>> build(int pageID) {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.selectOnly(db.cardItems)
       ..addColumns([db.cardItems.id])
       ..where(db.cardItems.pageID.equals(pageID));
@@ -49,7 +49,7 @@ class CardID extends _$CardID {
 @riverpod
 class CardTitle extends _$CardTitle {
   Future<String?> build(int cardID) {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.selectOnly(db.cardItems)
       ..addColumns([db.cardItems.title])
       ..where(db.cardItems.id.equals(cardID));
@@ -62,7 +62,7 @@ class CardTitle extends _$CardTitle {
   }
 
   Future<dynamic> _updateSource() {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.update(db.cardItems)
       ..whereSamePrimaryKey(CardItemsCompanion(id: Value(cardID)));
     return query.write(CardItemsCompanion(title: Value(state.value!)));
@@ -73,7 +73,7 @@ class CardTitle extends _$CardTitle {
 class DishID extends _$DishID {
   @override
   Future<List<int>> build() {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.selectOnly(db.dishes)..addColumns([db.dishes.id]);
     return query.map((row) => row.read(db.dishes.id)!).get();
   }
@@ -83,7 +83,7 @@ class DishID extends _$DishID {
 class DishItem extends _$DishItem {
   @override
   Future<Dish> build(int dishID) {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.select(db.dishes)..where((tbl) => tbl.id.equals(dishID));
     return query.getSingle();
   }
@@ -93,7 +93,7 @@ class DishItem extends _$DishItem {
 class Note extends _$Note {
   @override
   Future<String?> build(int cardID) async {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.selectOnly(db.servingsNote)
       ..addColumns([db.servingsNote.note])
       ..where(db.servingsNote.cardID.equals(cardID));
@@ -106,7 +106,7 @@ class Note extends _$Note {
   }
 
   Future<dynamic> _updateSource() {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     return db.into(db.servingsNote).insertOnConflictUpdate(
           ServingsNoteCompanion.insert(
             cardID: Value(cardID),
@@ -120,7 +120,7 @@ class Note extends _$Note {
 class PageID extends _$PageID {
   @override
   Future<List<int>> build() {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.selectOnly(db.pages)..addColumns([db.pages.id]);
     return query.map((row) => row.read(db.pages.id)!).get();
   }
@@ -130,7 +130,7 @@ class PageID extends _$PageID {
 class PageName extends _$PageName {
   @override
   Future<String?> build(int pageID) {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final col = ifNull(db.pages.name, db.pages.asset);
     final query = db.selectOnly(db.pages)
       ..addColumns([col])
@@ -143,7 +143,7 @@ class PageName extends _$PageName {
 class Portion extends _$Portion {
   @override
   Future<int?> build(int cardID, int dishID) async {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final query = db.selectOnly(db.servings)
       ..addColumns([db.servings.portion])
       ..where(
@@ -162,7 +162,7 @@ class Portion extends _$Portion {
 
   Future<dynamic> _updateSource() {
     int cardID = ref.read(selectedCardProvider)!;
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     if (state == 0) {
       final query = db.delete(db.servings)
         ..where((tbl) => tbl.cardID.equals(cardID) & tbl.dishID.equals(dishID));

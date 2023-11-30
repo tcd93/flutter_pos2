@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 class Receiver with Channel {
   void Function(RTCPeerConnectionState state)? onConnectionState;
   void Function(RTCDataChannel state)? onChannelState;
+  void Function(String message)? onMessage;
 
   @visibleForTesting
   RTCDataChannel? dc;
@@ -17,6 +18,7 @@ class Receiver with Channel {
   Receiver({
     void Function(RTCPeerConnectionState state)? onPeerConnectionState,
     this.onChannelState,
+    this.onMessage,
   }) : onConnectionState = onPeerConnectionState;
 
   @override
@@ -37,9 +39,7 @@ class Receiver with Channel {
           onChannelState?.call(channel);
         };
         channel.onMessage = (message) {
-          print(
-            'Receiver: data channel ${channel.label} received ${message.text}',
-          );
+          this.onMessage?.call(message.text);
         };
       }
     };

@@ -2,6 +2,8 @@ import 'package:flutter_pos/mdns/bonjour.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_pos/p2p/receiver.dart';
 import 'package:flutter_pos/p2p/signaler.dart';
+import 'package:flutter_pos/p2p/syncer.dart';
+import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -63,6 +65,11 @@ class _ReceiverService extends _$ReceiverService {
       onPeerConnectionState: (state) {
         ref.read(peerConnectionStateProvider.notifier).set(state);
       },
+      onMessage: (message) {
+        final role = ref.read(roleProvider);
+        final db = ref.read(dbProvider);
+        Syncer(type: role).sync(role, db, message);
+      },
     );
   }
 }
@@ -83,6 +90,11 @@ class _SignalService extends _$SignalService {
       onHosting: (hosting) {
         ref.read(hostStatusProvider.notifier).set(hosting);
         hosting ? bonjour.broadcast() : bonjour.stopBroadcast();
+      },
+      onMessage: (dc, message) {
+        final role = ref.read(roleProvider);
+        final db = ref.read(dbProvider);
+        Syncer(type: role).sync(role, db, message);
       },
     );
   }

@@ -79,7 +79,7 @@ final serviceProvider = NotifierProvider<Service, Channel?>.internal(
 );
 
 typedef _$Service = Notifier<Channel?>;
-String _$receiverServiceHash() => r'3bd85c6fac2f91e98622b1d4474ca89dfc45382c';
+String _$receiverServiceHash() => r'165bff1b3c51b9c96116d4a7d6f287df9416a2b2';
 
 /// See also [_ReceiverService].
 @ProviderFor(_ReceiverService)
@@ -95,7 +95,7 @@ final _receiverServiceProvider =
 );
 
 typedef _$ReceiverService = Notifier<Receiver>;
-String _$signalServiceHash() => r'05fb291fe9c497ded37d4312d319e04fabbab8bd';
+String _$signalServiceHash() => r'3588a33b02428b90f8c4cd774aba6b1fd0167102';
 
 /// See also [_SignalService].
 @ProviderFor(_SignalService)

@@ -14,7 +14,7 @@ class MenuControl extends _$MenuControl {
   MenuControl build(int cardID) => this;
 
   Future<int> checkOut(double amount, String? note) async {
-    final db = ref.read(_dbProvider);
+    final db = ref.read(dbProvider);
     final transDate = DateUtils.dateOnly(DateTime.now());
     final secondsSinceMidnight = DateTime.now().difference(transDate).inSeconds;
 

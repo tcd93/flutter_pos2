@@ -1,5 +1,5 @@
-import 'package:flutter_pos/image_type.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter_pos/image_type.dart';
 
 import 'connections/connection.dart' as impl;
 
@@ -11,7 +11,7 @@ class DriftDB extends _$DriftDB {
     impl.validateDatabaseSchema(this);
   }
 
-  DriftDB.forTesting(DatabaseConnection connection) : super(connection);
+  DriftDB.forTesting(QueryExecutor e) : super(e);
 
   @override
   MigrationStrategy get migration {
