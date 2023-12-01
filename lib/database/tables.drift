@@ -43,7 +43,8 @@ CREATE TABLE transactions (
     date DATETIME NOT NULL, /*only the date part (YYYY-MM-DD)*/
     time INT, /*seconds elapsed since midnight*/
     price REAL,
-    note TEXT
+    note TEXT,
+    UNIQUE (date, time)
 );
 
 getPriceByDate: SELECT date, SUM(price) priceByDate FROM transactions WHERE date BETWEEN :from AND :to GROUP BY date;

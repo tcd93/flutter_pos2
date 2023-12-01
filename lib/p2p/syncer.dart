@@ -24,7 +24,22 @@ class Syncer {
     if (trx == null) return;
 
     if (trx is Transaction) {
-      return db.into(db.transactions).insertOnConflictUpdate(trx);
+      return db.into(db.transactions).insert(
+            trx,
+            onConflict: DoUpdate.withExcluded(
+              (old, excluded) {
+                return TransactionsCompanion.custom(
+                  cardID: excluded.cardID,
+                  date: excluded.date,
+                  time: excluded.time,
+                  price: excluded.price,
+                  note: (excluded.note + Constant(' -merged'))
+                      .iif(excluded.note.isNotNull(), excluded.note),
+                );
+              },
+              target: [db.transactions.date, db.transactions.time],
+            ),
+          );
     }
   }
 

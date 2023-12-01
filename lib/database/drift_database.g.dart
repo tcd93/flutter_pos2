@@ -1248,6 +1248,10 @@ class Transactions extends Table with TableInfo<Transactions, Transaction> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {date, time},
+      ];
+  @override
   Transaction map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Transaction(
@@ -1271,6 +1275,8 @@ class Transactions extends Table with TableInfo<Transactions, Transaction> {
     return Transactions(attachedDatabase, alias);
   }
 
+  @override
+  List<String> get customConstraints => const ['UNIQUE(date, time)'];
   @override
   bool get dontWriteConstraints => true;
 }
