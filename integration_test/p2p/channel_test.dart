@@ -188,7 +188,7 @@ void main() {
         price: 100,
       );
 
-      await signaler.send(label, syncer.wrap(trx));
+      await signaler.send(label, syncer.wrap([trx]));
       await insertCompleter.future;
 
       final query = memdb.select(memdb.transactions)

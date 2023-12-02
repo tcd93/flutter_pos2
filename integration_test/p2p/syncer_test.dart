@@ -29,15 +29,24 @@ void main() {
       await memdb.close();
     });
 
-    test('ability to merge transaction in syncer', () async {
+    test('ability to merge transactions in syncer', () async {
       final mergingTrx =
           Transaction(id: 100, cardID: 0, date: date, time: time, price: 150);
+      final mergingTrx2 = Transaction(
+          id: 101, cardID: 0, date: date, time: time + 1, price: 200);
       // send....
-      await syncer.sync(Profile.receiver, memdb, syncer.wrap(mergingTrx));
+      await syncer.sync(
+        Profile.receiver,
+        memdb,
+        syncer.wrap([mergingTrx, mergingTrx2]),
+      );
       final query = memdb.select(memdb.transactions)
-        ..where((r) => r.date.equals(date) & r.time.equals(time));
-      final row = await query.getSingle();
+        ..where((r) => r.date.equals(date))
+        ..orderBy([(u) => d.OrderingTerm.asc(u.id)]);
+      final rows = await query.get();
+      expect(rows.length, 2);
 
+      final row = rows[0];
       expect(row.id, existingTrx.id);
       expect(row.toJson()..remove('id'), mergingTrx.toJson()..remove('id'));
     });
