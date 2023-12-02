@@ -53,7 +53,7 @@ void main() {
         reason: 'channel should be named "${label}"',
       );
       expect(
-        receiver.dc!.label,
+        receiver.connections[0].label,
         'channel-1',
         reason: 'channel should be named "${label}"',
       );
@@ -63,14 +63,14 @@ void main() {
       await signaler.disconnect();
 
       expect(signaler.connections, isEmpty);
-      expect(receiver.dc, isNull);
+      expect(receiver.connections, isEmpty);
     });
 
     test('disconnect successfully from Receiver', () async {
       await receiver.disconnect();
 
       expect(signaler.connections, isEmpty);
-      expect(receiver.dc, isNull);
+      expect(receiver.connections, isEmpty);
     });
   });
 
@@ -133,12 +133,12 @@ void main() {
             'should have two connections in Signaler() "${label1}" and "${label2}"',
       );
       expect(
-        receiver1.dc!.label,
+        receiver1.connections[0].label,
         label1,
         reason: 'channel should be named "${label1}"',
       );
       expect(
-        receiver2.dc!.label,
+        receiver2.connections[0].label,
         label2,
         reason: 'channel should be named "${label2}"',
       );

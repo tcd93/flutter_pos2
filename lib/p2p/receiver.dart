@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
@@ -12,29 +11,21 @@ class Receiver with Channel {
   void Function(RTCDataChannel state)? onChannelState;
   void Function(String message)? onMessage;
 
-  @visibleForTesting
-  RTCDataChannel? dc;
-
   Receiver({
     void Function(RTCPeerConnectionState state)? onPeerConnectionState,
     this.onChannelState,
     this.onMessage,
   }) : onConnectionState = onPeerConnectionState;
 
-  @override
-  String? get displayLabel {
-    return dc?.label;
-  }
-
   Future<void> createChannel(String host, String label) async {
     final peer = await createPeer(label);
 
     peer.onDataChannel = (channel) {
       if (channel.label == label) {
-        dc = channel;
+        connections.add(channel);
         channel.onDataChannelState = (state) {
           if (state == RTCDataChannelState.RTCDataChannelClosed) {
-            dc = null;
+            connections.remove(channel);
           }
           onChannelState?.call(channel);
         };
@@ -61,26 +52,8 @@ class Receiver with Channel {
   }
 
   @override
-  Future<void> disconnect() async {
-    if (dc != null) {
-      await dc!.close();
-      await disconnectPeer(dc!.label!);
-      dc = null;
-    }
-  }
-
-  @override
   void onPeerConnectionState(RTCPeerConnectionState state) {
     onConnectionState?.call(state);
-  }
-
-  @override
-  RTCDataChannel validateChannel(String channelName) {
-    if (dc == null) {
-      throw ChannelNotCreatedException();
-    }
-    assert(dc!.label == channelName);
-    return dc!;
   }
 
   Future<String?> _requestOffer(String ipAddress, String? label) async {

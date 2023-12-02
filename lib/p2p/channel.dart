@@ -9,7 +9,13 @@ typedef Role = Profile;
 mixin Channel {
   List<RTCPeerConnection> _peers = [];
 
-  String? get displayLabel;
+  @visibleForTesting
+  @protected
+  List<RTCDataChannel> connections = [];
+
+  String? get displayLabel {
+    return connections.map((c) => c.label).join('; ');
+  }
 
   /// Label must match channel name when calling [Receiver.createChannel]
   Future<RTCPeerConnection> createPeer(String label) async {
@@ -31,7 +37,14 @@ mixin Channel {
     return peer;
   }
 
-  Future<void> disconnect();
+  Future<void> disconnect() async {
+    for (final dc in connections) {
+      final label = dc.label;
+      await dc.close();
+      await disconnectPeer(label!);
+    }
+    connections = [];
+  }
 
   Future<void> disconnectPeer(String label) async {
     final peer = validatePeer(label);
@@ -47,7 +60,13 @@ mixin Channel {
   }
 
   @protected
-  RTCDataChannel validateChannel(String channelName);
+  RTCDataChannel validateChannel(String channelName) {
+    final dc = connections.firstWhereOrNull((con) => con.label == channelName);
+    if (dc == null) {
+      throw ChannelNotCreatedException();
+    }
+    return dc;
+  }
 
   @protected
   RTCPeerConnection validatePeer(String identity) {

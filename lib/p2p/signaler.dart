@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -19,8 +17,6 @@ class Signaler with Channel {
   void Function(RTCDataChannel dc)? onChannelState;
   void Function(RTCDataChannel dc, String message)? onMessage;
   void Function(bool status)? onHosting;
-  @visibleForTesting
-  List<RTCDataChannel> connections = [];
 
   /// Temporary communication server (STUN server of sort) to establish p2p connection
   HttpServer? _server;
@@ -35,27 +31,12 @@ class Signaler with Channel {
   })  : _port = port,
         onConnectionState = onPeerConnectionState;
 
-  @override
-  String? get displayLabel {
-    return connections.map((c) => c.label).join('; ');
-  }
-
   bool get hosting => _server != null;
 
   Future<void> closeServer() async {
     await _server?.close(force: true);
     _server = null;
     onHosting?.call(false);
-  }
-
-  @override
-  Future<void> disconnect() async {
-    for (final dc in connections) {
-      final label = dc.label;
-      await dc.close();
-      await super.disconnectPeer(label!);
-    }
-    connections = [];
   }
 
   @override
@@ -93,15 +74,6 @@ class Signaler with Channel {
         }
       }
     });
-  }
-
-  @override
-  RTCDataChannel validateChannel(String channelName) {
-    final dc = connections.firstWhereOrNull((con) => con.label == channelName);
-    if (dc == null) {
-      throw ChannelNotCreatedException();
-    }
-    return dc;
   }
 
   Future<RTCSessionDescription> _createOffer(
