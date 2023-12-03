@@ -51,6 +51,22 @@ final peerConnectionStateProvider =
 );
 
 typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
+String _$resultNotifierHash() => r'28d822b1920391250c0f1597c86519d9e0e8a6f5';
+
+/// See also [ResultNotifier].
+@ProviderFor(ResultNotifier)
+final resultNotifierProvider =
+    AutoDisposeNotifierProvider<ResultNotifier, int>.internal(
+  ResultNotifier.new,
+  name: r'resultNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$resultNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ResultNotifier = AutoDisposeNotifier<int>;
 String _$roleHash() => r'c497fe4ca3f49cf73e5c6eb479907d1d3627a939';
 
 /// See also [Role].
@@ -79,7 +95,7 @@ final serviceProvider = NotifierProvider<Service, Channel?>.internal(
 );
 
 typedef _$Service = Notifier<Channel?>;
-String _$receiverServiceHash() => r'165bff1b3c51b9c96116d4a7d6f287df9416a2b2';
+String _$receiverServiceHash() => r'3712d23a2df37c3eb2624804270586c1d97dc6ec';
 
 /// See also [_ReceiverService].
 @ProviderFor(_ReceiverService)
@@ -95,7 +111,7 @@ final _receiverServiceProvider =
 );
 
 typedef _$ReceiverService = Notifier<Receiver>;
-String _$signalServiceHash() => r'3588a33b02428b90f8c4cd774aba6b1fd0167102';
+String _$signalServiceHash() => r'6dd8ec565b0e5ac3862240bd05125e43298b3c4d';
 
 /// See also [_SignalService].
 @ProviderFor(_SignalService)

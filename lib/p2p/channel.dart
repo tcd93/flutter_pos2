@@ -54,9 +54,12 @@ mixin Channel {
 
   void onPeerConnectionState(RTCPeerConnectionState state);
 
-  Future<void> send(String channelName, String message) {
-    final dc = validateChannel(channelName);
-    return dc.send(RTCDataChannelMessage(message));
+  Future send(String message) {
+    List<Future<void>> futures = [];
+    for (final conn in connections) {
+      futures.add(conn.send(RTCDataChannelMessage(message)));
+    }
+    return Future.wait(futures);
   }
 
   @protected

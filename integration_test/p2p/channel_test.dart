@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:drift/drift.dart' as d;
 import 'package:flutter_pos/database/drift_database.dart';
 import 'package:flutter_pos/database/drift_database_test.dart';
-import 'package:flutter_pos/p2p/channel.dart';
+import 'package:flutter_pos/p2p/channel.dart' hide Role;
 import 'package:flutter_pos/p2p/receiver.dart';
 import 'package:flutter_pos/p2p/signaler.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
+import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/webrtc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:integration_test/integration_test.dart';
@@ -145,56 +148,126 @@ void main() {
     });
   });
 
-  group('cross device data sync', () {
+  group('cross device data sync (with provider test)', () {
     const String label = 'channel';
+    late TestingDriftDB memdb;
+    late ProviderContainer containerForSignaler;
+    late ProviderContainer containerForReceiver;
     late Signaler signaler;
     late Receiver receiver;
-    late TestingDriftDB memdb;
-    final syncer = Syncer(type: Profile.receiver);
-    Completer<RTCDataChannelState> channelStateCompleter = Completer();
-    Completer<void> insertCompleter = Completer();
+
+    /// https://riverpod.dev/docs/essentials/testing
+    ProviderContainer createContainer({
+      ProviderContainer? parent,
+      List<Override> overrides = const [],
+      List<ProviderObserver>? observers,
+    }) {
+      final container = ProviderContainer(
+        parent: parent,
+        overrides: overrides,
+        observers: observers,
+      );
+      addTearDown(container.dispose);
+      return container;
+    }
 
     setUp(() async {
       memdb = TestingDriftDB();
-      signaler = Signaler();
-      receiver = Receiver(
-        onChannelState: (dc) {
-          if (!channelStateCompleter.isCompleted)
-            channelStateCompleter.complete(dc.state);
-        },
-        onMessage: (message) async {
-          await syncer.sync(Profile.receiver, memdb, message);
-          if (!insertCompleter.isCompleted) insertCompleter.complete();
-        },
-      );
-      await signaler.startServer();
-      await receiver.createChannel('localhost', label);
-      await channelStateCompleter.future;
-
       await memdb.into(memdb.cardItems).insert(
           CardItemsCompanion.insert(id: d.Value(0), pageID: 0, title: 'test'));
+
+      containerForSignaler = createContainer(
+        overrides: [dbProvider.overrideWith((ref) => memdb)],
+      );
+      containerForSignaler.read(roleProvider.notifier).set(Profile.signaler);
+
+      containerForReceiver = createContainer(
+        overrides: [dbProvider.overrideWith((ref) => memdb)],
+      );
+      containerForReceiver.read(roleProvider.notifier).set(Profile.receiver);
+
+      signaler = containerForSignaler.read(serviceProvider) as Signaler;
+      await signaler.startServer();
+      receiver = containerForReceiver.read(serviceProvider) as Receiver;
+      await receiver.createChannel('localhost', label);
+
+      final Completer channelStateCompleter = Completer();
+      final listener = containerForReceiver.listen(
+        peerConnectionStateProvider,
+        (prev, after) {
+          if (after == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
+            channelStateCompleter.complete();
+          }
+        },
+      );
+      await channelStateCompleter.future;
+      listener.close();
     });
 
     tearDown(() async {
-      await signaler.disconnect();
+      receiver.disconnect();
+      signaler.disconnect();
       await memdb.close();
     });
 
     test('send signal to insert new transaction in receiver', () async {
       final trx = Transaction(
-        id: 100,
-        cardID: 0,
-        date: DateTime(2023, 30, 11),
-        price: 100,
-      );
+          id: 100, cardID: 0, date: DateTime(2023, 30, 11), price: 100);
 
-      await signaler.send(label, syncer.wrap([trx]));
-      await insertCompleter.future;
+      await signaler.send(Syncer.wrap([trx]));
+
+      final Completer<(int? prev, int? after)> resultCompleter = Completer();
+      final listener = containerForReceiver.listen(
+        resultNotifierProvider,
+        (prev, after) {
+          if (!resultCompleter.isCompleted)
+            resultCompleter.complete((prev, after));
+        },
+      );
+      final (prev, after) = await resultCompleter.future;
+      listener.close();
+      expect(prev, 0);
+      expect(after, 1);
 
       final query = memdb.select(memdb.transactions)
         ..where((r) => r.id.equals(100));
       final row = await query.getSingle();
       expect(row, trx);
+    });
+
+    test('broadcast new dozens of transactions to provider', () async {
+      final trx = Transaction(
+          id: 0, cardID: 0, date: DateTime(2023, 30, 11), time: 0, price: 100);
+
+      // generate 25 mock transactions
+      final trxs = List.generate(25, (index) {
+        return trx.copyWith(
+            id: index,
+            time: d.Value(index),
+            price: d.Value(100 + index.toDouble()));
+      });
+
+      // 3 batches: 10 - 10 - 5
+      await for (final batch in Syncer.wrapTen(trxs)) {
+        signaler.send(batch);
+      }
+
+      final countQuery = (memdb.selectOnly(memdb.transactions)
+            ..addColumns([d.countAll()]))
+          .map((r) => r.read(d.countAll()));
+
+      int count = 0;
+      final Completer resultCompleter = Completer();
+      containerForReceiver.listen(
+        resultNotifierProvider,
+        (prev, after) {
+          count++;
+          if (count == 3) resultCompleter.complete();
+        },
+      );
+      await resultCompleter.future;
+      final rowCount = await countQuery.getSingle();
+      expect(rowCount, 25, reason: ' should have 25 rows in table');
     });
   });
 }

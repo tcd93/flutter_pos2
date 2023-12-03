@@ -38,7 +38,7 @@ void main() {
       await syncer.sync(
         Profile.receiver,
         memdb,
-        syncer.wrap([mergingTrx, mergingTrx2]),
+        Syncer.wrap([mergingTrx, mergingTrx2]),
       );
       final query = memdb.select(memdb.transactions)
         ..where((r) => r.date.equals(date))

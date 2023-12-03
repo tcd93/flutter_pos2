@@ -4,6 +4,7 @@ import 'package:flutter_pos/p2p/receiver.dart';
 import 'package:flutter_pos/p2p/signaler.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
+import 'package:flutter_pos/pages/main_section/networking/sync_progress_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -96,6 +97,23 @@ class Networking extends ConsumerWidget {
                 final service = ref.read(serviceProvider);
                 service?.disconnect();
               },
+            );
+          },
+          child: Icon(Icons.sync_disabled),
+        ),
+        // broadcast transaction data for other devices to sync
+        Consumer(
+          builder: (context, ref, icon) {
+            final state = ref.watch(peerConnectionStateProvider);
+            final label = ref.watch(labelProvider);
+
+            return ListTile(
+              enabled: state ==
+                      RTCPeerConnectionState.RTCPeerConnectionStateConnected &&
+                  label != null,
+              title: Text('Send transactions to other connected devices'),
+              leading: icon,
+              onTap: () => syncDialog(context, ref),
             );
           },
           child: Icon(Icons.sync_disabled),

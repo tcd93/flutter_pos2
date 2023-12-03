@@ -32,6 +32,31 @@ class PeerConnectionState extends _$PeerConnectionState {
   set(RTCPeerConnectionState newState) => state = newState;
 }
 
+@riverpod
+class ResultNotifier extends _$ResultNotifier {
+  int _size = 0;
+
+  add(int count) {
+    if (count == state) {
+      ref.notifyListeners();
+      return;
+    }
+
+    state = state + count;
+    if (state == _size) {
+      // TODO: notify done
+      print('transactions complete!');
+    }
+  }
+
+  @override
+  int build() => 0;
+
+  setSize(int size) {
+    _size = size;
+  }
+}
+
 @Riverpod(keepAlive: true)
 class Role extends _$Role {
   @override
@@ -65,10 +90,18 @@ class _ReceiverService extends _$ReceiverService {
       onPeerConnectionState: (state) {
         ref.read(peerConnectionStateProvider.notifier).set(state);
       },
-      onMessage: (message) {
+      onMessage: (message) async {
         final role = ref.read(roleProvider);
         final db = ref.read(dbProvider);
-        Syncer(type: role).sync(role, db, message);
+        int result = -1;
+        try {
+          final size = Syncer.getSize(message);
+          ref.read(resultNotifierProvider.notifier).setSize(size);
+
+          result = await Syncer(type: role).sync(role, db, message);
+        } finally {
+          ref.read(resultNotifierProvider.notifier).add(result);
+        }
       },
     );
   }
@@ -91,10 +124,15 @@ class _SignalService extends _$SignalService {
         ref.read(hostStatusProvider.notifier).set(hosting);
         hosting ? bonjour.broadcast() : bonjour.stopBroadcast();
       },
-      onMessage: (dc, message) {
+      onMessage: (dc, message) async {
         final role = ref.read(roleProvider);
         final db = ref.read(dbProvider);
-        Syncer(type: role).sync(role, db, message);
+        int result = -1;
+        try {
+          result = await Syncer(type: role).sync(role, db, message);
+        } finally {
+          ref.read(resultNotifierProvider.notifier).add(result);
+        }
       },
     );
   }

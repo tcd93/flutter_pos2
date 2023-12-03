@@ -15,16 +15,16 @@ class Syncer {
 
   Syncer._(this.type);
 
-  Future<dynamic> sync(Profile type, DriftDB db, String message) async {
+  Future<int> sync(Profile type, DriftDB db, String message) async {
     // role changed since singleton instance creation, ignore
     if (type != this.type) {
-      return;
+      return -1;
     }
     final trans = _tryUnwrap(message);
-    if (trans == null) return;
+    if (trans == null) return -1;
 
     if (trans is List<Insertable<Transaction>>) {
-      return db.transactions.insertAll(
+      await db.transactions.insertAll(
         trans,
         onConflict: DoUpdate.withExcluded(
           (old, excluded) {
@@ -40,13 +40,10 @@ class Syncer {
           target: [db.transactions.date, db.transactions.time],
         ),
       );
+      return trans.length;
     }
-  }
 
-  String wrap(Iterable<Insertable> data) {
-    assert(data.isNotEmpty);
-    final type = data.first.runtimeType.toString();
-    return jsonEncode({'record_type': type, 'record_details': data});
+    return -1;
   }
 
   List<Insertable>? _tryUnwrap(String message) {
@@ -70,5 +67,32 @@ class Syncer {
       print(stack);
     }
     return null;
+  }
+
+  static int getSize(String message) {
+    final json = jsonDecode(message);
+    return json['total_size'];
+  }
+
+  /// [totalSize] > [data.length] then it is part of a batched transfer
+  static String wrap(Iterable<Insertable> data, [int? totalSize]) {
+    assert(data.isNotEmpty);
+    if (totalSize == null) totalSize = data.length;
+
+    final type = data.first.runtimeType.toString();
+    return jsonEncode(
+      {'record_type': type, 'total_size': totalSize, 'record_details': data},
+    );
+  }
+
+  /// wrap 10 transactions at a time
+  static Stream<String> wrapTen(List<Insertable> data) async* {
+    assert(data.isNotEmpty);
+    for (int i = 0; i < data.length; i = i + 10) {
+      int j = i + 10;
+      if (j >= data.length) j = data.length;
+
+      yield wrap(data.sublist(i, j), data.length);
+    }
   }
 }
