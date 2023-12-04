@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_pos/mdns/bonjour.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_pos/p2p/receiver.dart';
@@ -34,27 +36,16 @@ class PeerConnectionState extends _$PeerConnectionState {
 
 @riverpod
 class ResultNotifier extends _$ResultNotifier {
-  int _size = 0;
-
-  add(int count) {
+  add(int processed) {
+    state = state + processed;
     if (count == state) {
-      ref.notifyListeners();
-      return;
-    }
-
-    state = state + count;
-    if (state == _size) {
       // TODO: notify done
       print('transactions complete!');
     }
   }
 
   @override
-  int build() => 0;
-
-  setSize(int size) {
-    _size = size;
-  }
+  int build(int count) => 0;
 }
 
 @Riverpod(keepAlive: true)
@@ -70,70 +61,55 @@ class Service extends _$Service {
   @override
   Channel? build() {
     final role = ref.watch(roleProvider);
+    final bonjour = Bonjour();
     return switch (role) {
-      Profile.signaler => ref.read(_signalServiceProvider),
-      Profile.receiver => ref.read(_receiverServiceProvider),
+      Profile.signaler => Signaler(
+          onChannelState: onChannelState,
+          onMessage: (channel, message) => onMessage(message),
+          onPeerConnectionState: onPeerConnectionState,
+          onHosting: (hosting) {
+            ref.read(hostStatusProvider.notifier).set(hosting);
+            hosting ? bonjour.broadcast() : bonjour.stopBroadcast();
+          },
+        ),
+      Profile.receiver => Receiver(
+          onChannelState: onChannelState,
+          onMessage: onMessage,
+          onPeerConnectionState: onPeerConnectionState,
+        ),
       _ => null,
     };
   }
-}
 
-@Riverpod(keepAlive: true)
-class _ReceiverService extends _$ReceiverService {
-  @override
-  Receiver build() {
-    return Receiver(
-      onChannelState: (dc) {
-        // recalculate labels on channel state change
-        ref.invalidate(labelProvider);
-      },
-      onPeerConnectionState: (state) {
-        ref.read(peerConnectionStateProvider.notifier).set(state);
-      },
-      onMessage: (message) async {
-        final role = ref.read(roleProvider);
-        final db = ref.read(dbProvider);
-        int result = -1;
-        try {
-          final size = Syncer.getSize(message);
-          ref.read(resultNotifierProvider.notifier).setSize(size);
-
-          result = await Syncer(type: role).sync(role, db, message);
-        } finally {
-          ref.read(resultNotifierProvider.notifier).add(result);
-        }
-      },
-    );
+  void onChannelState(RTCDataChannel dc) {
+    // recalculate labels on channel state change
+    ref.invalidate(labelProvider);
   }
-}
 
-@Riverpod(keepAlive: true)
-class _SignalService extends _$SignalService {
-  @override
-  Signaler build() {
-    final bonjour = Bonjour();
-    return Signaler(
-      onChannelState: (dc) {
-        // recalculate labels on channel state change
-        ref.invalidate(labelProvider);
-      },
-      onPeerConnectionState: (state) {
-        ref.read(peerConnectionStateProvider.notifier).set(state);
-      },
-      onHosting: (hosting) {
-        ref.read(hostStatusProvider.notifier).set(hosting);
-        hosting ? bonjour.broadcast() : bonjour.stopBroadcast();
-      },
-      onMessage: (dc, message) async {
-        final role = ref.read(roleProvider);
-        final db = ref.read(dbProvider);
-        int result = -1;
-        try {
-          result = await Syncer(type: role).sync(role, db, message);
-        } finally {
-          ref.read(resultNotifierProvider.notifier).add(result);
-        }
-      },
-    );
+  void onMessage(String message) async {
+    final role = ref.read(roleProvider);
+    final db = ref.read(dbProvider);
+    int? result;
+    try {
+      final json = jsonDecode(message);
+      final type = Syncer.getType(json);
+
+      switch (type) {
+        case 'Transaction':
+          final count = Syncer.getCount(json);
+          result = await Syncer(type: role).sync(role, db, json);
+          ref.read(resultNotifierProvider(count).notifier).add(result ?? 0);
+      }
+    } on InvalidJsonFormatException catch (ex) {
+      print(ex);
+    } on FormatException catch (ex, stack) {
+      print('Error in json decoding: $ex');
+      print(stack);
+      throw ex;
+    }
+  }
+
+  void onPeerConnectionState(RTCPeerConnectionState state) {
+    ref.read(peerConnectionStateProvider.notifier).set(state);
   }
 }

@@ -4,6 +4,13 @@ import 'package:drift/drift.dart';
 import 'package:flutter_pos/database/drift_database.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 
+class InvalidJsonFormatException extends FormatException {
+  final String cause;
+
+  InvalidJsonFormatException([String? cause])
+      : this.cause = cause ?? 'Invalid json format';
+}
+
 class Syncer {
   static Syncer? instance;
   late Profile type;
@@ -15,13 +22,14 @@ class Syncer {
 
   Syncer._(this.type);
 
-  Future<int> sync(Profile type, DriftDB db, String message) async {
+  /// Process and persist messages into database, return rowcount
+  Future<int?> sync(Profile type, DriftDB db, dynamic json) async {
     // role changed since singleton instance creation, ignore
     if (type != this.type) {
-      return -1;
+      return null;
     }
-    final trans = _tryUnwrap(message);
-    if (trans == null) return -1;
+    final trans = _tryUnwrap(json);
+    if (trans == null) return null;
 
     if (trans is List<Insertable<Transaction>>) {
       await db.transactions.insertAll(
@@ -43,35 +51,34 @@ class Syncer {
       return trans.length;
     }
 
-    return -1;
-  }
-
-  List<Insertable>? _tryUnwrap(String message) {
-    try {
-      final json = jsonDecode(message);
-
-      final recordType = json['record_type'];
-      List<dynamic> records = json['record_details'];
-      if (records.isEmpty) {
-        throw 'record_details contains empty list';
-      }
-
-      switch (recordType) {
-        case 'Transaction':
-          return records.map((r) => Transaction.fromJson(r)).toList();
-        default:
-          throw 'Sync type ${recordType} not supported';
-      }
-    } catch (ex, stack) {
-      print('Exception in json decoding: ${ex.toString()}');
-      print(stack);
-    }
     return null;
   }
 
-  static int getSize(String message) {
-    final json = jsonDecode(message);
+  List<Insertable>? _tryUnwrap(dynamic json) {
+    final recordType = json['record_type'];
+    List<dynamic> records = json['record_details'];
+    if (records.isEmpty)
+      throw InvalidJsonFormatException('record_details contains empty list');
+
+    switch (recordType) {
+      case 'Transaction':
+        return records.map((r) => Transaction.fromJson(r)).toList();
+      default:
+        throw 'Sync type ${recordType} not supported';
+    }
+  }
+
+  /// total number of rows we should process
+  static int getCount(dynamic json) {
+    if (json['total_size'] == null)
+      throw InvalidJsonFormatException('no total_size found in json message');
     return json['total_size'];
+  }
+
+  static String getType(dynamic json) {
+    if (json['record_type'] == null)
+      throw InvalidJsonFormatException('no record_type found in json message');
+    return json['record_type'];
   }
 
   /// [totalSize] > [data.length] then it is part of a batched transfer

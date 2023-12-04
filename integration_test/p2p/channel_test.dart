@@ -218,7 +218,7 @@ void main() {
 
       final Completer<(int? prev, int? after)> resultCompleter = Completer();
       final listener = containerForReceiver.listen(
-        resultNotifierProvider,
+        resultNotifierProvider(1),
         (prev, after) {
           if (!resultCompleter.isCompleted)
             resultCompleter.complete((prev, after));
@@ -259,7 +259,7 @@ void main() {
       int count = 0;
       final Completer resultCompleter = Completer();
       containerForReceiver.listen(
-        resultNotifierProvider,
+        resultNotifierProvider(25),
         (prev, after) {
           count++;
           if (count == 3) resultCompleter.complete();
