@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart' as d;
 import 'package:flutter_pos/database/drift_database.dart';
 import 'package:flutter_pos/database/drift_database_test.dart';
@@ -35,10 +37,10 @@ void main() {
       final mergingTrx2 = Transaction(
           id: 101, cardID: 0, date: date, time: time + 1, price: 200);
       // send....
-      await syncer.sync(
+      await syncer.syncTransactions(
         Profile.receiver,
         memdb,
-        Syncer.wrap([mergingTrx, mergingTrx2]),
+        jsonDecode(Syncer.wrap([mergingTrx, mergingTrx2])),
       );
       final query = memdb.select(memdb.transactions)
         ..where((r) => r.date.equals(date))

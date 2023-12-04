@@ -23,49 +23,43 @@ class Syncer {
   Syncer._(this.type);
 
   /// Process and persist messages into database, return rowcount
-  Future<int?> sync(Profile type, DriftDB db, dynamic json) async {
+  Future<int?> syncTransactions(Profile type, DriftDB db, dynamic json) async {
     // role changed since singleton instance creation, ignore
     if (type != this.type) {
       return null;
     }
-    final trans = _tryUnwrap(json);
-    if (trans == null) return null;
+    final trans = _tryUnwrap<Transaction>(json);
 
-    if (trans is List<Insertable<Transaction>>) {
-      await db.transactions.insertAll(
-        trans,
-        onConflict: DoUpdate.withExcluded(
-          (old, excluded) {
-            return TransactionsCompanion.custom(
-              cardID: excluded.cardID,
-              date: excluded.date,
-              time: excluded.time,
-              price: excluded.price,
-              note: (excluded.note + Constant(' -merged'))
-                  .iif(excluded.note.isNotNull(), excluded.note),
-            );
-          },
-          target: [db.transactions.date, db.transactions.time],
-        ),
-      );
-      return trans.length;
-    }
-
-    return null;
+    await db.transactions.insertAll(
+      trans,
+      onConflict: DoUpdate.withExcluded(
+        (old, excluded) {
+          return TransactionsCompanion.custom(
+            cardID: excluded.cardID,
+            date: excluded.date,
+            time: excluded.time,
+            price: excluded.price,
+            note: (excluded.note + Constant(' -merged'))
+                .iif(excluded.note.isNotNull(), excluded.note),
+          );
+        },
+        target: [db.transactions.date, db.transactions.time],
+      ),
+    );
+    return trans.length;
   }
 
-  List<Insertable>? _tryUnwrap(dynamic json) {
-    final recordType = json['record_type'];
+  List<T> _tryUnwrap<T>(dynamic json) {
     List<dynamic> records = json['record_details'];
     if (records.isEmpty)
       throw InvalidJsonFormatException('record_details contains empty list');
 
-    switch (recordType) {
-      case 'Transaction':
-        return records.map((r) => Transaction.fromJson(r)).toList();
-      default:
-        throw 'Sync type ${recordType} not supported';
+    // if generic type support factory methods that would be great
+    // https://github.com/dart-lang/language/issues/356
+    if (T == Transaction) {
+      return records.map((r) => Transaction.fromJson(r)).toList() as List<T>;
     }
+    throw 'Sync type ${T.runtimeType} not supported';
   }
 
   /// total number of rows we should process

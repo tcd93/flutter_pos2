@@ -97,7 +97,7 @@ class Service extends _$Service {
       switch (type) {
         case 'Transaction':
           final count = Syncer.getCount(json);
-          result = await Syncer(type: role).sync(role, db, json);
+          result = await Syncer(type: role).syncTransactions(role, db, json);
           ref.read(resultNotifierProvider(count).notifier).add(result ?? 0);
       }
     } on InvalidJsonFormatException catch (ex) {
