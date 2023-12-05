@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:drift/drift.dart' as d;
 import 'package:flutter_pos/database/drift_database.dart';
 import 'package:flutter_pos/database/drift_database_test.dart';
-import 'package:flutter_pos/p2p/channel.dart' hide Role;
-import 'package:flutter_pos/p2p/receiver.dart';
-import 'package:flutter_pos/p2p/signaler.dart';
+import 'package:flutter_pos/p2p/manager.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
@@ -20,13 +18,13 @@ void main() {
 
   group('end-to-end (2 peers)', () {
     const String label = 'channel-1';
-    late Signaler signaler;
-    late Receiver receiver;
+    late WebRtcManager signaler;
+    late WebRtcManager receiver;
     Completer<RTCDataChannelState> channelStateCompleter = Completer();
 
     setUp(() async {
-      signaler = Signaler();
-      receiver = Receiver(onChannelState: (dc) {
+      signaler = WebRtcManager();
+      receiver = WebRtcManager(onChannelState: (dc) {
         if (!channelStateCompleter.isCompleted)
           channelStateCompleter.complete(dc.state);
       });
@@ -80,21 +78,21 @@ void main() {
   group('end-to-end (3 peers)', () {
     const String label1 = 'channel-1';
     const String label2 = 'channel-2';
-    late Signaler signaler;
-    late Receiver receiver1;
-    late Receiver receiver2;
+    late WebRtcManager signaler;
+    late WebRtcManager receiver1;
+    late WebRtcManager receiver2;
     Completer<RTCDataChannelState> channelStateCompleter1 = Completer();
     Completer<RTCDataChannelState> channelStateCompleter2 = Completer();
 
     setUp(() async {
-      signaler = Signaler();
-      receiver1 = Receiver(
+      signaler = WebRtcManager();
+      receiver1 = WebRtcManager(
         onChannelState: (dc) {
           if (!channelStateCompleter1.isCompleted)
             channelStateCompleter1.complete(dc.state);
         },
       );
-      receiver2 = Receiver(
+      receiver2 = WebRtcManager(
         onChannelState: (dc) {
           if (!channelStateCompleter2.isCompleted)
             channelStateCompleter2.complete(dc.state);
@@ -153,8 +151,8 @@ void main() {
     late TestingDriftDB memdb;
     late ProviderContainer containerForSignaler;
     late ProviderContainer containerForReceiver;
-    late Signaler signaler;
-    late Receiver receiver;
+    late WebRtcManager signaler;
+    late WebRtcManager receiver;
 
     /// https://riverpod.dev/docs/essentials/testing
     ProviderContainer createContainer({
@@ -179,16 +177,14 @@ void main() {
       containerForSignaler = createContainer(
         overrides: [dbProvider.overrideWith((ref) => memdb)],
       );
-      containerForSignaler.read(roleProvider.notifier).set(Profile.signaler);
 
       containerForReceiver = createContainer(
         overrides: [dbProvider.overrideWith((ref) => memdb)],
       );
-      containerForReceiver.read(roleProvider.notifier).set(Profile.receiver);
 
-      signaler = containerForSignaler.read(serviceProvider) as Signaler;
+      signaler = containerForSignaler.read(serviceProvider);
       await signaler.startServer();
-      receiver = containerForReceiver.read(serviceProvider) as Receiver;
+      receiver = containerForReceiver.read(serviceProvider);
       await receiver.createChannel('localhost', label);
 
       final Completer channelStateCompleter = Completer();

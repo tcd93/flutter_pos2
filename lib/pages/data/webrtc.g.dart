@@ -20,7 +20,7 @@ final hostStatusProvider = NotifierProvider<HostStatus, bool>.internal(
 );
 
 typedef _$HostStatus = Notifier<bool>;
-String _$labelHash() => r'2f4dde966b037ddcbc376b9b5eee64a9e66fdaac';
+String _$labelHash() => r'9c7ad5b32e58c68c365726a84f183b1f58af1a93';
 
 /// See also [Label].
 @ProviderFor(Label)
@@ -214,25 +214,11 @@ class _ResultNotifierProviderElement
   int get count => (origin as ResultNotifierProvider).count;
 }
 
-String _$roleHash() => r'c497fe4ca3f49cf73e5c6eb479907d1d3627a939';
-
-/// See also [Role].
-@ProviderFor(Role)
-final roleProvider = NotifierProvider<Role, Profile>.internal(
-  Role.new,
-  name: r'roleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$roleHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$Role = Notifier<Profile>;
-String _$serviceHash() => r'50c83f8d7ee6f08c4d0701d88c154db6ffcc6e06';
+String _$serviceHash() => r'417b2c0ade432573ad794eee7075b9bffa07cff8';
 
 /// See also [Service].
 @ProviderFor(Service)
-final serviceProvider = NotifierProvider<Service, Channel?>.internal(
+final serviceProvider = NotifierProvider<Service, WebRtcManager>.internal(
   Service.new,
   name: r'serviceProvider',
   debugGetCreateSourceHash:
@@ -241,6 +227,6 @@ final serviceProvider = NotifierProvider<Service, Channel?>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef _$Service = Notifier<Channel?>;
+typedef _$Service = Notifier<WebRtcManager>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

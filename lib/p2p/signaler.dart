@@ -12,44 +12,26 @@ class ServerAlreadyRunningException implements Exception {
 }
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
-class Signaler with Channel {
-  void Function(RTCPeerConnectionState state)? onConnectionState;
-  void Function(RTCDataChannel dc)? onChannelState;
-  void Function(RTCDataChannel dc, String message)? onMessage;
-  void Function(bool status)? onHosting;
-
+mixin Signaler on Channel {
   /// Temporary communication server (STUN server of sort) to establish p2p connection
   HttpServer? _server;
-  final int _port;
-
-  Signaler({
-    int port = 50001,
-    void Function(RTCPeerConnectionState state)? onPeerConnectionState,
-    this.onChannelState,
-    this.onMessage,
-    this.onHosting,
-  })  : _port = port,
-        onConnectionState = onPeerConnectionState;
 
   bool get hosting => _server != null;
 
   Future<void> closeServer() async {
     await _server?.close(force: true);
     _server = null;
-    onHosting?.call(false);
+    onHostingCallback(false);
   }
 
-  @override
-  void onPeerConnectionState(RTCPeerConnectionState state) {
-    onConnectionState?.call(state);
-  }
+  void onHostingCallback(bool status);
 
-  Future<void> startServer() async {
+  Future<void> startServer([int port = 50001]) async {
     if (_server != null) {
       throw ServerAlreadyRunningException();
     }
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, _port);
-    onHosting?.call(true);
+    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+    onHostingCallback(true);
 
     final sv = _server!;
     print(
@@ -87,7 +69,7 @@ class Signaler with Channel {
     dc.onDataChannelState = (state) async {
       if (state == RTCDataChannelState.RTCDataChannelOpen ||
           state == RTCDataChannelState.RTCDataChannelClosed) {
-        closeServer();
+        await closeServer();
       }
       if (state == RTCDataChannelState.RTCDataChannelClosed) {
         connections.remove(dc);

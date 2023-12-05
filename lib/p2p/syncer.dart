@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_pos/database/drift_database.dart';
-import 'package:flutter_pos/p2p/channel.dart';
 
 class InvalidJsonFormatException extends FormatException {
   final String cause;
@@ -13,21 +12,16 @@ class InvalidJsonFormatException extends FormatException {
 
 class Syncer {
   static Syncer? instance;
-  late Profile type;
 
-  factory Syncer({required Profile type}) {
-    instance ??= Syncer._(type);
+  factory Syncer() {
+    instance ??= Syncer._();
     return instance!;
   }
 
-  Syncer._(this.type);
+  Syncer._();
 
   /// Process and persist messages into database, return rowcount
-  Future<int?> syncTransactions(Profile type, DriftDB db, dynamic json) async {
-    // role changed since singleton instance creation, ignore
-    if (type != this.type) {
-      return null;
-    }
+  Future<int?> syncTransactions(DriftDB db, dynamic json) async {
     final trans = _tryUnwrap<Transaction>(json);
 
     await db.transactions.insertAll(

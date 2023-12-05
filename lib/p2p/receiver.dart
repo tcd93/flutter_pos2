@@ -6,17 +6,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
-class Receiver with Channel {
-  void Function(RTCPeerConnectionState state)? onConnectionState;
-  void Function(RTCDataChannel state)? onChannelState;
-  void Function(String message)? onMessage;
-
-  Receiver({
-    void Function(RTCPeerConnectionState state)? onPeerConnectionState,
-    this.onChannelState,
-    this.onMessage,
-  }) : onConnectionState = onPeerConnectionState;
-
+mixin Receiver on Channel {
   Future<void> createChannel(String host, String label) async {
     final peer = await createPeer(label);
 
@@ -30,7 +20,7 @@ class Receiver with Channel {
           onChannelState?.call(channel);
         };
         channel.onMessage = (message) {
-          this.onMessage?.call(message.text);
+          this.onMessage?.call(channel, message.text);
         };
       }
     };
@@ -49,11 +39,6 @@ class Receiver with Channel {
 
     // triggers onIceCandidate
     await peer.setLocalDescription(answer);
-  }
-
-  @override
-  void onPeerConnectionState(RTCPeerConnectionState state) {
-    onConnectionState?.call(state);
   }
 
   Future<String?> _requestOffer(String ipAddress, String? label) async {

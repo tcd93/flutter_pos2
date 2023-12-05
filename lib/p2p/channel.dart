@@ -4,14 +4,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-typedef Role = Profile;
+abstract class Channel {
+  void Function(RTCPeerConnectionState state)? onConnectionState;
+  void Function(RTCDataChannel state)? onChannelState;
+  void Function(RTCDataChannel dc, String message)? onMessage;
 
-mixin Channel {
   List<RTCPeerConnection> _peers = [];
 
   @visibleForTesting
   @protected
   List<RTCDataChannel> connections = [];
+
+  Channel({this.onChannelState, this.onConnectionState, this.onMessage});
 
   String? get displayLabel {
     return connections.map((c) => c.label).join('; ');
@@ -32,7 +36,7 @@ mixin Channel {
       if (s == RTCPeerConnectionState.RTCPeerConnectionStateDisconnected) {
         _peers.remove(peer);
       }
-      onPeerConnectionState(s);
+      this.onConnectionState?.call(s);
     };
     return peer;
   }
@@ -51,8 +55,6 @@ mixin Channel {
     await peer.close();
     return peer.dispose();
   }
-
-  void onPeerConnectionState(RTCPeerConnectionState state);
 
   Future send(String message) {
     List<Future<void>> futures = [];
@@ -95,14 +97,4 @@ class PeerNotCreatedException implements Exception {
 
   PeerNotCreatedException([String? cause])
       : this.cause = cause ?? 'Peer has not been created yet';
-}
-
-enum Profile {
-  /// 1st peer in a p2p connection that also hosts a httpserver for [receiver] to find and connect to
-  signaler,
-
-  /// 2nd peer in a p2p connection
-  receiver,
-
-  none,
 }

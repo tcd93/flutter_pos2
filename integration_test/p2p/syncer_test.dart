@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:drift/drift.dart' as d;
 import 'package:flutter_pos/database/drift_database.dart';
 import 'package:flutter_pos/database/drift_database_test.dart';
-import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -13,7 +12,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   group('sqlite group:', () {
     late TestingDriftDB memdb;
-    final syncer = Syncer(type: Profile.receiver);
+    final syncer = Syncer();
     final date = DateTime(2023, 30, 11);
     final time = 1000;
     final existingTrx =
@@ -38,7 +37,6 @@ void main() {
           id: 101, cardID: 0, date: date, time: time + 1, price: 200);
       // send....
       await syncer.syncTransactions(
-        Profile.receiver,
         memdb,
         jsonDecode(Syncer.wrap([mergingTrx, mergingTrx2])),
       );

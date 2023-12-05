@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/p2p/channel.dart';
-import 'package:flutter_pos/p2p/receiver.dart';
-import 'package:flutter_pos/p2p/signaler.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
 import 'package:flutter_pos/pages/main_section/networking/sync_progress_bar.dart';
@@ -29,8 +26,7 @@ class Networking extends ConsumerWidget {
               title: hosting ? Text('Stop hosting') : Text('Create host'),
               leading: icon,
               onTap: () async {
-                ref.read(roleProvider.notifier).set(Profile.signaler);
-                final signaler = ref.read(serviceProvider) as Signaler;
+                final signaler = ref.read(serviceProvider);
                 if (!hosting) {
                   await signaler.startServer();
                 } else {
@@ -61,10 +57,9 @@ class Networking extends ConsumerWidget {
               onTap: () async {
                 final ip = await ipAddressDialog(context);
                 if (ip != null) {
-                  ref.read(roleProvider.notifier).set(Profile.receiver);
                   try {
                     final label = 'channel-${_idGenerator()}';
-                    final receiver = ref.read(serviceProvider) as Receiver;
+                    final receiver = ref.read(serviceProvider);
                     await receiver.createChannel(ip, label);
                   } catch (ex) {
                     _showSnackBar(context, ex.toString());
@@ -95,7 +90,7 @@ class Networking extends ConsumerWidget {
                       RTCPeerConnectionState.RTCPeerConnectionStateDisconnected,
                     );
                 final service = ref.read(serviceProvider);
-                service?.disconnect();
+                service.disconnect();
               },
             );
           },

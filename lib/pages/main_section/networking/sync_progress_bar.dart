@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<String?> syncDialog(BuildContext context, WidgetRef ref) async {
   final db = ref.read(dbProvider);
-  final service = ref.read(serviceProvider)!;
+  final service = ref.read(serviceProvider);
   final trans = await db.select(db.transactions).get();
   //  maxsize for webrtc datachannel is around 16kb
   await for (final sublist in Syncer.wrapTen(trans)) {

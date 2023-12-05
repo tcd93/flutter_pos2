@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_pos/mdns/bonjour.dart';
-import 'package:flutter_pos/p2p/channel.dart';
-import 'package:flutter_pos/p2p/receiver.dart';
-import 'package:flutter_pos/p2p/signaler.dart';
+import 'package:flutter_pos/p2p/manager.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -23,7 +21,7 @@ class HostStatus extends _$HostStatus {
 class Label extends _$Label {
   @override
   String? build() {
-    return ref.watch(serviceProvider)?.displayLabel;
+    return ref.watch(serviceProvider).displayLabel;
   }
 }
 
@@ -49,36 +47,19 @@ class ResultNotifier extends _$ResultNotifier {
 }
 
 @Riverpod(keepAlive: true)
-class Role extends _$Role {
-  @override
-  Profile build() => Profile.none;
-
-  set(Profile profile) => state = profile;
-}
-
-@Riverpod(keepAlive: true)
 class Service extends _$Service {
   @override
-  Channel? build() {
-    final role = ref.watch(roleProvider);
+  WebRtcManager build() {
     final bonjour = Bonjour();
-    return switch (role) {
-      Profile.signaler => Signaler(
-          onChannelState: onChannelState,
-          onMessage: (channel, message) => onMessage(message),
-          onPeerConnectionState: onPeerConnectionState,
-          onHosting: (hosting) {
-            ref.read(hostStatusProvider.notifier).set(hosting);
-            hosting ? bonjour.broadcast() : bonjour.stopBroadcast();
-          },
-        ),
-      Profile.receiver => Receiver(
-          onChannelState: onChannelState,
-          onMessage: onMessage,
-          onPeerConnectionState: onPeerConnectionState,
-        ),
-      _ => null,
-    };
+    return WebRtcManager(
+      onChannelState: onChannelState,
+      onMessage: (channel, message) => onMessage(message),
+      onConnectionState: onPeerConnectionState,
+      onHosting: (hosting) {
+        ref.read(hostStatusProvider.notifier).set(hosting);
+        hosting ? bonjour.broadcast() : bonjour.stopBroadcast();
+      },
+    );
   }
 
   void onChannelState(RTCDataChannel dc) {
@@ -87,7 +68,6 @@ class Service extends _$Service {
   }
 
   void onMessage(String message) async {
-    final role = ref.read(roleProvider);
     final db = ref.read(dbProvider);
     int? result;
     try {
@@ -97,7 +77,7 @@ class Service extends _$Service {
       switch (type) {
         case 'Transaction':
           final count = Syncer.getCount(json);
-          result = await Syncer(type: role).syncTransactions(role, db, json);
+          result = await Syncer().syncTransactions(db, json);
           ref.read(resultNotifierProvider(count).notifier).add(result ?? 0);
       }
     } on InvalidJsonFormatException catch (ex) {
