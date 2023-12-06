@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,9 @@ mixin Receiver on Channel {
       }
     };
 
+    final certificate = await rootBundle.load('assets/certs/cert.pem');
+    HttpOverrides.global = _Https(certificate.buffer.asInt8List());
+
     final sdp = await _requestOffer(host, label);
 
     await peer.setRemoteDescription(RTCSessionDescription(sdp, 'offer'));
@@ -42,7 +46,7 @@ mixin Receiver on Channel {
   }
 
   Future<String?> _requestOffer(String ipAddress, String? label) async {
-    final response = await http.get(Uri.http('${ipAddress}:50001', '', {
+    final response = await http.get(Uri.https('${ipAddress}:50001', '', {
       'label': label,
     }));
     assert(response.statusCode == HttpStatus.ok);
@@ -55,7 +59,7 @@ mixin Receiver on Channel {
     String sdp,
   ) async {
     final response = await http.post(
-      Uri.http('${ipAddress}:50001'),
+      Uri.https('${ipAddress}:50001'),
       body: jsonEncode({
         'label': label,
         'answer': sdp,
@@ -70,7 +74,7 @@ mixin Receiver on Channel {
     RTCIceCandidate candidate,
   ) async {
     final response = await http.post(
-      Uri.http('${ipAddress}:50001', 'add-candidate'),
+      Uri.https('${ipAddress}:50001', 'add-candidate'),
       body: jsonEncode({
         'label': label,
         'candidate': candidate.candidate,
@@ -79,5 +83,19 @@ mixin Receiver on Channel {
       }),
     );
     assert(response.statusCode == HttpStatus.ok);
+  }
+}
+
+class _Https extends HttpOverrides {
+  List<int> certChainBytes;
+
+  _Https(this.certChainBytes);
+
+  @override
+  HttpClient createHttpClient(SecurityContext? _) {
+    SecurityContext context = SecurityContext(withTrustedRoots: true)
+      ..setTrustedCertificatesBytes(certChainBytes);
+
+    return super.createHttpClient(context);
   }
 }

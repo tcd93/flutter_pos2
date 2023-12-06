@@ -63,6 +63,7 @@ flutter:
     - assets/fonts/
     - assets/food/
     - assets/icon/
+    - assets/certs/
 
   fonts:
     - family: Rubik

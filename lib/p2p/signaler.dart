@@ -30,7 +30,22 @@ mixin Signaler on Channel {
     if (_server != null) {
       throw ServerAlreadyRunningException();
     }
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+    //openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem
+    //-sha256 -days 3650 -nodes
+    //TODO: CN must match the client's request host to work
+    //example: if set CN to localhost, then the client request work only
+    //when called in localhost
+    final chain = Platform.script.resolve('assets/certs/cert.pem').toFilePath();
+    final key = Platform.script.resolve('assets/certs/key.pem').toFilePath();
+    var context = SecurityContext()
+      ..useCertificateChain(chain)
+      ..usePrivateKey(key);
+    _server = await HttpServer.bindSecure(
+      InternetAddress.anyIPv4,
+      port,
+      context,
+      requestClientCertificate: true,
+    );
     onHostingCallback(true);
 
     final sv = _server!;
