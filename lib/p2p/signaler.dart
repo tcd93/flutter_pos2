@@ -26,26 +26,26 @@ mixin Signaler on Channel {
 
   void onHostingCallback(bool status);
 
-  Future<void> startServer([int port = 50001]) async {
+  Future<void> startServer([
+    String? certFile,
+    String? keyFile,
+    int port = 50001,
+  ]) async {
     if (_server != null) {
       throw ServerAlreadyRunningException();
     }
-    //openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem
-    //-sha256 -days 3650 -nodes
-    //TODO: CN must match the client's request host to work
-    //example: if set CN to localhost, then the client request work only
-    //when called in localhost
-    final chain = Platform.script.resolve('assets/certs/cert.pem').toFilePath();
-    final key = Platform.script.resolve('assets/certs/key.pem').toFilePath();
-    var context = SecurityContext()
-      ..useCertificateChain(chain)
-      ..usePrivateKey(key);
-    _server = await HttpServer.bindSecure(
-      InternetAddress.anyIPv4,
-      port,
-      context,
-      requestClientCertificate: true,
-    );
+
+    if (certFile != null && keyFile != null) {
+      var context = SecurityContext()
+        ..useCertificateChain(certFile)
+        ..usePrivateKey(keyFile);
+
+      _server = await HttpServer.bindSecure(
+          InternetAddress.anyIPv4, port, context,
+          requestClientCertificate: true);
+    } else {
+      _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+    }
     onHostingCallback(true);
 
     final sv = _server!;
@@ -55,12 +55,22 @@ mixin Signaler on Channel {
 
     Future.microtask(() async {
       await for (final request in sv) {
+        final path = request.uri.path;
         switch (request.method) {
           case 'GET':
-            _handleIncoming(request);
+            {
+              switch (path) {
+                case '/':
+                  _handleIncoming(request);
+                case '/test':
+                  request.response
+                    ..statusCode = HttpStatus.ok
+                    ..headers.add('Access-Control-Allow-Origin', '*')
+                    ..close();
+              }
+            }
           case 'POST':
             {
-              final path = request.uri.path;
               switch (path) {
                 case '/':
                   _handleAnswer(request);

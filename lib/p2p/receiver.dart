@@ -1,10 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
+
+class AddHttps extends HttpOverrides {
+  String certFile;
+
+  AddHttps(this.certFile);
+
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    if (context == null) {
+      context = SecurityContext();
+      context.setTrustedCertificates(certFile);
+    }
+    return super.createHttpClient(context);
+  }
+}
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
 mixin Receiver on Channel {
@@ -26,8 +40,8 @@ mixin Receiver on Channel {
       }
     };
 
-    final certificate = await rootBundle.load('assets/certs/cert.pem');
-    HttpOverrides.global = _Https(certificate.buffer.asInt8List());
+    final cert = Platform.script.resolve('assets/certs/cert.pem').toFilePath();
+    HttpOverrides.global = AddHttps(cert);
 
     final sdp = await _requestOffer(host, label);
 
@@ -83,19 +97,5 @@ mixin Receiver on Channel {
       }),
     );
     assert(response.statusCode == HttpStatus.ok);
-  }
-}
-
-class _Https extends HttpOverrides {
-  List<int> certChainBytes;
-
-  _Https(this.certChainBytes);
-
-  @override
-  HttpClient createHttpClient(SecurityContext? _) {
-    SecurityContext context = SecurityContext(withTrustedRoots: true)
-      ..setTrustedCertificatesBytes(certChainBytes);
-
-    return super.createHttpClient(context);
   }
 }
