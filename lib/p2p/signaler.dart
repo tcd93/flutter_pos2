@@ -106,7 +106,7 @@ mixin Signaler on Channel {
       onChannelState?.call(dc);
     };
     dc.onMessage = (message) {
-      this.onMessage?.call(dc, message.text);
+      super.onRawMessage(dc, message.text);
     };
 
     final offer = await peer.createOffer();

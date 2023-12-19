@@ -20,11 +20,11 @@ final hostStatusProvider = NotifierProvider<HostStatus, bool>.internal(
 );
 
 typedef _$HostStatus = Notifier<bool>;
-String _$labelHash() => r'9c7ad5b32e58c68c365726a84f183b1f58af1a93';
+String _$labelHash() => r'445b9d7224430001adc8bdf6e8b3209a70cc07f7';
 
 /// See also [Label].
 @ProviderFor(Label)
-final labelProvider = NotifierProvider<Label, String?>.internal(
+final labelProvider = NotifierProvider<Label, List<String?>>.internal(
   Label.new,
   name: r'labelProvider',
   debugGetCreateSourceHash:
@@ -33,7 +33,7 @@ final labelProvider = NotifierProvider<Label, String?>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef _$Label = Notifier<String?>;
+typedef _$Label = Notifier<List<String?>>;
 String _$peerConnectionStateHash() =>
     r'52e2de4b5e2d8d34e52a9da5664cfd2d330a8575';
 
@@ -51,7 +51,21 @@ final peerConnectionStateProvider =
 );
 
 typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
-String _$resultNotifierHash() => r'ded3a4f29282663bfa84bb5def7a21748a48007f';
+String _$serviceHash() => r'b740fbaf4f8d19a63c6b23cef452dd4cb80de369';
+
+/// See also [Service].
+@ProviderFor(Service)
+final serviceProvider = NotifierProvider<Service, WebRtcManager>.internal(
+  Service.new,
+  name: r'serviceProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$serviceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$Service = Notifier<WebRtcManager>;
+String _$syncDoneNotifierHash() => r'0d221204af5204b5ad5db2a4ba4ef73973933940';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -74,38 +88,38 @@ class _SystemHash {
   }
 }
 
-abstract class _$ResultNotifier extends BuildlessAutoDisposeNotifier<int> {
-  late final int count;
+abstract class _$SyncDoneNotifier extends BuildlessAutoDisposeNotifier<bool> {
+  late final String channelLabel;
 
-  int build(
-    int count,
+  bool build(
+    String channelLabel,
   );
 }
 
-/// See also [ResultNotifier].
-@ProviderFor(ResultNotifier)
-const resultNotifierProvider = ResultNotifierFamily();
+/// See also [SyncDoneNotifier].
+@ProviderFor(SyncDoneNotifier)
+const syncDoneNotifierProvider = SyncDoneNotifierFamily();
 
-/// See also [ResultNotifier].
-class ResultNotifierFamily extends Family<int> {
-  /// See also [ResultNotifier].
-  const ResultNotifierFamily();
+/// See also [SyncDoneNotifier].
+class SyncDoneNotifierFamily extends Family<bool> {
+  /// See also [SyncDoneNotifier].
+  const SyncDoneNotifierFamily();
 
-  /// See also [ResultNotifier].
-  ResultNotifierProvider call(
-    int count,
+  /// See also [SyncDoneNotifier].
+  SyncDoneNotifierProvider call(
+    String channelLabel,
   ) {
-    return ResultNotifierProvider(
-      count,
+    return SyncDoneNotifierProvider(
+      channelLabel,
     );
   }
 
   @override
-  ResultNotifierProvider getProviderOverride(
-    covariant ResultNotifierProvider provider,
+  SyncDoneNotifierProvider getProviderOverride(
+    covariant SyncDoneNotifierProvider provider,
   ) {
     return call(
-      provider.count,
+      provider.channelLabel,
     );
   }
 
@@ -121,112 +135,98 @@ class ResultNotifierFamily extends Family<int> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'resultNotifierProvider';
+  String? get name => r'syncDoneNotifierProvider';
 }
 
-/// See also [ResultNotifier].
-class ResultNotifierProvider
-    extends AutoDisposeNotifierProviderImpl<ResultNotifier, int> {
-  /// See also [ResultNotifier].
-  ResultNotifierProvider(
-    int count,
+/// See also [SyncDoneNotifier].
+class SyncDoneNotifierProvider
+    extends AutoDisposeNotifierProviderImpl<SyncDoneNotifier, bool> {
+  /// See also [SyncDoneNotifier].
+  SyncDoneNotifierProvider(
+    String channelLabel,
   ) : this._internal(
-          () => ResultNotifier()..count = count,
-          from: resultNotifierProvider,
-          name: r'resultNotifierProvider',
+          () => SyncDoneNotifier()..channelLabel = channelLabel,
+          from: syncDoneNotifierProvider,
+          name: r'syncDoneNotifierProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$resultNotifierHash,
-          dependencies: ResultNotifierFamily._dependencies,
+                  : _$syncDoneNotifierHash,
+          dependencies: SyncDoneNotifierFamily._dependencies,
           allTransitiveDependencies:
-              ResultNotifierFamily._allTransitiveDependencies,
-          count: count,
+              SyncDoneNotifierFamily._allTransitiveDependencies,
+          channelLabel: channelLabel,
         );
 
-  ResultNotifierProvider._internal(
+  SyncDoneNotifierProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.count,
+    required this.channelLabel,
   }) : super.internal();
 
-  final int count;
+  final String channelLabel;
 
   @override
-  int runNotifierBuild(
-    covariant ResultNotifier notifier,
+  bool runNotifierBuild(
+    covariant SyncDoneNotifier notifier,
   ) {
     return notifier.build(
-      count,
+      channelLabel,
     );
   }
 
   @override
-  Override overrideWith(ResultNotifier Function() create) {
+  Override overrideWith(SyncDoneNotifier Function() create) {
     return ProviderOverride(
       origin: this,
-      override: ResultNotifierProvider._internal(
-        () => create()..count = count,
+      override: SyncDoneNotifierProvider._internal(
+        () => create()..channelLabel = channelLabel,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        count: count,
+        channelLabel: channelLabel,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ResultNotifier, int> createElement() {
-    return _ResultNotifierProviderElement(this);
+  AutoDisposeNotifierProviderElement<SyncDoneNotifier, bool> createElement() {
+    return _SyncDoneNotifierProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ResultNotifierProvider && other.count == count;
+    return other is SyncDoneNotifierProvider &&
+        other.channelLabel == channelLabel;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, count.hashCode);
+    hash = _SystemHash.combine(hash, channelLabel.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin ResultNotifierRef on AutoDisposeNotifierProviderRef<int> {
-  /// The parameter `count` of this provider.
-  int get count;
+mixin SyncDoneNotifierRef on AutoDisposeNotifierProviderRef<bool> {
+  /// The parameter `channelLabel` of this provider.
+  String get channelLabel;
 }
 
-class _ResultNotifierProviderElement
-    extends AutoDisposeNotifierProviderElement<ResultNotifier, int>
-    with ResultNotifierRef {
-  _ResultNotifierProviderElement(super.provider);
+class _SyncDoneNotifierProviderElement
+    extends AutoDisposeNotifierProviderElement<SyncDoneNotifier, bool>
+    with SyncDoneNotifierRef {
+  _SyncDoneNotifierProviderElement(super.provider);
 
   @override
-  int get count => (origin as ResultNotifierProvider).count;
+  String get channelLabel => (origin as SyncDoneNotifierProvider).channelLabel;
 }
-
-String _$serviceHash() => r'417b2c0ade432573ad794eee7075b9bffa07cff8';
-
-/// See also [Service].
-@ProviderFor(Service)
-final serviceProvider = NotifierProvider<Service, WebRtcManager>.internal(
-  Service.new,
-  name: r'serviceProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$serviceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$Service = Notifier<WebRtcManager>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

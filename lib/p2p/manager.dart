@@ -10,7 +10,7 @@ class WebRtcManager extends Channel with Signaler, Receiver {
     int port = 50001,
     void Function(RTCPeerConnectionState state)? onConnectionState,
     Function(RTCDataChannel state)? onChannelState,
-    void Function(RTCDataChannel dc, String message)? onMessage,
+    void Function(RTCDataChannel channel, String message)? onMessage,
     this.onHosting,
   }) : super(
           onChannelState: onChannelState,

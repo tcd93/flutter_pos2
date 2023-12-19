@@ -7,24 +7,36 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 Future<String?> syncDialog(BuildContext context, WidgetRef ref) async {
   final db = ref.read(dbProvider);
   final service = ref.read(serviceProvider);
+  // TODO: select top 10, loop
   final trans = await db.select(db.transactions).get();
-  //  maxsize for webrtc datachannel is around 16kb
+
+  final channelsDoneState = List.generate(
+    ref.watch(labelProvider).length,
+    (index) {
+      final label = ref.watch(labelProvider)[index];
+      if (label == null) return false;
+      return ref.watch(syncDoneNotifierProvider(label));
+    },
+  );
   await for (final sublist in Syncer.wrapTen(trans)) {
     service.send(sublist);
   }
 
   return showAdaptiveDialog(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: channelsDoneState.every((element) => element == true),
     builder: (context) {
       return AlertDialog(
         content: Column(
           children: [
-            Text('Transferring transactional data to other linked devices...'),
-            // TODO
-            // select top 10 from transactions
-            // also select from transaction_details
-            LinearProgressIndicator(),
+            if (channelsDoneState.contains((element) => element == false))
+              Text(
+                'Transferring transactional data to other linked devices...',
+              ),
+            if (channelsDoneState.contains((element) => element == false))
+              LinearProgressIndicator(),
+            if (channelsDoneState.every((element) => element == true))
+              Text('Done')
           ],
         ),
         actions: [

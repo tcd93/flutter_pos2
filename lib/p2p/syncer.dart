@@ -1,7 +1,11 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_pos/database/drift_database.dart';
+import 'package:logging/logging.dart';
+
+final _LOGGER = Logger('Syncer');
 
 class InvalidJsonFormatException extends FormatException {
   final String cause;
@@ -11,17 +15,47 @@ class InvalidJsonFormatException extends FormatException {
 }
 
 class Syncer {
-  static Syncer? instance;
+  final DriftDB db;
 
-  factory Syncer() {
-    instance ??= Syncer._();
-    return instance!;
+  Syncer(this.db);
+
+  String getType(dynamic json) {
+    if (json['record_type'] == null)
+      throw InvalidJsonFormatException('no record_type found in json message');
+    return json['record_type'];
   }
 
-  Syncer._();
+  /// When Transaction batch processing is complete, [onTransactionSyncComplete] is called
+  /// When the receiving end done processing Transactions, [onAcknowledge] is called
+  void processMessage(
+    String message, {
+    required void Function() onTransactionSyncComplete,
+    required void Function() onAcknowledge,
+  }) async {
+    try {
+      final json = jsonDecode(message);
+      final type = getType(json);
+
+      switch (type) {
+        case 'Transaction':
+          await syncTransactions(json);
+          final done = json['done'];
+          if (done) onTransactionSyncComplete();
+        case 'Acknowledge':
+          onAcknowledge();
+      }
+    } on InvalidJsonFormatException catch (ex) {
+      _LOGGER.severe(ex);
+    } on FormatException catch (ex, stack) {
+      _LOGGER.severe('Error in json decoding', ex, stack);
+    } catch (ex, stack) {
+      _LOGGER.severe('Unknown error', ex, stack);
+    }
+  }
 
   /// Process and persist messages into database, return rowcount
-  Future<int?> syncTransactions(DriftDB db, dynamic json) async {
+  @visibleForTesting
+  Future<int?> syncTransactions(dynamic json) async {
     final trans = _tryUnwrap<Transaction>(json);
 
     await db.transactions.insertAll(
@@ -56,27 +90,17 @@ class Syncer {
     throw 'Sync type ${T.runtimeType} not supported';
   }
 
-  /// total number of rows we should process
-  static int getCount(dynamic json) {
-    if (json['total_size'] == null)
-      throw InvalidJsonFormatException('no total_size found in json message');
-    return json['total_size'];
-  }
-
-  static String getType(dynamic json) {
-    if (json['record_type'] == null)
-      throw InvalidJsonFormatException('no record_type found in json message');
-    return json['record_type'];
+  static String acknowledge() {
+    return jsonEncode({'record_type': 'Acknowledge'});
   }
 
   /// [totalSize] > [data.length] then it is part of a batched transfer
-  static String wrap(Iterable<Insertable> data, [int? totalSize]) {
+  static String wrap(Iterable<Insertable> data, [bool done = true]) {
     assert(data.isNotEmpty);
-    if (totalSize == null) totalSize = data.length;
 
     final type = data.first.runtimeType.toString();
     return jsonEncode(
-      {'record_type': type, 'total_size': totalSize, 'record_details': data},
+      {'record_type': type, 'done': done, 'record_details': data},
     );
   }
 
@@ -87,7 +111,7 @@ class Syncer {
       int j = i + 10;
       if (j >= data.length) j = data.length;
 
-      yield wrap(data.sublist(i, j), data.length);
+      yield wrap(data.sublist(i, j), j == data.length);
     }
   }
 }

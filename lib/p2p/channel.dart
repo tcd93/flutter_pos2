@@ -7,7 +7,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 abstract class Channel {
   void Function(RTCPeerConnectionState state)? onConnectionState;
   void Function(RTCDataChannel state)? onChannelState;
-  void Function(RTCDataChannel dc, String message)? onMessage;
+  void Function(RTCDataChannel channel, String message)? onMessage;
 
   List<RTCPeerConnection> _peers = [];
 
@@ -17,8 +17,8 @@ abstract class Channel {
 
   Channel({this.onChannelState, this.onConnectionState, this.onMessage});
 
-  String? get displayLabel {
-    return connections.map((c) => c.label).join('; ');
+  List<String?> get displayLabels {
+    return connections.map((c) => c.label).toList();
   }
 
   /// Label must match channel name when calling [Receiver.createChannel]
@@ -56,12 +56,20 @@ abstract class Channel {
     return peer.dispose();
   }
 
-  Future send(String message) {
+  void onRawMessage(RTCDataChannel channel, String text) {
+    this.onMessage?.call(channel, text);
+  }
+
+  Future send(String text) async {
     List<Future<void>> futures = [];
     for (final conn in connections) {
-      futures.add(conn.send(RTCDataChannelMessage(message)));
+      futures.add(conn.send(RTCDataChannelMessage(text)));
     }
     return Future.wait(futures);
+  }
+
+  Future sendTo(RTCDataChannel channel, String text) async {
+    await channel.send(RTCDataChannelMessage(text));
   }
 
   @protected

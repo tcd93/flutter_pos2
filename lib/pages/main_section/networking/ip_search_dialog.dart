@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/mdns/bonjour.dart';
 
-Future<String?> ipAddressDialog(BuildContext context) {
+Future<(String, String)?> ipAddressDialog(BuildContext context) async {
   final bonjour = Bonjour();
   bonjour.discover();
   Iterable<String> hosts = [];
 
-  return showAdaptiveDialog(
+  final textController = TextEditingController();
+  final passController = TextEditingController();
+  final listenable = Listenable.merge([textController, passController]);
+
+  final result = await showAdaptiveDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) {
-      final textController = TextEditingController();
       return AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
+            TextField(
               controller: textController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -26,6 +29,22 @@ Future<String?> ipAddressDialog(BuildContext context) {
               minLines: 1,
               maxLines: 1,
               scrollPhysics: NeverScrollableScrollPhysics(),
+              keyboardType: TextInputType.url,
+            ),
+            Divider(),
+            TextField(
+              controller: passController,
+              obscureText: true,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                constraints: BoxConstraints.tightFor(width: 600),
+                labelText: 'Passphrase',
+              ),
+              minLines: 1,
+              maxLines: 1,
+              maxLength: 12,
+              scrollPhysics: NeverScrollableScrollPhysics(),
+              keyboardType: TextInputType.visiblePassword,
             ),
             Divider(),
             StatefulBuilder(
@@ -64,15 +83,31 @@ Future<String?> ipAddressDialog(BuildContext context) {
             },
             child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () {
-              bonjour.stopDiscovery();
-              Navigator.pop(context, textController.text);
+          ListenableBuilder(
+            listenable: listenable,
+            builder: (context, _) {
+              final show = textController.text.isNotEmpty &
+                  passController.text.isNotEmpty;
+              return TextButton(
+                onPressed: show
+                    ? () {
+                        bonjour.stopDiscovery();
+                        Navigator.pop(
+                          context,
+                          (textController.text, passController.text),
+                        );
+                      }
+                    : null,
+                child: const Text('OK'),
+              );
             },
-            child: const Text('OK'),
           ),
         ],
       );
     },
   );
+
+  textController.dispose();
+  passController.dispose();
+  return result;
 }

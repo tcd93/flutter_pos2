@@ -5,6 +5,9 @@ import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_pos/p2p/security.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
+
+final _LOGGER = Logger('Receiver');
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
 mixin Receiver on Channel {
@@ -25,7 +28,7 @@ mixin Receiver on Channel {
           onChannelState?.call(channel);
         };
         channel.onMessage = (message) {
-          this.onMessage?.call(channel, message.text);
+          super.onRawMessage(channel, message.text);
         };
       }
     };
@@ -43,8 +46,14 @@ mixin Receiver on Channel {
     await _sendBackAnswer(host, label, encodedAnswer);
 
     peer.onIceCandidate = (candidate) async {
-      print('onIceCandidate ${candidate.candidate}');
-      await _sendCandidate(host, label, candidate);
+      _LOGGER.fine('onIceCandidate ${candidate.candidate}');
+      try {
+        await _sendCandidate(host, label, candidate);
+      } on http.ClientException catch (ex, stack) {
+        _LOGGER.info('''Received Ice Candidate info when host is closed, it is 
+        likely that channel has already been established, candidate info is no 
+        longer required. Here is the error and stack trace: ''', ex, stack);
+      }
     };
 
     // triggers onIceCandidate

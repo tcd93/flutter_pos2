@@ -148,62 +148,74 @@ void main() {
 
   group('cross device data sync (with provider test)', () {
     const String label = 'channel';
-    late TestingDriftDB memdb;
+    const String label2 = 'channel-2';
     late ProviderContainer containerForSignaler;
     late ProviderContainer containerForReceiver;
+    late ProviderContainer containerForReceiver2;
     late WebRtcManager signaler;
     late WebRtcManager receiver;
+    late WebRtcManager receiver2;
 
     /// https://riverpod.dev/docs/essentials/testing
-    ProviderContainer createContainer({
-      ProviderContainer? parent,
-      List<Override> overrides = const [],
-      List<ProviderObserver>? observers,
-    }) {
+    Future<ProviderContainer> createContainer() async {
+      final memdb = TestingDriftDB();
+      await memdb.into(memdb.cardItems).insert(
+          CardItemsCompanion.insert(id: d.Value(0), pageID: 0, title: 'test'));
+
       final container = ProviderContainer(
-        parent: parent,
-        overrides: overrides,
-        observers: observers,
+        overrides: [dbProvider.overrideWith((ref) => memdb)],
       );
-      addTearDown(container.dispose);
+      addTearDown(() async {
+        await memdb.close();
+        // container.dispose();
+      });
       return container;
     }
 
     setUp(() async {
-      memdb = TestingDriftDB();
-      await memdb.into(memdb.cardItems).insert(
-          CardItemsCompanion.insert(id: d.Value(0), pageID: 0, title: 'test'));
-
-      containerForSignaler = createContainer(
-        overrides: [dbProvider.overrideWith((ref) => memdb)],
-      );
-
-      containerForReceiver = createContainer(
-        overrides: [dbProvider.overrideWith((ref) => memdb)],
-      );
+      d.driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+      containerForSignaler = await createContainer();
+      containerForReceiver = await createContainer();
+      containerForReceiver2 = await createContainer();
 
       signaler = containerForSignaler.read(serviceProvider);
+
       await signaler.startServer(passphrase: 'password123');
       receiver = containerForReceiver.read(serviceProvider);
       await receiver.createChannel('localhost', label, 'password123');
 
-      final Completer channelStateCompleter = Completer();
-      final listener = containerForReceiver.listen(
-        peerConnectionStateProvider,
+      final channelStateCompleter1 = Completer();
+      final listener1 = containerForSignaler.listen(
+        hostStatusProvider,
         (prev, after) {
-          if (after == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
-            channelStateCompleter.complete();
-          }
+          if (after == false) channelStateCompleter1.complete();
         },
       );
-      await channelStateCompleter.future;
-      listener.close();
+      await channelStateCompleter1.future;
+      listener1.close();
+
+      await signaler.startServer(passphrase: 'password123');
+      receiver2 = containerForReceiver2.read(serviceProvider);
+      await receiver2.createChannel('localhost', label2, 'password123');
+
+      final channelStateCompleter2 = Completer();
+      final listener2 = containerForSignaler.listen(
+        hostStatusProvider,
+        (prev, after) {
+          if (after == false) channelStateCompleter2.complete();
+        },
+      );
+      await channelStateCompleter2.future;
+      listener2.close();
     });
 
     tearDown(() async {
-      receiver.disconnect();
-      signaler.disconnect();
-      await memdb.close();
+      await receiver.disconnect();
+      await receiver2.disconnect();
+      await signaler.disconnect();
+      containerForSignaler.dispose();
+      containerForReceiver.dispose();
+      containerForReceiver2.dispose();
     });
 
     test('send signal to insert new transaction in receiver', () async {
@@ -212,9 +224,9 @@ void main() {
 
       await signaler.send(Syncer.wrap([trx]));
 
-      final Completer<(int? prev, int? after)> resultCompleter = Completer();
+      final Completer<(bool?, bool)> resultCompleter = Completer();
       final listener = containerForReceiver.listen(
-        resultNotifierProvider(1),
+        syncDoneNotifierProvider(label),
         (prev, after) {
           if (!resultCompleter.isCompleted)
             resultCompleter.complete((prev, after));
@@ -222,9 +234,10 @@ void main() {
       );
       final (prev, after) = await resultCompleter.future;
       listener.close();
-      expect(prev, 0);
-      expect(after, 1);
+      expect(prev, false);
+      expect(after, true);
 
+      final memdb = containerForReceiver.read(dbProvider);
       final query = memdb.select(memdb.transactions)
         ..where((r) => r.id.equals(100));
       final row = await query.getSingle();
@@ -248,20 +261,38 @@ void main() {
         signaler.send(batch);
       }
 
+      final memdb = containerForReceiver.read(dbProvider);
       final countQuery = (memdb.selectOnly(memdb.transactions)
             ..addColumns([d.countAll()]))
           .map((r) => r.read(d.countAll()));
 
-      int count = 0;
-      final Completer resultCompleter = Completer();
-      containerForReceiver.listen(
-        resultNotifierProvider(25),
+      final Completer<(bool?, bool)> resultCompleter = Completer();
+      final listener = containerForReceiver.listen(
+        syncDoneNotifierProvider(containerForReceiver.read(labelProvider)[0]!),
         (prev, after) {
-          count++;
-          if (count == 3) resultCompleter.complete();
+          if (!resultCompleter.isCompleted)
+            resultCompleter.complete((prev, after));
         },
       );
-      await resultCompleter.future;
+      final (prev, after) = await resultCompleter.future;
+      listener.close();
+      expect(prev, false);
+      expect(after, true);
+
+      // expect syncDoneNotifier fire twice for each channel in Signaler
+      final callback = expectAsync1((value) {
+        expect(value, true);
+      }, count: 2);
+      final labels = containerForSignaler.read(labelProvider);
+      labels.forEach((channel) {
+        containerForSignaler.listen(
+          syncDoneNotifierProvider(channel!),
+          (previous, next) {
+            callback(next);
+          },
+        );
+      });
+
       final rowCount = await countQuery.getSingle();
       expect(rowCount, 25, reason: ' should have 25 rows in table');
     });

@@ -94,13 +94,14 @@ class Networking extends ConsumerWidget {
               ),
               leading: icon,
               onTap: () async {
-                final ip = await ipAddressDialog(context);
-                if (ip != null) {
+                var result = await ipAddressDialog(context);
+                if (result != null) {
+                  final ip = result.$1;
+                  final passphrase = result.$2;
                   try {
                     final label = 'channel-${_idGenerator()}';
                     final receiver = ref.read(serviceProvider);
-                    // TODO: ask for passphrase in ipDialog
-                    await receiver.createChannel(ip, label, '123123');
+                    await receiver.createChannel(ip, label, passphrase);
                   } catch (ex) {
                     _showSnackBar(context, ex.toString());
                     throw ex;
@@ -115,12 +116,12 @@ class Networking extends ConsumerWidget {
         Consumer(
           builder: (context, ref, icon) {
             final state = ref.watch(peerConnectionStateProvider);
-            final label = ref.watch(labelProvider);
+            final labels = ref.watch(labelProvider);
 
             return ListTile(
               enabled: state ==
                       RTCPeerConnectionState.RTCPeerConnectionStateConnected &&
-                  label != null,
+                  labels.isNotEmpty,
               title: Text('Disconnect'),
               leading: icon,
               onTap: () async {
@@ -140,12 +141,12 @@ class Networking extends ConsumerWidget {
         Consumer(
           builder: (context, ref, icon) {
             final state = ref.watch(peerConnectionStateProvider);
-            final label = ref.watch(labelProvider);
+            final labels = ref.watch(labelProvider);
 
             return ListTile(
               enabled: state ==
                       RTCPeerConnectionState.RTCPeerConnectionStateConnected &&
-                  label != null,
+                  labels.isNotEmpty,
               title: Text('Send transactions to other connected devices'),
               leading: icon,
               onTap: () => syncDialog(context, ref),

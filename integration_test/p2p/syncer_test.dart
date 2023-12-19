@@ -11,8 +11,8 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   group('sqlite group:', () {
-    late TestingDriftDB memdb;
-    final syncer = Syncer();
+    late final TestingDriftDB memdb;
+    late final syncer = Syncer(memdb);
     final date = DateTime(2023, 30, 11);
     final time = 1000;
     final existingTrx =
@@ -36,8 +36,8 @@ void main() {
       final mergingTrx2 = Transaction(
           id: 101, cardID: 0, date: date, time: time + 1, price: 200);
       // send....
+      ;
       await syncer.syncTransactions(
-        memdb,
         jsonDecode(Syncer.wrap([mergingTrx, mergingTrx2])),
       );
       final query = memdb.select(memdb.transactions)

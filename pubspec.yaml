@@ -32,6 +32,7 @@ dependencies:
   flutter_webrtc: ^0.9.46
   http: ^1.1.0
   bonsoir: ^5.0.3
+  device_info_plus: ^9.1.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_pos/mdns/bonjour.dart';
 import 'package:flutter_pos/p2p/manager.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
@@ -20,8 +18,8 @@ class HostStatus extends _$HostStatus {
 @Riverpod(keepAlive: true)
 class Label extends _$Label {
   @override
-  String? build() {
-    return ref.watch(serviceProvider).displayLabel;
+  List<String?> build() {
+    return ref.watch(serviceProvider.select((srv) => srv.displayLabels));
   }
 }
 
@@ -32,20 +30,6 @@ class PeerConnectionState extends _$PeerConnectionState {
   set(RTCPeerConnectionState newState) => state = newState;
 }
 
-@riverpod
-class ResultNotifier extends _$ResultNotifier {
-  add(int processed) {
-    state = state + processed;
-    if (count == state) {
-      // TODO: notify done
-      print('transactions complete!');
-    }
-  }
-
-  @override
-  int build(int count) => 0;
-}
-
 @Riverpod(keepAlive: true)
 class Service extends _$Service {
   @override
@@ -53,7 +37,7 @@ class Service extends _$Service {
     final bonjour = Bonjour();
     return WebRtcManager(
       onChannelState: onChannelState,
-      onMessage: (channel, message) => onMessage(message),
+      onMessage: onMessage,
       onConnectionState: onPeerConnectionState,
       onHosting: (hosting) {
         ref.read(hostStatusProvider.notifier).set(hosting);
@@ -67,29 +51,30 @@ class Service extends _$Service {
     ref.invalidate(labelProvider);
   }
 
-  void onMessage(String message) async {
+  void onMessage(RTCDataChannel channel, String message) async {
     final db = ref.read(dbProvider);
-    int? result;
-    try {
-      final json = jsonDecode(message);
-      final type = Syncer.getType(json);
-
-      switch (type) {
-        case 'Transaction':
-          final count = Syncer.getCount(json);
-          result = await Syncer().syncTransactions(db, json);
-          ref.read(resultNotifierProvider(count).notifier).add(result ?? 0);
-      }
-    } on InvalidJsonFormatException catch (ex) {
-      print(ex);
-    } on FormatException catch (ex, stack) {
-      print('Error in json decoding: $ex');
-      print(stack);
-      throw ex;
-    }
+    Syncer(db).processMessage(
+      message,
+      onTransactionSyncComplete: () {
+        state.sendTo(channel, Syncer.acknowledge());
+        ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
+      },
+      onAcknowledge: () {
+        print('Sync acknowledged for channel: ${channel.label}');
+        ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
+      },
+    );
   }
 
   void onPeerConnectionState(RTCPeerConnectionState state) {
     ref.read(peerConnectionStateProvider.notifier).set(state);
   }
+}
+
+@riverpod
+class SyncDoneNotifier extends _$SyncDoneNotifier {
+  @override
+  bool build(String channelLabel) => false;
+
+  void done() => state = true;
 }
