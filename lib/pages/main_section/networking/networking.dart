@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/p2p/syncer.dart';
+import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
-import 'package:flutter_pos/pages/main_section/networking/sync_progress_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -48,8 +49,6 @@ class Networking extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _showSnackBarOnStateChanges(context, ref);
-
     return ExpansionTile(
       maintainState: true,
       title: Text('Local Area Network'),
@@ -149,7 +148,15 @@ class Networking extends ConsumerWidget {
                   labels.isNotEmpty,
               title: Text('Send transactions to other connected devices'),
               leading: icon,
-              onTap: () => syncDialog(context, ref),
+              onTap: () async {
+                final db = ref.read(dbProvider);
+                final service = ref.read(serviceProvider);
+                // TODO: select top 10, loop
+                final trans = await db.select(db.transactions).get();
+                await for (final sublist in Syncer.wrapTen(trans)) {
+                  service.send(sublist);
+                }
+              },
             );
           },
           child: Icon(Icons.sync_disabled),
@@ -167,18 +174,5 @@ class Networking extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text, overflow: TextOverflow.ellipsis),
     ));
-  }
-
-  void _showSnackBarOnStateChanges(BuildContext context, WidgetRef ref) {
-    ref.listen(peerConnectionStateProvider, (prev, next) {
-      switch (next) {
-        case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
-          _showSnackBar(context, 'Disconnected');
-        case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
-          _showSnackBar(context, 'Connected');
-        default:
-          return;
-      }
-    });
   }
 }
