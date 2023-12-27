@@ -159,7 +159,7 @@ class Networking extends ConsumerWidget {
               },
             );
           },
-          child: Icon(Icons.sync_disabled),
+          child: Icon(Icons.send_and_archive),
         ),
       ],
     );
