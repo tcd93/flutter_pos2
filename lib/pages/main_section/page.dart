@@ -54,7 +54,7 @@ class _PagesState extends ConsumerState<Pages> {
     return result.when(
       data: (pageIDs) {
         return Scaffold(
-          body: PageBody(pageIDs, sheetIndexNotifier),
+          body: SafeArea(child: PageBody(pageIDs, sheetIndexNotifier)),
           extendBody: true, // to achieve the bottom bar rounded corners effect
           endDrawer: const PageDrawer(),
           bottomNavigationBar: SexyBottomSheet(

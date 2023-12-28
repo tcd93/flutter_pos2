@@ -1,5 +1,5 @@
-import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:syncfusion_flutter_charts/charts.dart' hide LabelPlacement;
@@ -56,14 +56,16 @@ class _ReportState extends ConsumerState<Report> {
           )
         ],
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 10),
-          Expanded(child: chart()),
-          slider(context),
-          SizedBox(height: 10),
-        ],
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 10),
+            Expanded(child: chart()),
+            slider(context),
+            SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }

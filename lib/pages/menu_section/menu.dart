@@ -76,22 +76,24 @@ class _MenuState extends ConsumerState<Menu> {
           ),
         ],
       ),
-      body: DecoratedBox(
-        decoration: BoxDecoration(border: Border(top: BorderSide())),
-        child: CustomScrollView(
-          controller: scrollController,
-          physics: _NoImplicitScrollPhysics(parent: BouncingScrollPhysics()),
-          scrollBehavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-              PointerDeviceKind.trackpad,
-            },
+      body: SafeArea(
+        child: DecoratedBox(
+          decoration: BoxDecoration(border: Border(top: BorderSide())),
+          child: CustomScrollView(
+            controller: scrollController,
+            physics: _NoImplicitScrollPhysics(parent: BouncingScrollPhysics()),
+            scrollBehavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.trackpad,
+              },
+            ),
+            slivers: [
+              sliverAppBar(cardID),
+              sliverGrid(),
+            ],
           ),
-          slivers: [
-            sliverAppBar(cardID),
-            sliverGrid(),
-          ],
         ),
       ),
       bottomNavigationBar: BottomAppBar(
