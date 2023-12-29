@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
-import 'package:flutter/material.dart';
 
+const double safeArea = 60;
 const double _iconEndSize = 110;
+
 //this code is borrowed and then modified from https://github.com/MarcinusX/buy_ticket_design
 
 const double _iconStartSize = 75;
@@ -103,7 +105,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
 
   bool get sheetOpen => (controller.status == AnimationStatus.completed);
 
-  double get sheetSize => widget.items.length * iconSize;
+  double get sheetSize => widget.items.length * iconSize + safeArea;
 
   // minus the default height of bottom sheet
   double get viewerHeight => lerp(SexyBottomSheet.minHeight, screenHeight);
@@ -163,7 +165,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
 
   double iconLeftMargin(int index) => lerp(index * iconSize, 0);
 
-  double iconTopMargin(int index) => lerp(0, index * iconSize);
+  double iconTopMargin(int index) => lerp(0, safeArea + index * iconSize);
 
   /* end view box */
 
