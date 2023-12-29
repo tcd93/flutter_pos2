@@ -251,7 +251,7 @@ class _MenuState extends ConsumerState<Menu> {
     final screenWidth = MediaQuery.of(context).size.shortestSide;
 
     double extent = switch (screenWidth) {
-      < 600 /*phone*/ => screenWidth / 4,
+      < 600 /*phone*/ => screenWidth / 3,
       >= 600 && < 905 /*tablet*/ => screenWidth / 6,
       >= 905 && < 1240 => screenWidth / 8,
       >= 1240 && < 1440 => screenWidth / 10,
