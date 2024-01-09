@@ -30,13 +30,6 @@ class _ReportState extends ConsumerState<Report> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: ValueListenableBuilder(
-          valueListenable: title,
-          builder: (context, title, _) => Text(
-            title,
-            textScaler: TextScaler.linear(0.75),
-          ),
-        ),
         actions: [
           DropdownButtonHideUnderline(
             child: DropdownButton(
@@ -57,7 +50,6 @@ class _ReportState extends ConsumerState<Report> {
                   sliderController.start = min;
                   sliderController.end = max;
                 }
-                ;
               },
             ),
           )
@@ -67,6 +59,11 @@ class _ReportState extends ConsumerState<Report> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(height: 10),
+            ValueListenableBuilder(
+              valueListenable: title,
+              builder: (context, title, _) => Text(title),
+            ),
             SizedBox(height: 10),
             Expanded(child: chart()),
             slider(context),
@@ -83,6 +80,7 @@ class _ReportState extends ConsumerState<Report> {
         .value;
     return SfCartesianChart(
       plotAreaBorderWidth: 0,
+      enableAxisAnimation: true,
       tooltipBehavior: TooltipBehavior(enable: true),
       primaryXAxis: DateTimeAxis(
         isVisible: false,
@@ -92,7 +90,7 @@ class _ReportState extends ConsumerState<Report> {
         dateFormat: DateFormat.MMMMd(),
       ),
       primaryYAxis: NumericAxis(
-        labelPosition: ChartDataLabelPosition.inside,
+        labelPosition: ChartDataLabelPosition.outside,
         labelAlignment: LabelAlignment.end,
         majorTickLines: const MajorTickLines(size: 0),
         axisLine: const AxisLine(color: Colors.transparent),
