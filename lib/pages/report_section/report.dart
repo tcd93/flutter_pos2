@@ -18,6 +18,7 @@ class Report extends ConsumerStatefulWidget {
 class _ReportState extends ConsumerState<Report> {
   final currentYear = DateTime.now().year;
   late final RangeController rangeController;
+  late final RangeController sliderController;
   int year = DateTime.now().year;
   var title = ValueNotifier<String>('');
 
@@ -50,7 +51,13 @@ class _ReportState extends ConsumerState<Report> {
                   ),
               ],
               onChanged: (value) {
-                if (value != null) setState(() => year = value);
+                if (value != null) {
+                  setState(() => year = value);
+                  setTitle(SfRangeValues(min, max));
+                  sliderController.start = min;
+                  sliderController.end = max;
+                }
+                ;
               },
             ),
           )
@@ -104,6 +111,7 @@ class _ReportState extends ConsumerState<Report> {
             isVisible: true,
             labelIntersectAction: LabelIntersectAction.hide,
           ),
+          animationDuration: 0,
         ),
       ],
     );
@@ -118,6 +126,7 @@ class _ReportState extends ConsumerState<Report> {
   @override
   void initState() {
     rangeController = RangeController(start: min, end: max);
+    sliderController = RangeController(start: min, end: max);
     setTitle(SfRangeValues(min, max));
     super.initState();
   }
@@ -161,6 +170,7 @@ class _ReportState extends ConsumerState<Report> {
       min: min,
       max: max,
       interval: 1,
+      controller: sliderController,
       onChanged: (range) {
         rangeController.start = range.start;
         // [SfRangeSelector]'s month interval requires the next month be greater than current month
