@@ -53,7 +53,7 @@ class _MenuState extends ConsumerState<Menu> {
     final title = ref.watch(cardTitleProvider(cardID)).value ?? '';
 
     return Scaffold(
-      backgroundColor: pallette[page.selected]!,
+      backgroundColor: pallette[page.selected % pallette.length]!,
       appBar: AppBar(
         title: Text(title),
         leading: IconButton(

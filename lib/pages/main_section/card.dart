@@ -1,13 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/main_section/card_adder.dart';
 import 'package:flutter_pos/pages/menu_section/menu.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/flat_collapsible_card.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Cards extends ConsumerWidget {
@@ -79,7 +79,7 @@ class _CardState extends ConsumerState<_Card>
         ),
       ),
       openElevation: 0.0,
-      openColor: pallette[widget.pageID]!,
+      openColor: pallette[widget.pageID % pallette.length]!,
       transitionDuration: Duration(milliseconds: 500),
       closedBuilder: collapsibleCard,
       openBuilder: (context, closeContainer) {

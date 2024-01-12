@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/utils/text_styles.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
 
 const double safeArea = 60;
@@ -70,10 +69,10 @@ class MenuButton extends StatelessWidget {
 class SexyBottomSheet extends StatefulWidget {
   static double minHeight = 80;
 
-  final List<Widget> items;
+  final List<SexyBottomSheetItem> items;
 
   /// Display a row of Images in collapsed state from [items]
-  final Widget Function(int index)? imageBuilder;
+  final Widget? Function(int index)? imageBuilder;
   final ValueNotifier<int> selectedIndex;
 
   SexyBottomSheet({
@@ -84,6 +83,18 @@ class SexyBottomSheet extends StatefulWidget {
 
   @override
   _SexyBottomSheetState createState() => _SexyBottomSheetState();
+}
+
+class SexyBottomSheetItem {
+  final Widget child;
+  final bool hideWhenCollapsed;
+  final bool disallowSelection;
+
+  const SexyBottomSheetItem(
+    this.child, {
+    this.hideWhenCollapsed = false,
+    this.disallowSelection = false,
+  });
 }
 
 class _SexyBottomSheetState extends State<SexyBottomSheet>
@@ -142,9 +153,10 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
     super.dispose();
   }
 
-  Widget icon(Widget item) {
+  Widget icon(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
     if (index == -1) return SizedBox();
+    if (item.hideWhenCollapsed && !sheetOpen) return SizedBox();
 
     return Positioned(
       height: iconSize,
@@ -233,9 +245,10 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
               width: containerWidth,
               height: containerHeight,
             ),
-            for (Widget item in widget.items) tile(item),
-            for (Widget item in widget.items) icon(item),
-            for (Widget item in widget.items) selectionBox(item),
+            for (SexyBottomSheetItem item in widget.items) tile(item),
+            if (widget.imageBuilder != null)
+              for (SexyBottomSheetItem item in widget.items) icon(item),
+            for (SexyBottomSheetItem item in widget.items) selectionBox(item),
           ],
         ),
       ),
@@ -243,8 +256,12 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
   }
 
   // build the rectangle around the "selected" icon
-  Widget selectionBox(Widget item) {
+  Widget selectionBox(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
+    if (index == -1) return SizedBox();
+    if (item.hideWhenCollapsed && !sheetOpen) return SizedBox();
+    if (item.disallowSelection) return SizedBox();
+
     return Positioned(
       top: iconTopMargin(index),
       left: iconLeftMargin(index),
@@ -276,9 +293,10 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
     );
   }
 
-  Widget tile(Widget item) {
+  Widget tile(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
     if (index == -1) return SizedBox();
+    if (item.hideWhenCollapsed && !sheetOpen) return SizedBox();
 
     return Positioned(
       top: iconTopMargin(index),
@@ -287,20 +305,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
       height: iconSize,
       child: Opacity(
         opacity: controller.value,
-        child: Card(
-          // color: invertColorsMaterial(context),
-          margin: EdgeInsets.all(15.0),
-          child: Padding(
-            padding: EdgeInsets.only(left: iconSize),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: DefaultTextStyle.merge(
-                style: SubHeadingStylesMaterial.primary,
-                child: widget.items[index],
-              ),
-            ),
-          ),
-        ),
+        child: item.child,
       ),
     );
   }

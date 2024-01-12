@@ -1,11 +1,11 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/main_section/card.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 

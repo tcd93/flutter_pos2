@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_pos/pages/main_section/drawer.dart';
+import 'package:flutter_pos/pages/main_section/page_adder.dart';
 import 'package:flutter_pos/pages/main_section/page_body.dart';
+import 'package:flutter_pos/pages/main_section/page_tile.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -58,14 +60,21 @@ class _PagesState extends ConsumerState<Pages> {
           extendBody: true, // to achieve the bottom bar rounded corners effect
           endDrawer: const PageDrawer(),
           bottomNavigationBar: SexyBottomSheet(
-            items: pageIDs.map((pageID) {
-              final name = ref.watch(pageNameProvider(pageID)).value;
-              return Text(name ?? '');
-            }).toList(growable: false),
-            imageBuilder: (_) => Image.asset(
-              'assets/icon/icon-legacy.png',
-              fit: BoxFit.cover,
-            ),
+            items: [
+              ...pageIDs
+                  .map((pageID) => PageTile(pageID))
+                  .toList(growable: false),
+              const PageAdder(),
+            ],
+            imageBuilder: (index) {
+              if (index < pageIDs.length) {
+                return Image.asset(
+                  'assets/icon/icon-legacy.png',
+                  fit: BoxFit.cover,
+                );
+              }
+              return null;
+            },
             selectedIndex: sheetIndexNotifier,
           ),
         );

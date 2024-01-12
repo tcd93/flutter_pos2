@@ -118,6 +118,15 @@ class Note extends _$Note {
 
 @riverpod
 class PageID extends _$PageID {
+  Future<dynamic> addPage(String title) async {
+    final db = ref.read(dbProvider);
+    final newID = await db
+        .into(db.pages)
+        .insert(PagesCompanion.insert(name: Value(title)));
+    state.value!.add(newID);
+    ref.notifyListeners();
+  }
+
   @override
   Future<List<int>> build() {
     final db = ref.read(dbProvider);
