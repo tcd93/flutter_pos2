@@ -89,6 +89,56 @@ class _CardState extends ConsumerState<_Card>
     );
   }
 
+  Widget cardDeleteButton(String title) {
+    return TextButton(
+      onPressed: () {
+        showAdaptiveDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Delete $title?'),
+              content: Text('Make sure table is currently empty'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final result = await ref
+                        .read(cardIDProvider(widget.pageID).notifier)
+                        .remove(widget.cardID);
+
+                    if (result is String) {
+                      await showAdaptiveDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Delete failed'),
+                            content: Text(result),
+                          );
+                        },
+                      );
+                    }
+
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: const Text('Delete'),
+      style: ButtonStyle(
+        foregroundColor: MaterialStatePropertyAll(Colors.red),
+      ),
+    );
+  }
+
   Widget cardDetails(VoidCallback openContainer, double price) {
     return Consumer(
       builder: (context, ref, _) {
@@ -137,6 +187,8 @@ class _CardState extends ConsumerState<_Card>
                 scrollPhysics: NeverScrollableScrollPhysics(),
               ),
               actions: [
+                cardDeleteButton(title),
+                VerticalDivider(),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),

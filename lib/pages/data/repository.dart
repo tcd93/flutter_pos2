@@ -1,5 +1,7 @@
 part of 'db.dart';
 
+final _LOGGER = Logger('Repository');
+
 @riverpod
 double? price(PriceRef ref, int cardID) {
   final menu = ref.watch(dishIDProvider);
@@ -43,6 +45,22 @@ class CardID extends _$CardID {
       ..addColumns([db.cardItems.id])
       ..where(db.cardItems.pageID.equals(pageID));
     return query.map((row) => row.read(db.cardItems.id)!).get();
+  }
+
+  Future<dynamic> remove(int cardID) async {
+    final db = ref.read(dbProvider);
+    try {
+      await (db.delete(db.cardItems)..where((c) => c.id.equals(cardID))).go();
+    } on Exception catch (ex) {
+      /*787: foreign key exception*/
+      if (ex.toString().contains('SqliteException(787)')) {
+        _LOGGER.warning(ex);
+
+        return 'Table is currently serving, or there are transactional records ' +
+            'already associated with this, can not delete, create new table instead';
+      }
+    }
+    ref.invalidateSelf();
   }
 }
 
