@@ -1,5 +1,5 @@
-import 'package:flutter_pos/utils/color_schemes.g.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/utils/color_schemes.g.dart';
 
 class AppTheme {
   static const carouselDuration = 300;
@@ -34,6 +34,9 @@ class AppTheme {
       shape: BeveledRectangleBorder(),
       endShape: BeveledRectangleBorder(),
     ),
+    dialogTheme: DialogTheme(
+      shape: BeveledRectangleBorder(),
+    ),
   );
   static final dark = ThemeData(
     fontFamily: 'Quicksand',
@@ -58,6 +61,9 @@ class AppTheme {
     drawerTheme: DrawerThemeData(
       shape: BeveledRectangleBorder(),
       endShape: BeveledRectangleBorder(),
+    ),
+    dialogTheme: DialogTheme(
+      shape: BeveledRectangleBorder(),
     ),
   );
 }
