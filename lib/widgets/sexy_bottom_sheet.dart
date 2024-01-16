@@ -71,14 +71,11 @@ class SexyBottomSheet extends StatefulWidget {
 
   final List<SexyBottomSheetItem> items;
 
-  /// Display a row of Images in collapsed state from [items]
-  final Widget? Function(int index)? imageBuilder;
   final ValueNotifier<int> selectedIndex;
 
   SexyBottomSheet({
     required this.items,
     required this.selectedIndex,
-    this.imageBuilder,
   });
 
   @override
@@ -94,12 +91,16 @@ class SexyBottomSheetItem {
   /// Return [true] to confirm deletion; Set null to disable dismiss functionality
   final Future<bool> Function(BuildContext context)? onDismiss;
 
+  /// Display icon
+  final Widget? Function()? imageBuilder;
+
   const SexyBottomSheetItem(
     this.child, {
     required this.key,
     this.hideWhenCollapsed = false,
     this.disallowSelection = false,
     this.onDismiss,
+    this.imageBuilder,
   });
 }
 
@@ -176,7 +177,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
             borderRadius: BorderRadius.all(
               Radius.circular(8.0),
             ),
-            child: widget.imageBuilder?.call(index),
+            child: item.imageBuilder?.call(),
           ),
         ),
       ),
@@ -254,8 +255,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
               height: containerHeight,
             ),
             for (SexyBottomSheetItem item in widget.items) tile(item),
-            if (widget.imageBuilder != null)
-              for (SexyBottomSheetItem item in widget.items) icon(item),
+            for (SexyBottomSheetItem item in widget.items) icon(item),
           ],
         ),
       ),

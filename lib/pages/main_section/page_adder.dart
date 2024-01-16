@@ -17,6 +17,9 @@ class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
   bool get hideWhenCollapsed => true;
 
   @override
+  Widget? Function()? get imageBuilder => null;
+
+  @override
   Key get key => ValueKey(UniqueKey());
 
   @override

@@ -66,15 +66,6 @@ class _PagesState extends ConsumerState<Pages> {
                   .toList(growable: false),
               const PageAdder(),
             ],
-            imageBuilder: (index) {
-              if (index < pageIDs.length) {
-                return Image.asset(
-                  'assets/icon/icon-legacy.png',
-                  fit: BoxFit.cover,
-                );
-              }
-              return null;
-            },
             selectedIndex: sheetIndexNotifier,
           ),
         );

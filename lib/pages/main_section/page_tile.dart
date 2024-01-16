@@ -20,6 +20,16 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   bool get hideWhenCollapsed => false;
 
   @override
+  Widget? Function()? get imageBuilder {
+    return () {
+      return Image.asset(
+        'assets/icon/icon-legacy.png',
+        fit: BoxFit.cover,
+      );
+    };
+  }
+
+  @override
   Key get key => ValueKey(pageID);
 
   @override
