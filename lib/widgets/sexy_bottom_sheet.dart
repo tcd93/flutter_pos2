@@ -69,6 +69,9 @@ class MenuButton extends StatelessWidget {
 class SexyBottomSheet extends StatefulWidget {
   static double minHeight = 80;
 
+  /// Sheet open/colapse duration in millisec
+  final int animationDuration;
+
   final List<SexyBottomSheetItem> items;
 
   final ValueNotifier<int> selectedIndex;
@@ -76,6 +79,7 @@ class SexyBottomSheet extends StatefulWidget {
   SexyBottomSheet({
     required this.items,
     required this.selectedIndex,
+    this.animationDuration = 300,
   });
 
   @override
@@ -107,6 +111,7 @@ class SexyBottomSheetItem {
 class _SexyBottomSheetState extends State<SexyBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
+  late Animation curve;
   /* "view box" attributes inside InteractiveViewer */
   late TransformationController transform;
 
@@ -193,10 +198,12 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
   @override
   void initState() {
     super.initState();
+
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: Duration(milliseconds: widget.animationDuration),
     );
+    curve = controller.drive(CurveTween(curve: Curves.easeInOut));
 
     transform = TransformationController();
 
@@ -235,8 +242,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
     });
   }
 
-  double lerp(double min, double max) =>
-      lerpDouble(min, max, controller.value) ?? 0;
+  double lerp(double min, double max) => lerpDouble(min, max, curve.value) ?? 0;
 
   /// Scrollable horizontally when collapsed, vertically when expanded
   Widget scrollableViewBox() {
@@ -338,5 +344,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
     );
   }
 
-  void toggleBottomSheet() => controller.fling(velocity: sheetOpen ? -2 : 2);
+  void toggleBottomSheet() {
+    sheetOpen ? controller.reverse() : controller.forward();
+  }
 }
