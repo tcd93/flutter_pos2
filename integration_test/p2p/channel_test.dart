@@ -237,6 +237,15 @@ void main() {
       expect(prev, false);
       expect(after, true);
 
+      final doneNotiferOnSignalerAlsoFires = expectAsync2((prev, after) {
+        expect(prev, false);
+        expect(after, true);
+      });
+      containerForSignaler.listen(
+        syncDoneNotifierProvider(label),
+        doneNotiferOnSignalerAlsoFires,
+      );
+
       final memdb = containerForReceiver.read(dbProvider);
       final query = memdb.select(memdb.transactions)
         ..where((r) => r.id.equals(100));
