@@ -62,7 +62,7 @@ class _PagesState extends ConsumerState<Pages> {
           bottomNavigationBar: SexyBottomSheet(
             items: [
               ...pageIDs
-                  .map((pageID) => PageTile(pageID))
+                  .map((pageID) => PageTile(context, pageID))
                   .toList(growable: false),
               const PageAdder(),
             ],
@@ -74,29 +74,6 @@ class _PagesState extends ConsumerState<Pages> {
                 );
               }
               return null;
-            },
-            onDismiss: (item) async {
-              assert(item is PageTile);
-
-              final result = await ref
-                  .read(pageIDProvider.notifier)
-                  .remove((item as PageTile).pageID);
-
-              if (result is String) {
-                await showAdaptiveDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Delete failed'),
-                      content: Text(result),
-                    );
-                  },
-                );
-
-                return false;
-              }
-              return true;
             },
             selectedIndex: sheetIndexNotifier,
           ),

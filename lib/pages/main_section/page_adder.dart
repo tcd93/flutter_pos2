@@ -20,6 +20,9 @@ class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
   Key get key => ValueKey(UniqueKey());
 
   @override
+  Future<bool> Function(BuildContext)? get onDismiss => null;
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedIn = ref.watch(loginProvider);
     if (!loggedIn) {

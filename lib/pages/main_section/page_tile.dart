@@ -6,8 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   final int pageID;
+  final BuildContext context;
 
-  const PageTile(this.pageID);
+  const PageTile(this.context, this.pageID);
 
   @override
   Widget get child => this;
@@ -20,6 +21,34 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
 
   @override
   Key get key => ValueKey(pageID);
+
+  @override
+  Future<bool> Function(BuildContext)? get onDismiss {
+    final loggedIn = ProviderScope.containerOf(context).read(loginProvider);
+    if (!loggedIn) return null;
+
+    return (context) async {
+      final result = await ProviderScope.containerOf(context)
+          .read(pageIDProvider.notifier)
+          .remove(pageID);
+
+      if (result is String) {
+        await showAdaptiveDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Delete failed'),
+              content: Text(result),
+            );
+          },
+        );
+
+        return false;
+      }
+      return true;
+    };
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

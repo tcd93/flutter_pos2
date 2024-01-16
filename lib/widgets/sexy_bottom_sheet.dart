@@ -75,14 +75,10 @@ class SexyBottomSheet extends StatefulWidget {
   final Widget? Function(int index)? imageBuilder;
   final ValueNotifier<int> selectedIndex;
 
-  /// Return [true] to confirm deletion
-  final Future<bool> Function(SexyBottomSheetItem index)? onDismiss;
-
   SexyBottomSheet({
     required this.items,
     required this.selectedIndex,
     this.imageBuilder,
-    this.onDismiss,
   });
 
   @override
@@ -95,11 +91,15 @@ class SexyBottomSheetItem {
   final bool disallowSelection;
   final Key key;
 
+  /// Return [true] to confirm deletion; Set null to disable dismiss functionality
+  final Future<bool> Function(BuildContext context)? onDismiss;
+
   const SexyBottomSheetItem(
     this.child, {
     required this.key,
     this.hideWhenCollapsed = false,
     this.disallowSelection = false,
+    this.onDismiss,
   });
 }
 
@@ -299,7 +299,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
               ),
             );
           },
-          child: widget.onDismiss != null
+          child: item.onDismiss != null
               ? Dismissible(
                   key: item.key,
                   child: item.child,
@@ -321,7 +321,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
                             TextButton(
                               onPressed: () async {
                                 final result =
-                                    await widget.onDismiss?.call(item);
+                                    await item.onDismiss?.call(context);
                                 Navigator.pop(context, result);
                               },
                               child: Text('OK'),
