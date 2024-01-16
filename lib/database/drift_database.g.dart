@@ -3,6 +3,217 @@
 part of 'drift_database.dart';
 
 // ignore_for_file: type=lint
+class Pages extends Table with TableInfo<Pages, Page> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Pages(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _assetMeta = const VerificationMeta('asset');
+  late final GeneratedColumn<String> asset = GeneratedColumn<String>(
+      'asset', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns => [id, name, asset];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pages';
+  @override
+  VerificationContext validateIntegrity(Insertable<Page> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    if (data.containsKey('asset')) {
+      context.handle(
+          _assetMeta, asset.isAcceptableOrUnknown(data['asset']!, _assetMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Page map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Page(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name']),
+      asset: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}asset']),
+    );
+  }
+
+  @override
+  Pages createAlias(String alias) {
+    return Pages(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class Page extends DataClass implements Insertable<Page> {
+  final int id;
+  final String? name;
+  final String? asset;
+  const Page({required this.id, this.name, this.asset});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || asset != null) {
+      map['asset'] = Variable<String>(asset);
+    }
+    return map;
+  }
+
+  PagesCompanion toCompanion(bool nullToAbsent) {
+    return PagesCompanion(
+      id: Value(id),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      asset:
+          asset == null && nullToAbsent ? const Value.absent() : Value(asset),
+    );
+  }
+
+  factory Page.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Page(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String?>(json['name']),
+      asset: serializer.fromJson<String?>(json['asset']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String?>(name),
+      'asset': serializer.toJson<String?>(asset),
+    };
+  }
+
+  Page copyWith(
+          {int? id,
+          Value<String?> name = const Value.absent(),
+          Value<String?> asset = const Value.absent()}) =>
+      Page(
+        id: id ?? this.id,
+        name: name.present ? name.value : this.name,
+        asset: asset.present ? asset.value : this.asset,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Page(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('asset: $asset')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, asset);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Page &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.asset == this.asset);
+}
+
+class PagesCompanion extends UpdateCompanion<Page> {
+  final Value<int> id;
+  final Value<String?> name;
+  final Value<String?> asset;
+  const PagesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.asset = const Value.absent(),
+  });
+  PagesCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.asset = const Value.absent(),
+  });
+  static Insertable<Page> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? asset,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (asset != null) 'asset': asset,
+    });
+  }
+
+  PagesCompanion copyWith(
+      {Value<int>? id, Value<String?>? name, Value<String?>? asset}) {
+    return PagesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      asset: asset ?? this.asset,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (asset.present) {
+      map['asset'] = Variable<String>(asset.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PagesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('asset: $asset')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class CardItems extends Table with TableInfo<CardItems, CardItem> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -20,7 +231,7 @@ class CardItems extends Table with TableInfo<CardItems, CardItem> {
       'pageID', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+      $customConstraints: 'NOT NULL REFERENCES pages(id)');
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
       'title', aliasedName, false,
@@ -541,217 +752,6 @@ class DishesCompanion extends UpdateCompanion<Dish> {
           ..write('imageType: $imageType, ')
           ..write('imagePath: $imagePath, ')
           ..write('imageData: $imageData')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class Pages extends Table with TableInfo<Pages, Page> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  Pages(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _assetMeta = const VerificationMeta('asset');
-  late final GeneratedColumn<String> asset = GeneratedColumn<String>(
-      'asset', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  @override
-  List<GeneratedColumn> get $columns => [id, name, asset];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'pages';
-  @override
-  VerificationContext validateIntegrity(Insertable<Page> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
-    }
-    if (data.containsKey('asset')) {
-      context.handle(
-          _assetMeta, asset.isAcceptableOrUnknown(data['asset']!, _assetMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Page map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Page(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name']),
-      asset: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}asset']),
-    );
-  }
-
-  @override
-  Pages createAlias(String alias) {
-    return Pages(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class Page extends DataClass implements Insertable<Page> {
-  final int id;
-  final String? name;
-  final String? asset;
-  const Page({required this.id, this.name, this.asset});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
-    }
-    if (!nullToAbsent || asset != null) {
-      map['asset'] = Variable<String>(asset);
-    }
-    return map;
-  }
-
-  PagesCompanion toCompanion(bool nullToAbsent) {
-    return PagesCompanion(
-      id: Value(id),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      asset:
-          asset == null && nullToAbsent ? const Value.absent() : Value(asset),
-    );
-  }
-
-  factory Page.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Page(
-      id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String?>(json['name']),
-      asset: serializer.fromJson<String?>(json['asset']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String?>(name),
-      'asset': serializer.toJson<String?>(asset),
-    };
-  }
-
-  Page copyWith(
-          {int? id,
-          Value<String?> name = const Value.absent(),
-          Value<String?> asset = const Value.absent()}) =>
-      Page(
-        id: id ?? this.id,
-        name: name.present ? name.value : this.name,
-        asset: asset.present ? asset.value : this.asset,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('Page(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('asset: $asset')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, name, asset);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Page &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.asset == this.asset);
-}
-
-class PagesCompanion extends UpdateCompanion<Page> {
-  final Value<int> id;
-  final Value<String?> name;
-  final Value<String?> asset;
-  const PagesCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.asset = const Value.absent(),
-  });
-  PagesCompanion.insert({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.asset = const Value.absent(),
-  });
-  static Insertable<Page> custom({
-    Expression<int>? id,
-    Expression<String>? name,
-    Expression<String>? asset,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (asset != null) 'asset': asset,
-    });
-  }
-
-  PagesCompanion copyWith(
-      {Value<int>? id, Value<String?>? name, Value<String?>? asset}) {
-    return PagesCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      asset: asset ?? this.asset,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (asset.present) {
-      map['asset'] = Variable<String>(asset.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('PagesCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('asset: $asset')
           ..write(')'))
         .toString();
   }
@@ -1726,9 +1726,9 @@ class TransactionDetailsCompanion extends UpdateCompanion<TransactionDetail> {
 
 abstract class _$DriftDB extends GeneratedDatabase {
   _$DriftDB(QueryExecutor e) : super(e);
+  late final Pages pages = Pages(this);
   late final CardItems cardItems = CardItems(this);
   late final Dishes dishes = Dishes(this);
-  late final Pages pages = Pages(this);
   late final Servings servings = Servings(this);
   late final ServingsNote servingsNote = ServingsNote(this);
   late final Transactions transactions = Transactions(this);
@@ -1756,9 +1756,9 @@ abstract class _$DriftDB extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+        pages,
         cardItems,
         dishes,
-        pages,
         servings,
         servingsNote,
         transactions,

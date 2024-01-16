@@ -8,15 +8,14 @@ import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
+import 'package:logging/logging.dart';
+
+final _LOGGER = Logger('Page Body');
 
 class PageBody extends ConsumerStatefulWidget {
-  final List<int> pageIDs;
   final ValueNotifier<int> sheetIndexNotifier;
 
-  PageBody(
-    this.pageIDs,
-    this.sheetIndexNotifier,
-  );
+  PageBody(this.sheetIndexNotifier);
 
   @override
   createState() => _PageBodyState();
@@ -41,24 +40,39 @@ class _PageBodyState extends ConsumerState<PageBody> {
 
   @override
   Widget build(BuildContext context) {
+    final pageIDs = ref.watch(pageIDProvider).value;
     final pallete = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
+
+    if (pageIDs == null) return CircularProgressIndicator();
+
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
+        // background
         LiquidSwipe.builder(
           initialPage: 0,
           fullTransitionValue: 350.0,
           enableLoop: false,
           waveType: WaveType.liquidReveal,
           liquidController: lqControl,
-          itemBuilder: (context, index) => Container(
-            color: pallete[index % pallete.length],
-          ), // background (needed to 'hide' next page of liquid swipe)
-          itemCount: widget.pageIDs.length,
+          itemBuilder: (context, index) {
+            // pageIDs size might change after page modification
+            // LiquidSwipe's array size may be temporarily out of sync
+            if (index >= pageIDs.length) {
+              return Container(
+                color: pallete[index % pallete.length],
+              );
+            }
+            return Container(
+              color: pallete[index % pallete.length],
+              key: ValueKey(pageIDs[index]),
+            );
+          },
+          itemCount: pageIDs.length,
         ),
         PageView(
           children: [
-            ...widget.pageIDs.map((pageID) {
+            ...pageIDs.map((pageID) {
               return Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: SexyBottomSheet.minHeight,
@@ -77,8 +91,10 @@ class _PageBodyState extends ConsumerState<PageBody> {
             },
           ),
           onPageChanged: (onScreenIndex) {
+            if (onScreenIndex >= pageIDs.length) return;
+
             final pageStatus = ref.read(pageStatusProvider.notifier);
-            pageStatus.current(onScreenIndex);
+            pageStatus.current(pageIDs[onScreenIndex]);
 
             // in case of swiping to change page, sync the provider's index state
             if ((onScreenIndex - ref.read(pageStatusProvider).selected).abs() ==
@@ -86,7 +102,7 @@ class _PageBodyState extends ConsumerState<PageBody> {
                 !animating) {
               widget.sheetIndexNotifier.value = onScreenIndex;
 
-              pageStatus.select(onScreenIndex);
+              pageStatus.select(pageIDs[onScreenIndex]);
             }
           },
         ),
@@ -108,6 +124,7 @@ class _PageBodyState extends ConsumerState<PageBody> {
               final pageID = ref.watch(
                 pageStatusProvider.select((p) => p.current),
               );
+              _LOGGER.info('Current selected page id: $pageID');
               final name = ref.watch(pageNameProvider(pageID)).value;
 
               return Text(name ?? '', style: HeadingStylesMaterial.primary);
@@ -127,8 +144,12 @@ class _PageBodyState extends ConsumerState<PageBody> {
   @override
   void initState() {
     widget.sheetIndexNotifier.addListener(() {
+      final pageIDs = ref.read(pageIDProvider).value;
+      if (pageIDs == null || widget.sheetIndexNotifier.value >= pageIDs.length)
+        return;
+
       ref.read(pageStatusProvider.notifier)
-        ..select(widget.sheetIndexNotifier.value);
+        ..select(pageIDs[widget.sheetIndexNotifier.value]);
 
       animateToItem(widget.sheetIndexNotifier.value);
     });

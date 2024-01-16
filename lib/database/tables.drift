@@ -4,9 +4,15 @@ import '../image_type.dart';
 Don't use DEFAULT here, set defaults in data model layer to avoid confusions
 */
 
+CREATE TABLE pages (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    asset TEXT
+) AS Page;
+
 CREATE TABLE cardItems (
     id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-    pageID INT NOT NULL,
+    pageID INT NOT NULL REFERENCES pages(id),
     title TEXT NOT NULL
 );
 
@@ -18,12 +24,6 @@ CREATE TABLE dishes (
     imagePath TEXT,
     imageData BLOB
 ) AS Dish;
-
-CREATE TABLE pages (
-    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    asset TEXT
-) AS Page;
 
 CREATE TABLE servings (
     cardID INT NOT NULL REFERENCES cardItems(id),

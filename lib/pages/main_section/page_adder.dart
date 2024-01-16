@@ -5,7 +5,7 @@ import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
-  const PageAdder({super.key});
+  const PageAdder();
 
   @override
   Widget get child => this;
@@ -15,6 +15,9 @@ class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
 
   @override
   bool get hideWhenCollapsed => true;
+
+  @override
+  Key get key => ValueKey(UniqueKey());
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

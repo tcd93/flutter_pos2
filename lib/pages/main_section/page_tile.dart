@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   final int pageID;
 
-  const PageTile(this.pageID, {super.key});
+  const PageTile(this.pageID);
 
   @override
   Widget get child => this;
@@ -19,11 +19,15 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   bool get hideWhenCollapsed => false;
 
   @override
+  Key get key => ValueKey(pageID);
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final name = ref.watch(pageNameProvider(pageID)).value;
     return Card(
       // color: invertColorsMaterial(context),
       margin: EdgeInsets.all(15.0),
+      key: ValueKey(pageID),
       child: Padding(
         padding: EdgeInsets.only(left: 100.0),
         child: Align(

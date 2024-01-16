@@ -151,6 +151,23 @@ class PageID extends _$PageID {
     final query = db.selectOnly(db.pages)..addColumns([db.pages.id]);
     return query.map((row) => row.read(db.pages.id)!).get();
   }
+
+  Future<dynamic> remove(int pageID) async {
+    final db = ref.read(dbProvider);
+    _LOGGER.info('Deleting page: $pageID ');
+    try {
+      await (db.delete(db.pages)..where((c) => c.id.equals(pageID))).go();
+    } on Exception catch (ex) {
+      /*787: foreign key exception*/
+      if (ex.toString().contains('SqliteException(787)')) {
+        _LOGGER.warning(ex);
+
+        return 'Page contains table, can not delete';
+      }
+    }
+    ref.invalidateSelf();
+    ref.invalidate(pageNameProvider(pageID));
+  }
 }
 
 @riverpod

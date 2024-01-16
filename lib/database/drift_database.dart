@@ -21,9 +21,9 @@ class DriftDB extends _$DriftDB {
           print('DB first run: creating default records...');
 
           await this.pages.insertAll([
-            PagesCompanion.insert(id: Value(0), name: Value('Page 1')),
-            PagesCompanion.insert(id: Value(1), name: Value('Page 2')),
-            PagesCompanion.insert(id: Value(2), name: Value('Page 3')),
+            PagesCompanion.insert(id: Value(0), name: Value('Page 0')),
+            PagesCompanion.insert(id: Value(1), name: Value('Page 1')),
+            PagesCompanion.insert(id: Value(2), name: Value('Page 2')),
           ]);
 
           await this.cardItems.insertAll([

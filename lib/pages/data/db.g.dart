@@ -488,7 +488,7 @@ final selectedCardProvider = NotifierProvider<SelectedCard, int?>.internal(
 );
 
 typedef _$SelectedCard = Notifier<int?>;
-String _$cardIDHash() => r'fcd28bdb871e088c32660640f6b0ac29e536ed91';
+String _$cardIDHash() => r'b25065774c6ad3b44243396a2c55ddea27320639';
 
 abstract class _$CardID extends BuildlessAutoDisposeAsyncNotifier<List<int>> {
   late final int pageID;
@@ -1064,7 +1064,7 @@ class _NoteProviderElement
   int get cardID => (origin as NoteProvider).cardID;
 }
 
-String _$pageIDHash() => r'6fce4a5862490c4e25f574292c726192b55218ef';
+String _$pageIDHash() => r'c12f6fd5ee109955cafdf9882c239288e93672a7';
 
 /// See also [PageID].
 @ProviderFor(PageID)

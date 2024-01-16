@@ -75,10 +75,14 @@ class SexyBottomSheet extends StatefulWidget {
   final Widget? Function(int index)? imageBuilder;
   final ValueNotifier<int> selectedIndex;
 
+  /// Return [true] to confirm deletion
+  final Future<bool> Function(SexyBottomSheetItem index)? onDismiss;
+
   SexyBottomSheet({
     required this.items,
     required this.selectedIndex,
     this.imageBuilder,
+    this.onDismiss,
   });
 
   @override
@@ -89,9 +93,11 @@ class SexyBottomSheetItem {
   final Widget child;
   final bool hideWhenCollapsed;
   final bool disallowSelection;
+  final Key key;
 
   const SexyBottomSheetItem(
     this.child, {
+    required this.key,
     this.hideWhenCollapsed = false,
     this.disallowSelection = false,
   });
@@ -163,13 +169,15 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
       width: iconSize,
       top: iconTopMargin(index),
       left: iconLeftMargin(index),
-      child: Container(
-        margin: EdgeInsets.all(8.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
+      child: IgnorePointer(
+        child: Container(
+          margin: EdgeInsets.all(8.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(
+              Radius.circular(8.0),
+            ),
+            child: widget.imageBuilder?.call(index),
           ),
-          child: widget.imageBuilder?.call(index),
         ),
       ),
     );
@@ -248,46 +256,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
             for (SexyBottomSheetItem item in widget.items) tile(item),
             if (widget.imageBuilder != null)
               for (SexyBottomSheetItem item in widget.items) icon(item),
-            for (SexyBottomSheetItem item in widget.items) selectionBox(item),
           ],
-        ),
-      ),
-    );
-  }
-
-  // build the rectangle around the "selected" icon
-  Widget selectionBox(SexyBottomSheetItem item) {
-    int index = widget.items.indexOf(item);
-    if (index == -1) return SizedBox();
-    if (item.hideWhenCollapsed && !sheetOpen) return SizedBox();
-    if (item.disallowSelection) return SizedBox();
-
-    return Positioned(
-      top: iconTopMargin(index),
-      left: iconLeftMargin(index),
-      width: lerp(iconSize, screenWidth),
-      height: iconSize,
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent, // must use translucent
-        onTap: () => widget.selectedIndex.value = index,
-        child: ValueListenableBuilder(
-          valueListenable: widget.selectedIndex,
-          builder: (context, selectedIndex, _) {
-            final selected = index == selectedIndex;
-            return Container(
-              margin: EdgeInsets.all(8.0),
-              decoration: selected
-                  ? BoxDecoration(
-                      border: Border.all(
-                        width: 1.5,
-                        color: isThemeCurrentlyDark(context)
-                            ? Theme.of(context).primaryColorLight
-                            : Theme.of(context).primaryColorDark,
-                      ),
-                    )
-                  : BoxDecoration(),
-            );
-          },
         ),
       ),
     );
@@ -303,9 +272,68 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
       left: iconLeftMargin(index),
       width: lerp(iconSize, screenWidth),
       height: iconSize,
-      child: Opacity(
-        opacity: controller.value,
-        child: item.child,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTapUp: (_) {
+          if (!item.disallowSelection) widget.selectedIndex.value = index;
+        },
+        child: ValueListenableBuilder(
+          valueListenable: widget.selectedIndex,
+          builder: (context, selectedIndex, child) {
+            final selected = index == selectedIndex;
+
+            return Container(
+              margin: EdgeInsets.all(4.0),
+              decoration: selected && !item.disallowSelection
+                  ? BoxDecoration(
+                      border: Border.all(
+                        color: isThemeCurrentlyDark(context)
+                            ? Theme.of(context).primaryColorLight
+                            : Theme.of(context).primaryColorDark,
+                      ),
+                    )
+                  : BoxDecoration(),
+              child: IgnorePointer(
+                ignoring: selected,
+                child: child,
+              ),
+            );
+          },
+          child: widget.onDismiss != null
+              ? Dismissible(
+                  key: item.key,
+                  child: item.child,
+                  background: Container(color: Theme.of(context).disabledColor),
+                  behavior: HitTestBehavior.translucent,
+                  confirmDismiss: (direction) {
+                    return showAdaptiveDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Delete item?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                final result =
+                                    await widget.onDismiss?.call(item);
+                                Navigator.pop(context, result);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                )
+              : item.child,
+        ),
       ),
     );
   }
