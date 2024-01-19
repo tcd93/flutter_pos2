@@ -11,22 +11,39 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   const PageTile(this.context, this.pageID);
 
   @override
-  Widget get child => this;
+  Widget? Function(double) get childBuilder {
+    return (value) {
+      return Builder(
+        builder: (context) {
+          if (value <= 0.3) {
+            return Opacity(
+              opacity: 1.0 - value,
+              child: Center(
+                child: DefaultTextStyle.merge(
+                  style: BodyStylesDefault.primary,
+                  child: Text(pageID.toString()),
+                ),
+              ),
+            );
+          }
+          return this;
+        },
+      );
+    };
+  }
 
   @override
   bool get disallowSelection => false;
 
   @override
-  bool get hideWhenCollapsed => false;
-
-  @override
-  Widget? Function()? get imageBuilder {
-    return () {
-      return Image.asset(
-        'assets/icon/icon-legacy.png',
-        fit: BoxFit.cover,
-      );
-    };
+  Widget? Function(double)? get headerBuilder {
+    return null;
+    // return (value) {
+    //   return Image.asset(
+    //     'assets/icon/icon-legacy.png',
+    //     fit: BoxFit.cover,
+    //   );
+    // };
   }
 
   @override

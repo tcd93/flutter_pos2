@@ -64,7 +64,7 @@ class _PagesState extends ConsumerState<Pages> {
               ...pageIDs
                   .map((pageID) => PageTile(context, pageID))
                   .toList(growable: false),
-              const PageAdder(),
+              PageAdder(context),
             ],
             selectedIndex: sheetIndexNotifier,
           ),

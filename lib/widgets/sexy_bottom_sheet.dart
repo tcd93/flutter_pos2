@@ -87,31 +87,35 @@ class SexyBottomSheet extends StatefulWidget {
 }
 
 class SexyBottomSheetItem {
-  final Widget child;
-  final bool hideWhenCollapsed;
   final bool disallowSelection;
   final Key key;
 
   /// Return [true] to confirm deletion; Set null to disable dismiss functionality
   final Future<bool> Function(BuildContext context)? onDismiss;
 
-  /// Display icon
-  final Widget? Function()? imageBuilder;
+  /// Display icon / leading widget
+  ///
+  /// [value] : 1.0 == fully open, 0.0 == fully closed
+  final Widget? Function(double value)? headerBuilder;
+
+  /// Return inner child widget
+  ///
+  /// [value] : 1.0 == fully open, 0.0 == fully closed
+  final Widget? Function(double value) childBuilder;
 
   const SexyBottomSheetItem(
-    this.child, {
+    this.childBuilder, {
     required this.key,
-    this.hideWhenCollapsed = false,
     this.disallowSelection = false,
     this.onDismiss,
-    this.imageBuilder,
+    this.headerBuilder,
   });
 }
 
 class _SexyBottomSheetState extends State<SexyBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
-  late Animation curve;
+  late Animation<double> curve;
   /* "view box" attributes inside InteractiveViewer */
   late TransformationController transform;
 
@@ -168,7 +172,6 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
   Widget icon(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
     if (index == -1) return SizedBox();
-    if (item.hideWhenCollapsed && !sheetOpen) return SizedBox();
 
     return Positioned(
       height: iconSize,
@@ -176,14 +179,9 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
       top: iconTopMargin(index),
       left: iconLeftMargin(index),
       child: IgnorePointer(
-        child: Container(
-          margin: EdgeInsets.all(8.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(
-              Radius.circular(8.0),
-            ),
-            child: item.imageBuilder?.call(),
-          ),
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: item.headerBuilder?.call(controller.value),
         ),
       ),
     );
@@ -271,7 +269,6 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
   Widget tile(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
     if (index == -1) return SizedBox();
-    if (item.hideWhenCollapsed && !sheetOpen) return SizedBox();
 
     return Positioned(
       top: iconTopMargin(index),
@@ -285,7 +282,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
         },
         child: ValueListenableBuilder(
           valueListenable: widget.selectedIndex,
-          builder: (context, selectedIndex, child) {
+          builder: (context, selectedIndex, tile) {
             final selected = index == selectedIndex;
 
             return Container(
@@ -298,17 +295,15 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
                             : Theme.of(context).primaryColorDark,
                       ),
                     )
-                  : BoxDecoration(),
-              child: IgnorePointer(
-                ignoring: selected,
-                child: child,
-              ),
+                  : null,
+              child: IgnorePointer(ignoring: selected, child: tile),
             );
           },
           child: item.onDismiss != null
               ? Dismissible(
                   key: item.key,
-                  child: item.child,
+                  child:
+                      item.childBuilder(controller.value) ?? SizedBox.shrink(),
                   background: Container(color: Theme.of(context).disabledColor),
                   behavior: HitTestBehavior.translucent,
                   confirmDismiss: (direction) {
@@ -338,7 +333,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
                     );
                   },
                 )
-              : item.child,
+              : item.childBuilder(controller.value),
         ),
       ),
     );

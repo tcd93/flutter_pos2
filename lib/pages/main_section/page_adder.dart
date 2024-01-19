@@ -5,19 +5,23 @@ import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
-  const PageAdder();
+  final BuildContext context;
+
+  const PageAdder(this.context);
 
   @override
-  Widget get child => this;
+  Widget? Function(double) get childBuilder {
+    return (value) {
+      if (value == 0.0) return null;
+      return this;
+    };
+  }
 
   @override
   bool get disallowSelection => true;
 
   @override
-  bool get hideWhenCollapsed => true;
-
-  @override
-  Widget? Function()? get imageBuilder => null;
+  Widget? Function(double)? get headerBuilder => null;
 
   @override
   Key get key => ValueKey(UniqueKey());
@@ -40,12 +44,13 @@ class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
           type: MaterialType.transparency,
           child: InkWell(
             child: Center(
-              child:
-                  Text('Long Press To +', textScaler: TextScaler.linear(1.2)),
+              child: Text(
+                'Long Press To +',
+                textScaler: TextScaler.linear(1.2),
+              ),
             ),
-            onLongPress: () {
-              ref.read(pageIDProvider.notifier).addPage('New Page');
-            },
+            onLongPress: () =>
+                ref.read(pageIDProvider.notifier).addPage('New Page'),
           ),
         ),
       ),
