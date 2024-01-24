@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/menu_section/dish_tile.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
-import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/anim_search_widget.dart';
 import 'package:flutter_pos/widgets/sliver_grid_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,16 +43,16 @@ class _MenuState extends ConsumerState<Menu> {
   @override
   Widget build(BuildContext context) {
     final cardID = ref.read(selectedCardProvider);
-    final page = ref.watch(pageStatusProvider);
+    // final page = ref.watch(pageStatusProvider);
     if (cardID == null) {
       return SizedBox();
     }
-    final pallette = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
+    // final pallette = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
     final title = ref.watch(cardTitleProvider(cardID)).value ?? '';
 
     return Scaffold(
-      backgroundColor: pallette[page.selected % pallette.length]!,
+      // backgroundColor: pallette[page.selected % pallette.length]!,
       appBar: AppBar(
         title: Text(title),
         leading: IconButton(

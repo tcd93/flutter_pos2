@@ -6,7 +6,6 @@ import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/main_section/card_adder.dart';
 import 'package:flutter_pos/pages/menu_section/menu.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
-import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/flat_collapsible_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -66,7 +65,7 @@ class _CardState extends ConsumerState<_Card>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final pallette = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
+    // final pallette = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
     return OpenContainer(
       tappable: false,
@@ -79,7 +78,8 @@ class _CardState extends ConsumerState<_Card>
         ),
       ),
       openElevation: 0.0,
-      openColor: pallette[widget.pageID % pallette.length]!,
+      openColor: Colors.transparent,
+      // openColor: pallette[widget.pageID % pallette.length]!,
       transitionDuration: Duration(milliseconds: 500),
       closedBuilder: collapsibleCard,
       openBuilder: (context, closeContainer) {
