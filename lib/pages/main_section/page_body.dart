@@ -4,10 +4,8 @@ import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/main_section/card.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
-import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:logging/logging.dart';
 
 final _LOGGER = Logger('Page Body');
@@ -22,13 +20,13 @@ class PageBody extends ConsumerStatefulWidget {
 }
 
 class _PageBodyState extends ConsumerState<PageBody> {
-  final lqControl = LiquidController();
+  // final lqControl = LiquidController();
   final pageControl = PageController(viewportFraction: 0.9);
   bool animating = false;
 
   void animateToItem(int? index) async {
     if (index == null) return;
-    lqControl.animateToPage(page: index, duration: AppTheme.carouselDuration);
+    // lqControl.animateToPage(page: index, duration: AppTheme.carouselDuration);
     animating = true;
     await pageControl.animateToPage(
       index,
@@ -41,7 +39,7 @@ class _PageBodyState extends ConsumerState<PageBody> {
   @override
   Widget build(BuildContext context) {
     final pageIDs = ref.watch(pageIDProvider).value;
-    final pallete = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
+    // final pallete = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
     if (pageIDs == null) return CircularProgressIndicator();
 
@@ -49,27 +47,27 @@ class _PageBodyState extends ConsumerState<PageBody> {
       alignment: Alignment.topCenter,
       children: <Widget>[
         // background
-        LiquidSwipe.builder(
-          initialPage: 0,
-          fullTransitionValue: 350.0,
-          enableLoop: false,
-          waveType: WaveType.liquidReveal,
-          liquidController: lqControl,
-          itemBuilder: (context, index) {
-            // pageIDs size might change after page modification
-            // LiquidSwipe's array size may be temporarily out of sync
-            if (index >= pageIDs.length) {
-              return Container(
-                color: pallete[index % pallete.length],
-              );
-            }
-            return Container(
-              color: pallete[index % pallete.length],
-              key: ValueKey(pageIDs[index]),
-            );
-          },
-          itemCount: pageIDs.length,
-        ),
+        // LiquidSwipe.builder(
+        //   initialPage: 0,
+        //   fullTransitionValue: 350.0,
+        //   enableLoop: false,
+        //   waveType: WaveType.liquidReveal,
+        //   liquidController: lqControl,
+        //   itemBuilder: (context, index) {
+        //     // pageIDs size might change after page modification
+        //     // LiquidSwipe's array size may be temporarily out of sync
+        //     if (index >= pageIDs.length) {
+        //       return Container(
+        //         color: pallete[index % pallete.length],
+        //       );
+        //     }
+        //     return Container(
+        //       color: pallete[index % pallete.length],
+        //       key: ValueKey(pageIDs[index]),
+        //     );
+        //   },
+        //   itemCount: pageIDs.length,
+        // ),
         PageView(
           children: [
             ...pageIDs.map((pageID) {
