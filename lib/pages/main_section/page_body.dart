@@ -21,7 +21,7 @@ class PageBody extends ConsumerStatefulWidget {
 
 class _PageBodyState extends ConsumerState<PageBody> {
   // final lqControl = LiquidController();
-  final pageControl = PageController(viewportFraction: 0.9);
+  final pageControl = PageController(viewportFraction: 0.82);
   bool animating = false;
 
   void animateToItem(int? index) async {
