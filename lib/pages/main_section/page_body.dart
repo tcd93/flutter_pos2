@@ -93,11 +93,11 @@ class _PageBodyState extends ConsumerState<PageBody> {
 
             final pageStatus = ref.read(pageStatusProvider.notifier);
             pageStatus.current(pageIDs[onScreenIndex]);
+            final selectIdx =
+                pageIDs.indexOf(ref.read(pageStatusProvider).selected);
 
             // in case of swiping to change page, sync the provider's index state
-            if ((onScreenIndex - ref.read(pageStatusProvider).selected).abs() ==
-                    1 &&
-                !animating) {
+            if ((onScreenIndex - selectIdx).abs() == 1 && !animating) {
               widget.sheetIndexNotifier.value = onScreenIndex;
 
               pageStatus.select(pageIDs[onScreenIndex]);
