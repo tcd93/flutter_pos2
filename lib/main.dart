@@ -17,7 +17,6 @@ void main() {
       '${record.level.name} (${record.time}): ${record.message} ${record.error ?? ''}',
     );
     if (record.stackTrace != null) print(record.stackTrace);
-    print('\n');
   });
 
   runApp(
