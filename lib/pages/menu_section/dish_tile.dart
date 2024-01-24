@@ -48,7 +48,9 @@ class DishTile extends ConsumerWidget {
                   onTapDown: (_) => updateOrDelete(ref, portion + 1),
                   // onDoubleTap: () => updateOrDelete(ref, portion - 1),
                   onLongPressUp: () => updateOrDelete(ref, 0),
-                  child: _imageConverter(),
+                  // wrap image in a SizedBox to prevent it from blocking
+                  // GestureDetector while loading
+                  child: SizedBox.expand(child: _imageConverter()),
                 ),
                 flex: 3),
             Divider(),
