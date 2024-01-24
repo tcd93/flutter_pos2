@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter_pos/image_type.dart';
-import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pos/image_type.dart';
+import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishTile extends ConsumerWidget {
@@ -45,8 +45,8 @@ class DishTile extends ConsumerWidget {
           children: [
             Expanded(
                 child: GestureDetector(
-                  onTap: () => updateOrDelete(ref, portion + 1),
-                  onDoubleTap: () => updateOrDelete(ref, portion - 1),
+                  onTapDown: (_) => updateOrDelete(ref, portion + 1),
+                  // onDoubleTap: () => updateOrDelete(ref, portion - 1),
                   onLongPressUp: () => updateOrDelete(ref, 0),
                   child: _imageConverter(),
                 ),
