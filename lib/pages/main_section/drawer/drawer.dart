@@ -1,8 +1,8 @@
-import 'package:flutter_pos/pages/data/db.dart';
-import 'package:flutter_pos/pages/main_section/networking/networking.dart';
-import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/main_section/drawer/local_area_network/networking.dart';
+import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PageDrawer extends StatelessWidget {

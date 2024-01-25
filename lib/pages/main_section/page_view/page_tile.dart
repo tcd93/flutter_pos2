@@ -8,7 +8,7 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   final int pageID;
   final BuildContext context;
 
-  const PageTile(this.context, this.pageID);
+  const PageTile(this.context, this.pageID, {super.key});
 
   @override
   Widget? Function(double) get childBuilder {

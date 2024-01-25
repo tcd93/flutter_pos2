@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
-import 'package:flutter_pos/pages/main_section/networking/ip_search_dialog.dart';
+import 'package:flutter_pos/pages/main_section/drawer/local_area_network/ip_search_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 

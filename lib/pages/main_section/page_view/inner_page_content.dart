@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
-import 'package:flutter_pos/pages/main_section/card.dart';
+import 'package:flutter_pos/pages/main_section/page_view/collapsible_card_list.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
@@ -10,16 +10,16 @@ import 'package:logging/logging.dart';
 
 final _LOGGER = Logger('Page Body');
 
-class PageBody extends ConsumerStatefulWidget {
+class InnerPageContent extends ConsumerStatefulWidget {
   final ValueNotifier<int> sheetIndexNotifier;
 
-  PageBody(this.sheetIndexNotifier);
+  InnerPageContent(this.sheetIndexNotifier, {super.key});
 
   @override
-  createState() => _PageBodyState();
+  createState() => _InnerPageContentState();
 }
 
-class _PageBodyState extends ConsumerState<PageBody> {
+class _InnerPageContentState extends ConsumerState<InnerPageContent> {
   // final lqControl = LiquidController();
   final pageControl = PageController(viewportFraction: 0.82);
   bool animating = false;
@@ -76,7 +76,7 @@ class _PageBodyState extends ConsumerState<PageBody> {
                   vertical: SexyBottomSheet.minHeight,
                 ),
                 key: ValueKey(pageID),
-                child: Cards(pageID),
+                child: CollapsibleCardList(pageID),
               );
             })
           ],

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
-import 'package:flutter_pos/pages/main_section/drawer.dart';
-import 'package:flutter_pos/pages/main_section/page_adder.dart';
-import 'package:flutter_pos/pages/main_section/page_body.dart';
-import 'package:flutter_pos/pages/main_section/page_tile.dart';
-import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
+import 'package:flutter_pos/pages/main_section/bottom_bar/expandable_bottom_bar.dart';
+import 'package:flutter_pos/pages/main_section/drawer/drawer.dart';
+import 'package:flutter_pos/pages/main_section/page_view/inner_page_content.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -52,26 +49,11 @@ class _PagesState extends ConsumerState<Pages> {
     _showSnackBarOnStateChanges(context, ref);
     _showSnackBarOnDoneNotifier(context, ref);
 
-    final result = ref.watch(pageIDProvider);
-    return result.when(
-      data: (pageIDs) {
-        return Scaffold(
-          body: SafeArea(child: PageBody(sheetIndexNotifier)),
-          extendBody: true, // to achieve the bottom bar rounded corners effect
-          endDrawer: const PageDrawer(),
-          bottomNavigationBar: SexyBottomSheet(
-            items: [
-              ...pageIDs
-                  .map((pageID) => PageTile(context, pageID))
-                  .toList(growable: false),
-              PageAdder(context),
-            ],
-            selectedIndex: sheetIndexNotifier,
-          ),
-        );
-      },
-      error: (error, stackTrace) => Center(child: Text(error.toString())),
-      loading: () => Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      body: SafeArea(child: InnerPageContent(sheetIndexNotifier)),
+      extendBody: true, // to achieve the bottom bar rounded corners effect
+      endDrawer: const PageDrawer(),
+      bottomNavigationBar: ExpandableBottomBar(sheetIndexNotifier),
     );
   }
 
