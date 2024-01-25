@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/menu_section/sliver_menu_grid.dart';
-import 'package:flutter_pos/widgets/anim_search_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'menu_search_bar.dart';
 import 'sliver_grid_title.dart';
 
 class Menu extends ConsumerStatefulWidget {
@@ -71,7 +71,7 @@ class _MenuState extends ConsumerState<Menu> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 8.0),
-            child: searchBar(),
+            child: MenuSearchBar(filterString),
           ),
         ],
       ),
@@ -185,37 +185,6 @@ class _MenuState extends ConsumerState<Menu> {
       },
       icon: Icon(Icons.note_add),
       tooltip: 'Note',
-    );
-  }
-
-  Widget searchBar() {
-    return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(width: 200),
-      child: AnimatedSearchBar(
-        searchDecoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.zero,
-          ),
-          label: Text('Search', textScaler: TextScaler.linear(0.75)),
-          labelStyle: TextStyle(fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Theme.of(context).dialogBackgroundColor.withOpacity(0.4),
-          isDense: true,
-        ),
-        searchIcon: Icon(
-          Icons.search,
-          key: ValueKey('open'),
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        closeIcon: Icon(
-          Icons.close,
-          key: ValueKey('close'),
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        onChanged: (filter) {
-          filterString.value = filter;
-        },
-      ),
     );
   }
 }
