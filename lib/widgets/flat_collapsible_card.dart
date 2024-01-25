@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/utils/app_theme.dart';
 
 class FlatCollapsibleCard extends StatefulWidget {
   final AnimationController controller;
+  final double beginHeightFactor;
+  final double beginWidthFactor;
+  final double? endHeightFactor;
+  final double? endWidthFactor;
+  final double maxHeight;
 
   /// Different header color when animating?
   final Color Function()? headerColor;
 
   /// Builder for header section of card
-  final Widget Function(double animationValue) header;
+  final Widget header;
 
   /// Builder for collapsable section of card
-  final Widget Function(double animationValue) details;
+  final Widget details;
   final void Function(bool expanded)? onToggle;
 
-  FlatCollapsibleCard({
+  const FlatCollapsibleCard({
     required this.controller,
     required this.header,
     required this.details,
+    required this.beginHeightFactor,
+    required this.beginWidthFactor,
+    this.endHeightFactor,
+    this.endWidthFactor,
+    required this.maxHeight,
     this.headerColor,
     this.onToggle,
     super.key,
@@ -40,17 +49,18 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard>
       animation: widget.controller,
       builder: (context, details) {
         return SizedBox(
-          height: animatableHeight.value * AppTheme.cardHeightMax,
+          height: animatableHeight.value * widget.maxHeight,
           width: animatableWidth.value * screenWidth,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AnimatedContainer(
-                duration: Duration(milliseconds: AppTheme.cardExpandDuration),
-                height: AppTheme.beginHeightFactor * AppTheme.cardHeightMax,
+                duration:
+                    widget.controller.duration ?? Duration(milliseconds: 450),
+                height: widget.beginHeightFactor * widget.maxHeight,
                 color: widget.headerColor?.call() ?? Colors.transparent,
                 child: InkWell(
-                  child: widget.header(widget.controller.value),
+                  child: widget.header,
                   onTap: toggleCard,
                 ),
               ),
@@ -64,7 +74,7 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard>
           decoration: BoxDecoration(
             border: Border(top: BorderSide()),
           ),
-          child: widget.details(widget.controller.value),
+          child: widget.details,
         ),
       ),
     );
@@ -73,13 +83,13 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard>
   @override
   void initState() {
     animatableHeight = Tween<double>(
-      begin: AppTheme.beginHeightFactor,
-      end: AppTheme.endHeightFactor,
+      begin: widget.beginHeightFactor,
+      end: widget.endHeightFactor,
     ).chain(CurveTween(curve: Curves.fastOutSlowIn)).animate(widget.controller);
 
     animatableWidth = Tween<double>(
-      begin: AppTheme.beginWidthFactor,
-      end: AppTheme.endWidthFactor,
+      begin: widget.beginWidthFactor,
+      end: widget.endWidthFactor,
     ).chain(CurveTween(curve: Curves.easeOutBack)).animate(widget.controller);
 
     super.initState();

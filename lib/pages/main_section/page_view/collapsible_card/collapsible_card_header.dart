@@ -4,72 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CollapsibleCardHeader extends ConsumerWidget {
+class CollapsibleCardHeader extends ConsumerStatefulWidget {
   final int cardID;
   final int pageID;
-  final double animationValue;
+  final Animation<double> animation;
 
   const CollapsibleCardHeader({
     super.key,
     required this.cardID,
     required this.pageID,
-    required this.animationValue,
+    required this.animation,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final title = ref.watch(cardTitleProvider(cardID)).value ?? '';
-
-    return GestureDetector(
-      onLongPress: () {
-        showAdaptiveDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            final textController = TextEditingController(text: title);
-            return AlertDialog(
-              content: TextFormField(
-                controller: textController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  constraints: BoxConstraints.tightFor(width: 600),
-                  labelText: 'Card Name',
-                ),
-                maxLength: 20,
-                minLines: 1,
-                maxLines: 1,
-                scrollPhysics: NeverScrollableScrollPhysics(),
-              ),
-              actions: [
-                _CardDeleteButton(pageID: pageID, cardID: cardID, title: title),
-                VerticalDivider(),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    ref
-                        .read(cardTitleProvider(cardID).notifier)
-                        .set(textController.text);
-                    Navigator.pop(context, 'OK');
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-      child: ListTile(
-        title: Text(title, textScaler: TextScaler.linear(1.2)),
-        leading: Transform.rotate(
-          angle: math.pi * animationValue,
-          child: Icon(Icons.arrow_drop_up),
-        ),
-      ),
-    );
-  }
+  ConsumerState<CollapsibleCardHeader> createState() => _CardHeaderState();
 }
 
 class _CardDeleteButton extends ConsumerWidget {
@@ -130,6 +78,74 @@ class _CardDeleteButton extends ConsumerWidget {
       child: const Text('Delete'),
       style: ButtonStyle(
         foregroundColor: MaterialStatePropertyAll(Colors.red),
+      ),
+    );
+  }
+}
+
+class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final title = ref.watch(cardTitleProvider(widget.cardID)).value ?? '';
+
+    return GestureDetector(
+      onLongPress: () {
+        showAdaptiveDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            final textController = TextEditingController(text: title);
+            return AlertDialog(
+              content: TextFormField(
+                controller: textController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  constraints: BoxConstraints.tightFor(width: 600),
+                  labelText: 'Card Name',
+                ),
+                maxLength: 20,
+                minLines: 1,
+                maxLines: 1,
+                scrollPhysics: NeverScrollableScrollPhysics(),
+              ),
+              actions: [
+                _CardDeleteButton(
+                  pageID: widget.pageID,
+                  cardID: widget.cardID,
+                  title: title,
+                ),
+                VerticalDivider(),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    ref
+                        .read(cardTitleProvider(widget.cardID).notifier)
+                        .set(textController.text);
+                    Navigator.pop(context, 'OK');
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: ListTile(
+        title: Text(title, textScaler: TextScaler.linear(1.2)),
+        leading: AnimatedBuilder(
+          animation: widget.animation,
+          builder: (context, icon) {
+            return Transform.rotate(
+              angle: widget.animation.value * math.pi,
+              child: icon,
+            );
+          },
+          child: Icon(Icons.arrow_drop_up),
+        ),
       ),
     );
   }

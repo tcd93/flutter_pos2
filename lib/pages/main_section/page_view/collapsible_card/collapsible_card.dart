@@ -37,16 +37,15 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
   Widget build(BuildContext context) {
     super.build(context);
     final price = ref.watch(priceProvider(widget.cardID)) ?? 0.0;
+
     return FlatCollapsibleCard(
       controller: controller,
-      header: (animationValue) {
-        return CollapsibleCardHeader(
-          cardID: widget.cardID,
-          pageID: widget.pageID,
-          animationValue: animationValue,
-        );
-      },
-      details: (_) => CollapsibleCardDetails(
+      header: CollapsibleCardHeader(
+        cardID: widget.cardID,
+        pageID: widget.pageID,
+        animation: controller,
+      ),
+      details: CollapsibleCardDetails(
         cardID: widget.cardID,
         openContainer: widget.openContainer,
         price: price,
@@ -57,6 +56,11 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
             : Colors.transparent;
       },
       onToggle: (expanded) => this.expanded = expanded,
+      beginHeightFactor: AppTheme.beginHeightFactor,
+      beginWidthFactor: AppTheme.beginWidthFactor,
+      endHeightFactor: AppTheme.endHeightFactor,
+      endWidthFactor: AppTheme.endWidthFactor,
+      maxHeight: AppTheme.cardHeightMax,
     );
   }
 
