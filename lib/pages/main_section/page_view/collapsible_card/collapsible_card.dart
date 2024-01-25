@@ -36,7 +36,6 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final price = ref.watch(priceProvider(widget.cardID)) ?? 0.0;
 
     return FlatCollapsibleCard(
       controller: controller,
@@ -48,14 +47,11 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
       details: CollapsibleCardDetails(
         cardID: widget.cardID,
         openContainer: widget.openContainer,
-        price: price,
       ),
-      headerColor: () {
-        return controller.isAnimating || controller.isCompleted || price > 0
-            ? Theme.of(context).highlightColor
-            : Colors.transparent;
+      onToggle: (expanded) {
+        expanded ? controller.reverse() : controller.forward();
+        this.expanded = expanded;
       },
-      onToggle: (expanded) => this.expanded = expanded,
       beginHeightFactor: AppTheme.beginHeightFactor,
       beginWidthFactor: AppTheme.beginWidthFactor,
       endHeightFactor: AppTheme.endHeightFactor,
@@ -76,6 +72,7 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
       vsync: this,
       duration: Duration(milliseconds: AppTheme.cardExpandDuration),
     );
+
     ref.listenManual(pageStatusProvider, (previous, next) {
       if (previous?.selected == widget.pageID) {
         controller.reverse();

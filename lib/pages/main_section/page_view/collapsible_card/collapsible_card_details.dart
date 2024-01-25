@@ -6,17 +6,18 @@ class CollapsibleCardDetails extends ConsumerWidget {
   final int cardID;
 
   final VoidCallback openContainer;
-  final double price;
+
   const CollapsibleCardDetails({
     super.key,
     required this.cardID,
     required this.openContainer,
-    required this.price,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final note = ref.watch(noteProvider(cardID)).value ?? '';
+    final price = ref.watch(priceProvider(cardID)) ?? 0.0;
+
     return ListTile(
       title: Text(price.toString() + ' \$'),
       trailing: OutlinedButton.icon(

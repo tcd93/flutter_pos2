@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
 class FlatCollapsibleCard extends StatefulWidget {
-  final AnimationController controller;
+  final Animation<double> controller;
   final double beginHeightFactor;
   final double beginWidthFactor;
   final double? endHeightFactor;
   final double? endWidthFactor;
   final double maxHeight;
-
-  /// Different header color when animating?
-  final Color Function()? headerColor;
 
   /// Builder for header section of card
   final Widget header;
@@ -24,10 +21,9 @@ class FlatCollapsibleCard extends StatefulWidget {
     required this.details,
     required this.beginHeightFactor,
     required this.beginWidthFactor,
+    required this.maxHeight,
     this.endHeightFactor,
     this.endWidthFactor,
-    required this.maxHeight,
-    this.headerColor,
     this.onToggle,
     super.key,
   });
@@ -54,11 +50,8 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AnimatedContainer(
-                duration:
-                    widget.controller.duration ?? Duration(milliseconds: 450),
+              Container(
                 height: widget.beginHeightFactor * widget.maxHeight,
-                color: widget.headerColor?.call() ?? Colors.transparent,
                 child: InkWell(
                   child: widget.header,
                   onTap: toggleCard,
@@ -96,8 +89,7 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard>
   }
 
   toggleCard() {
-    expanded ? widget.controller.reverse() : widget.controller.forward();
-    expanded = !expanded;
     widget.onToggle?.call(expanded);
+    expanded = !expanded;
   }
 }
