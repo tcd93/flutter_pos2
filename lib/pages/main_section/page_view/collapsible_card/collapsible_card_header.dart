@@ -78,7 +78,6 @@ class _CardDeleteButton extends ConsumerWidget {
   final String title;
 
   const _CardDeleteButton({
-    super.key,
     required this.pageID,
     required this.cardID,
     required this.title,
