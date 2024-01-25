@@ -49,12 +49,9 @@ class _MenuState extends ConsumerState<Menu> {
     }
     // final pallette = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
-    final title = ref.watch(cardTitleProvider(cardID)).value ?? '';
-
     return Scaffold(
       // backgroundColor: pallette[page.selected % pallette.length]!,
       appBar: AppBar(
-        title: Text(title),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {

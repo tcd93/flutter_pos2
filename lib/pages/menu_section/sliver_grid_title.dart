@@ -21,10 +21,12 @@ class SliverGridTitle extends StatelessWidget {
       automaticallyImplyLeading: false,
       title: Consumer(
         builder: (context, ref, _) {
+          final title = ref.watch(cardTitleProvider(cardID)).value ?? '';
           final price = ref.watch(priceProvider(cardID)) ?? 0.0;
           final note = ref.watch(noteProvider(cardID)).value ?? '';
           return ListTile(
-            title: price > 0 ? Text(price.toString() + ' \$') : Text(''),
+            title: Text(
+                '$title ${price > 0 ? '(' + price.toString() + '\$)' : ''}'),
             contentPadding: EdgeInsets.zero,
             subtitle: note.isNotEmpty
                 ? Text(note, maxLines: 2, overflow: TextOverflow.ellipsis)
