@@ -8,8 +8,9 @@ class MenuSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width - 64.0;
     return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(width: 200),
+      constraints: BoxConstraints.tightFor(width: screenWidth),
       child: AnimatedSearchBar(
         searchDecoration: InputDecoration(
           border: OutlineInputBorder(
