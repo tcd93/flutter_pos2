@@ -1,11 +1,11 @@
-import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/utils/app_theme.dart';
 
 class FlatCollapsibleCard extends StatefulWidget {
   final AnimationController controller;
 
   /// Different header color when animating?
-  final Color Function(AnimationController controller)? headerColor;
+  final Color Function()? headerColor;
 
   /// Builder for header section of card
   final Widget Function(double animationValue) header;
@@ -48,8 +48,7 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard>
               AnimatedContainer(
                 duration: Duration(milliseconds: AppTheme.cardExpandDuration),
                 height: AppTheme.beginHeightFactor * AppTheme.cardHeightMax,
-                color: widget.headerColor?.call(widget.controller) ??
-                    Colors.transparent,
+                color: widget.headerColor?.call() ?? Colors.transparent,
                 child: InkWell(
                   child: widget.header(widget.controller.value),
                   onTap: toggleCard,

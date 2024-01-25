@@ -51,7 +51,7 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
         openContainer: widget.openContainer,
         price: price,
       ),
-      headerColor: (controller) {
+      headerColor: () {
         return controller.isAnimating || controller.isCompleted || price > 0
             ? Theme.of(context).highlightColor
             : Colors.transparent;
