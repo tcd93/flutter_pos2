@@ -9,16 +9,16 @@ import 'package:logging/logging.dart';
 
 final _LOGGER = Logger('Menu Grid');
 
-class MenuGrid extends ConsumerStatefulWidget {
+class SliverMenuGrid extends ConsumerStatefulWidget {
   final ValueNotifier<String> filterString;
 
-  const MenuGrid(this.filterString, {super.key});
+  const SliverMenuGrid(this.filterString, {super.key});
 
   @override
-  ConsumerState<MenuGrid> createState() => _MenuGridState();
+  ConsumerState<SliverMenuGrid> createState() => _MenuGridState();
 }
 
-class _MenuGridState extends ConsumerState<MenuGrid> {
+class _MenuGridState extends ConsumerState<SliverMenuGrid> {
   double screenWidth = 0.0;
   double extent = 0.0;
   double margin = 0.0;

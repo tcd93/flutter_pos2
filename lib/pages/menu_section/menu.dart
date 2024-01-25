@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pos/pages/data/db.dart';
-import 'package:flutter_pos/pages/menu_section/menu_grid.dart';
+import 'package:flutter_pos/pages/menu_section/sliver_menu_grid.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/widgets/anim_search_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,7 +89,7 @@ class _MenuState extends ConsumerState<Menu> {
             ),
             slivers: [
               sliverAppBar(cardID),
-              if (allowGridView) MenuGrid(filterString),
+              if (allowGridView) SliverMenuGrid(filterString),
             ],
           ),
         ),
