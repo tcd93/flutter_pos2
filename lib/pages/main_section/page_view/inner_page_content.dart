@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
-import 'package:flutter_pos/pages/main_section/page_view/collapsible_card_list.dart';
+import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card_list.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
