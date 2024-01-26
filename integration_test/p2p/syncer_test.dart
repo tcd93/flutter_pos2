@@ -14,7 +14,7 @@ void main() {
     late final TestingDriftDB memdb;
     late final syncer = Syncer(memdb);
     final date = DateTime(2023, 30, 11);
-    final time = 1000;
+    const time = 1000;
     final existingTrx =
         Transaction(id: 50, cardID: 0, date: date, time: time, price: 100);
 
@@ -22,7 +22,7 @@ void main() {
       memdb = TestingDriftDB();
 
       await memdb.into(memdb.cardItems).insert(
-          CardItemsCompanion.insert(id: d.Value(0), pageID: 0, title: 'test'));
+          CardItemsCompanion.insert(id: const d.Value(0), pageID: 0, title: 'test'));
       await memdb.into(memdb.transactions).insert(existingTrx);
     });
 
@@ -36,7 +36,6 @@ void main() {
       final mergingTrx2 = Transaction(
           id: 101, cardID: 0, date: date, time: time + 1, price: 200);
       // send....
-      ;
       await syncer.syncTransactions(
         jsonDecode(Syncer.wrap([mergingTrx, mergingTrx2])),
       );

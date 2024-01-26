@@ -3,6 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('Collapsible Card Header');
 
 class CollapsibleCardHeader extends ConsumerStatefulWidget {
   final int cardID;
@@ -41,7 +44,7 @@ class _CardDeleteButton extends ConsumerWidget {
           builder: (context) {
             return AlertDialog(
               title: Text('Delete $title?'),
-              content: Text('Make sure table is currently empty'),
+              content: const Text('Make sure table is currently empty'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -53,17 +56,33 @@ class _CardDeleteButton extends ConsumerWidget {
                         .read(cardIDProvider(pageID).notifier)
                         .remove(cardID);
 
+                    if (!context.mounted) {
+                      _logger.warning(
+                        'BuildContext is dismounted after an async operation, '
+                        'unable to show AdaptiveDialog',
+                      );
+                      return;
+                    }
+
                     if (result is String) {
                       await showAdaptiveDialog(
                         context: context,
                         barrierDismissible: true,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text('Delete failed'),
+                            title: const Text('Delete failed'),
                             content: Text(result),
                           );
                         },
                       );
+                    }
+
+                    if (!context.mounted) {
+                      _logger.warning(
+                        'BuildContext is dismounted after an async operation, '
+                        'unable to pop routes',
+                      );
+                      return;
                     }
 
                     Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -75,10 +94,10 @@ class _CardDeleteButton extends ConsumerWidget {
           },
         );
       },
-      child: const Text('Delete'),
-      style: ButtonStyle(
+      style: const ButtonStyle(
         foregroundColor: MaterialStatePropertyAll(Colors.red),
       ),
+      child: const Text('Delete'),
     );
   }
 }
@@ -102,7 +121,7 @@ class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
             return AlertDialog(
               content: TextFormField(
                 controller: textController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   constraints: BoxConstraints.tightFor(width: 600),
                   labelText: 'Card Name',
@@ -110,7 +129,7 @@ class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
                 maxLength: 20,
                 minLines: 1,
                 maxLines: 1,
-                scrollPhysics: NeverScrollableScrollPhysics(),
+                scrollPhysics: const NeverScrollableScrollPhysics(),
               ),
               actions: [
                 _CardDeleteButton(
@@ -118,7 +137,7 @@ class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
                   cardID: widget.cardID,
                   title: title,
                 ),
-                VerticalDivider(),
+                const VerticalDivider(),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),
@@ -141,7 +160,7 @@ class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
         animation: widget.animation,
         builder: (context, icon) {
           return ListTile(
-            title: Text(title, textScaler: TextScaler.linear(1.2)),
+            title: Text(title, textScaler: const TextScaler.linear(1.2)),
             tileColor:
                 price > 0 ? Theme.of(context).highlightColor : color.value,
             leading: Transform.rotate(
@@ -150,7 +169,7 @@ class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
             ),
           );
         },
-        child: Icon(Icons.arrow_drop_up),
+        child: const Icon(Icons.arrow_drop_up),
       ),
     );
   }

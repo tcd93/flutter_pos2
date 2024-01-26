@@ -12,13 +12,13 @@ class PageDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        listTileTheme: ListTileThemeData(
+        listTileTheme: const ListTileThemeData(
           style: ListTileStyle.drawer,
         ),
       ),
       child: Drawer(
         child: ListView(
-          children: [
+          children: const [
             _SwitchTheme(key: ValueKey(1)),
             Divider(),
             _LogInOut(key: ValueKey(2)),
@@ -41,8 +41,8 @@ class _LogInOut extends ConsumerWidget {
     final loggedIn = ref.watch(loginProvider);
     final lctrl = ref.read(loginProvider.notifier);
     return ListTile(
-      title: loggedIn ? Text('Logout') : Text('Login'),
-      leading: loggedIn ? Icon(Icons.logout) : Icon(Icons.login),
+      title: loggedIn ? const Text('Logout') : const Text('Login'),
+      leading: loggedIn ? const Icon(Icons.logout) : const Icon(Icons.login),
       onTap: () => loggedIn ? lctrl.logout() : lctrl.login(),
     );
   }
@@ -54,18 +54,18 @@ class _Reporting extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ExpansionTile(
-      title: Text('Report'),
-      leading: Icon(Icons.analytics),
+      title: const Text('Report'),
+      leading: const Icon(Icons.analytics),
       children: [
         ListTile(
-          title: Text('Report 1'),
+          title: const Text('Report 1'),
           hoverColor: Theme.of(context).highlightColor,
           onTap: () {
             Navigator.of(context).pushNamed('/report');
           },
         ),
         ListTile(
-          title: Text('Report 2'),
+          title: const Text('Report 2'),
           hoverColor: Theme.of(context).highlightColor,
           onTap: () {},
         )
@@ -80,8 +80,8 @@ class _SwitchTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('Switch Theme'),
-      leading: Icon(Icons.light_mode),
+      title: const Text('Switch Theme'),
+      leading: const Icon(Icons.light_mode),
       onTap: () => EasyDynamicTheme.of(context).changeTheme(
         dark: !isThemeCurrentlyDark(context),
       ),

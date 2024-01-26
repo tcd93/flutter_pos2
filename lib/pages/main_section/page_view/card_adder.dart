@@ -17,15 +17,15 @@ class CardAdder extends ConsumerWidget {
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    return Container(
+    return SizedBox(
       width: AppTheme.beginWidthFactor * screenWidth,
       height: AppTheme.beginHeightFactor * AppTheme.cardHeightMax,
       child: DottedBorder(
-        dashPattern: [8, 4],
+        dashPattern: const [8, 4],
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
-            child: Center(
+            child: const Center(
               child:
                   Text('Long Press To +', textScaler: TextScaler.linear(1.2)),
             ),

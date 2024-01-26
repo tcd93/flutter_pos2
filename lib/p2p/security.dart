@@ -1,7 +1,7 @@
 import 'package:encrypt/encrypt.dart';
 import 'package:logging/logging.dart';
 
-final _LOGGER = Logger('Security');
+final _logger = Logger('Security');
 
 class EncodedMessage {
   final Encrypted encrypted;
@@ -28,7 +28,7 @@ class EncodedMessage {
     try {
       final type = EncodeType.values.byName(json['type']);
       if (json[json['type']] == null || json['iv'] == null) {
-        _LOGGER.log(
+        _logger.log(
           Level.SEVERE,
           'keys [iv] or ${json[json['type']]} not found',
         );
@@ -38,7 +38,7 @@ class EncodedMessage {
       final iv = IV.fromBase64(json['iv']);
       return EncodedMessage(encrypted, iv, type);
     } catch (ex) {
-      _LOGGER.log(Level.SEVERE, ex);
+      _logger.log(Level.SEVERE, ex);
       return null;
     }
   }

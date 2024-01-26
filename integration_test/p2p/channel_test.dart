@@ -51,12 +51,12 @@ void main() {
       expect(
         signaler.connections[0].label,
         'channel-1',
-        reason: 'channel should be named "${label}"',
+        reason: 'channel should be named "$label"',
       );
       expect(
         receiver.connections[0].label,
         'channel-1',
-        reason: 'channel should be named "${label}"',
+        reason: 'channel should be named "$label"',
       );
     });
 
@@ -131,17 +131,17 @@ void main() {
         signaler.connections.map((c) => c.label).toList(),
         [label1, label2],
         reason:
-            'should have two connections in Signaler() "${label1}" and "${label2}"',
+            'should have two connections in Signaler() "$label1" and "$label2"',
       );
       expect(
         receiver1.connections[0].label,
         label1,
-        reason: 'channel should be named "${label1}"',
+        reason: 'channel should be named "$label1"',
       );
       expect(
         receiver2.connections[0].label,
         label2,
-        reason: 'channel should be named "${label2}"',
+        reason: 'channel should be named "$label2"',
       );
     });
   });
@@ -160,7 +160,7 @@ void main() {
     Future<ProviderContainer> createContainer() async {
       final memdb = TestingDriftDB();
       await memdb.into(memdb.cardItems).insert(
-          CardItemsCompanion.insert(id: d.Value(0), pageID: 0, title: 'test'));
+          CardItemsCompanion.insert(id: const d.Value(0), pageID: 0, title: 'test'));
 
       final container = ProviderContainer(
         overrides: [dbProvider.overrideWith((ref) => memdb)],
@@ -293,14 +293,14 @@ void main() {
         expect(value, true);
       }, count: 2);
       final labels = containerForSignaler.read(labelProvider);
-      labels.forEach((channel) {
+      for (var channel in labels) {
         containerForSignaler.listen(
           syncDoneNotifierProvider(channel!),
           (previous, next) {
             callback(next);
           },
         );
-      });
+      }
 
       final rowCount = await countQuery.getSingle();
       expect(rowCount, 25, reason: ' should have 25 rows in table');

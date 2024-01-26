@@ -1,11 +1,9 @@
+include: package:flutter_lints/flutter.yaml
+
 analyzer:
   plugins:
     - custom_lint
   errors:
     invalid_annotation_target: ignore
     duplicate_ignore: ignore
-
-custom_lint:
-  rules:
-    - prefer_const_constructors: true
-    - prefer_const_declarations: true
+    curly_braces_in_flow_control_structures: ignore

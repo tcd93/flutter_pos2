@@ -3,6 +3,9 @@ import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
 import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('Page Tile');
 
 class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
   final int pageID;
@@ -59,13 +62,21 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
           .read(pageIDProvider.notifier)
           .remove(pageID);
 
+      if (!context.mounted) {
+        _logger.warning(
+          'BuildContext is dismounted after an async operation, unable to show '
+          'AdaptiveDialog',
+        );
+        return false;
+      }
+
       if (result is String) {
         await showAdaptiveDialog(
           context: context,
           barrierDismissible: true,
           builder: (context) {
             return AlertDialog(
-              title: Text('Delete failed'),
+              title: const Text('Delete failed'),
               content: Text(result),
             );
           },
@@ -82,10 +93,10 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
     final name = ref.watch(pageNameProvider(pageID)).value;
     return Card(
       // color: invertColorsMaterial(context),
-      margin: EdgeInsets.all(15.0),
+      margin: const EdgeInsets.all(15.0),
       key: ValueKey(pageID),
       child: Padding(
-        padding: EdgeInsets.only(left: 100.0),
+        padding: const EdgeInsets.only(left: 100.0),
         child: Align(
           alignment: Alignment.centerLeft,
           child: DefaultTextStyle.merge(

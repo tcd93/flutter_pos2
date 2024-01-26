@@ -15,7 +15,7 @@ class DishTile extends ConsumerWidget {
 
   final Animation<double> animation;
 
-  const DishTile({
+  const DishTile({super.key, 
     required this.dishID,
     required this.type,
     required this.imagePath,
@@ -29,10 +29,10 @@ class DishTile extends ConsumerWidget {
     final cardID = ref.watch(selectedCardProvider);
     final portion = ref.watch(portionProvider(cardID!, dishID)).value ?? 0;
     return AnimatedContainer(
-      duration: Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 350),
       color:
           portion > 0 ? Theme.of(context).highlightColor : Colors.transparent,
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: ScaleTransition(
         scale: animation.drive(
           CurveTween(
@@ -44,6 +44,7 @@ class DishTile extends ConsumerWidget {
         child: Column(
           children: [
             Expanded(
+                flex: 3,
                 child: GestureDetector(
                   onTapDown: (_) => updateOrDelete(ref, portion + 1),
                   // onDoubleTap: () => updateOrDelete(ref, portion - 1),
@@ -51,9 +52,8 @@ class DishTile extends ConsumerWidget {
                   // wrap image in a SizedBox to prevent it from blocking
                   // GestureDetector while loading
                   child: SizedBox.expand(child: _imageConverter()),
-                ),
-                flex: 3),
-            Divider(),
+                )),
+            const Divider(),
             Expanded(child: _buttonRow(ref, portion)),
           ],
         ),
@@ -73,21 +73,21 @@ class DishTile extends ConsumerWidget {
         Expanded(
           child: IconButton(
             onPressed: () => updateOrDelete(ref, portion - 1),
-            icon: Icon(Icons.arrow_back_ios_new),
+            icon: const Icon(Icons.arrow_back_ios_new),
             padding: EdgeInsets.zero,
           ),
         ),
-        VerticalDivider(width: 1),
+        const VerticalDivider(width: 1),
         Expanded(
           child: Center(
             child: Text(portion.toString()),
           ),
         ),
-        VerticalDivider(width: 1),
+        const VerticalDivider(width: 1),
         Expanded(
           child: IconButton(
             onPressed: () => updateOrDelete(ref, portion + 1),
-            icon: Icon(Icons.arrow_forward_ios),
+            icon: const Icon(Icons.arrow_forward_ios),
             padding: EdgeInsets.zero,
           ),
         ),

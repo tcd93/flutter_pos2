@@ -7,7 +7,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 
-final _LOGGER = Logger('Receiver');
+final _logger = Logger('Receiver');
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
 mixin Receiver on Channel {
@@ -46,11 +46,11 @@ mixin Receiver on Channel {
     await _sendBackAnswer(host, label, encodedAnswer);
 
     peer.onIceCandidate = (candidate) async {
-      _LOGGER.fine('onIceCandidate ${candidate.candidate}');
+      _logger.fine('onIceCandidate ${candidate.candidate}');
       try {
         await _sendCandidate(host, label, candidate);
       } on http.ClientException catch (ex, stack) {
-        _LOGGER.info('''Received Ice Candidate info when host is closed, it is 
+        _logger.info('''Received Ice Candidate info when host is closed, it is 
         likely that channel has already been established, candidate info is no 
         longer required. Here is the error and stack trace: ''', ex, stack);
       }
@@ -72,7 +72,7 @@ mixin Receiver on Channel {
       ...decoded.encode(passphrase).toJson(),
     };
     final response =
-        await http.get(Uri.http('${ipAddress}:50001', '', requestParam));
+        await http.get(Uri.http('$ipAddress:50001', '', requestParam));
     assert(response.statusCode == HttpStatus.ok, response.body);
     return jsonDecode(response.body);
   }
@@ -83,7 +83,7 @@ mixin Receiver on Channel {
     EncodedMessage answer,
   ) async {
     final response = await http.post(
-      Uri.http('${ipAddress}:50001'),
+      Uri.http('$ipAddress:50001'),
       body: jsonEncode({
         'label': label,
         ...answer.toJson(),
@@ -98,7 +98,7 @@ mixin Receiver on Channel {
     RTCIceCandidate candidate,
   ) async {
     final response = await http.post(
-      Uri.http('${ipAddress}:50001', 'add-candidate'),
+      Uri.http('$ipAddress:50001', 'add-candidate'),
       body: jsonEncode({
         'label': label,
         'candidate': candidate.candidate,

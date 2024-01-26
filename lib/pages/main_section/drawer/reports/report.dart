@@ -39,8 +39,8 @@ class _ReportState extends ConsumerState<Report> {
               items: [
                 for (int i = 0; i < 5; i++)
                   DropdownMenuItem(
-                    child: Text((currentYear - i).toString()),
                     value: currentYear - i,
+                    child: Text((currentYear - i).toString()),
                   ),
               ],
               onChanged: (value) {
@@ -59,15 +59,15 @@ class _ReportState extends ConsumerState<Report> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ValueListenableBuilder(
               valueListenable: title,
               builder: (context, title, _) => Text(title),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(child: chart()),
             slider(context),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -89,11 +89,11 @@ class _ReportState extends ConsumerState<Report> {
         rangeController: rangeController,
         dateFormat: DateFormat.MMMMd(),
       ),
-      primaryYAxis: NumericAxis(
+      primaryYAxis: const NumericAxis(
         labelPosition: ChartDataLabelPosition.outside,
         labelAlignment: LabelAlignment.end,
-        majorTickLines: const MajorTickLines(size: 0),
-        axisLine: const AxisLine(color: Colors.transparent),
+        majorTickLines: MajorTickLines(size: 0),
+        axisLine: AxisLine(color: Colors.transparent),
         anchorRangeToVisiblePoints: false,
       ),
       series: [
@@ -104,8 +104,8 @@ class _ReportState extends ConsumerState<Report> {
           yValueMapper: (sale, _) => sale.price,
           splineType: SplineType.cardinal,
           cardinalSplineTension: 0.8,
-          markerSettings: MarkerSettings(isVisible: true),
-          dataLabelSettings: DataLabelSettings(
+          markerSettings: const MarkerSettings(isVisible: true),
+          dataLabelSettings: const DataLabelSettings(
             isVisible: true,
             labelIntersectAction: LabelIntersectAction.hide,
           ),
@@ -156,7 +156,7 @@ class _ReportState extends ConsumerState<Report> {
     }
     final start = DateFormat.yMMMd().format(range.start);
     final end = DateFormat.yMMMd().format(range.end);
-    title.value = 'Transactions from ${start} to ${end}';
+    title.value = 'Transactions from $start to $end';
   }
 
   Widget slider(BuildContext context) {
@@ -176,7 +176,7 @@ class _ReportState extends ConsumerState<Report> {
         if (isMonthSelection(range.start, range.end) ||
             isYearSelection(range.start, range.end)) {
           rangeController.end = (range.end as DateTime).add(
-            Duration(days: -1),
+            const Duration(days: -1),
           );
         } else {
           rangeController.end = range.end;
@@ -210,7 +210,7 @@ class _ReportState extends ConsumerState<Report> {
             minimum: min,
             maximum: max,
           ),
-          primaryYAxis: NumericAxis(isVisible: false),
+          primaryYAxis: const NumericAxis(isVisible: false),
           plotAreaBorderWidth: 0,
           series: [
             SplineAreaSeries<({DateTime dateTime, double? price}), DateTime>(

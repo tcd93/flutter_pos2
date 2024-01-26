@@ -5,13 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_pos/database/drift_database.dart';
 import 'package:logging/logging.dart';
 
-final _LOGGER = Logger('Syncer');
+final _logger = Logger('Syncer');
 
 class InvalidJsonFormatException extends FormatException {
   final String cause;
 
   InvalidJsonFormatException([String? cause])
-      : this.cause = cause ?? 'Invalid json format';
+      : cause = cause ?? 'Invalid json format';
 }
 
 class Syncer {
@@ -45,11 +45,11 @@ class Syncer {
           onAcknowledge();
       }
     } on InvalidJsonFormatException catch (ex) {
-      _LOGGER.severe(ex);
+      _logger.severe(ex);
     } on FormatException catch (ex, stack) {
-      _LOGGER.severe('Error in json decoding', ex, stack);
+      _logger.severe('Error in json decoding', ex, stack);
     } catch (ex, stack) {
-      _LOGGER.severe('Unknown error', ex, stack);
+      _logger.severe('Unknown error', ex, stack);
     }
   }
 
@@ -67,7 +67,7 @@ class Syncer {
             date: excluded.date,
             time: excluded.time,
             price: excluded.price,
-            note: (excluded.note + Constant(' -merged'))
+            note: (excluded.note + const Constant(' -merged'))
                 .iif(excluded.note.isNotNull(), excluded.note),
           );
         },

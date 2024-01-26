@@ -9,7 +9,7 @@ class FlatCollapsibleCard extends StatefulWidget {
 
   final void Function()? onToggle;
 
-  FlatCollapsibleCard({
+  const FlatCollapsibleCard({
     required this.header,
     required this.details,
     required this.animatableHeight,
@@ -43,13 +43,13 @@ class _FlatCollapsibleCardState extends State<FlatCollapsibleCard> {
           SizedBox(
             height: initialHeight,
             child: InkWell(
-              child: widget.header,
               onTap: widget.onToggle,
+              child: widget.header,
             ),
           ),
           Expanded(
             child: DecoratedBox(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(top: BorderSide()),
               ),
               child: widget.details,

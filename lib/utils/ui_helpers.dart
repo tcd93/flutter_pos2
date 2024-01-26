@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-void doNothing() {
-  print('Nothing is happening here (yet)');
-} //better than doing null-ing, right? ;)
-
 bool isIOS(BuildContext context) {
   if (Theme.of(context).platform == TargetPlatform.iOS) {
     return true;

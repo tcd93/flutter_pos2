@@ -25,7 +25,7 @@ class CollapsibleCard extends ConsumerStatefulWidget {
 
 class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  late final _LOGGER = Logger('CollapsibleCard ${widget.cardID}');
+  late final _logger = Logger('CollapsibleCard ${widget.cardID}');
   late AnimationController controller;
 
   bool expanded = false;
@@ -67,7 +67,7 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
 
   @override
   void dispose() {
-    _LOGGER.info('Disposed');
+    _logger.info('Disposed');
     controller.dispose();
     super.dispose();
   }
@@ -76,16 +76,16 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
   void initState() {
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: AppTheme.cardExpandDuration),
+      duration: const Duration(milliseconds: AppTheme.cardExpandDuration),
     );
 
     ref.listenManual(pageStatusProvider, (previous, next) {
       if (previous?.selected == widget.pageID) {
-        // _LOGGER.info('controller.reverse()');
+        // _logger.info('controller.reverse()');
         controller.reverse();
       }
       if (expanded && next.selected == widget.pageID) {
-        // _LOGGER.info('controller.forward()');
+        // _logger.info('controller.forward()');
         controller.forward();
       }
     });

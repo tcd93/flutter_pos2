@@ -1,6 +1,6 @@
 part of 'db.dart';
 
-final _LOGGER = Logger('Repository');
+final _logger = Logger('Repository');
 
 @riverpod
 double? price(PriceRef ref, int cardID) {
@@ -54,9 +54,9 @@ class CardID extends _$CardID {
     } on Exception catch (ex) {
       /*787: foreign key exception*/
       if (ex.toString().contains('SqliteException(787)')) {
-        _LOGGER.warning(ex);
+        _logger.warning(ex);
 
-        return 'Table is currently serving, or there are transactional records ' +
+        return 'Table is currently serving, or there are transactional records '
             'already associated with this, can not delete, create new table instead';
       }
     }
@@ -66,6 +66,7 @@ class CardID extends _$CardID {
 
 @riverpod
 class CardTitle extends _$CardTitle {
+  @override
   Future<String?> build(int cardID) {
     final db = ref.read(dbProvider);
     final query = db.selectOnly(db.cardItems)
@@ -154,13 +155,13 @@ class PageID extends _$PageID {
 
   Future<dynamic> remove(int pageID) async {
     final db = ref.read(dbProvider);
-    _LOGGER.info('Deleting page: $pageID ');
+    _logger.info('Deleting page: $pageID ');
     try {
       await (db.delete(db.pages)..where((c) => c.id.equals(pageID))).go();
     } on Exception catch (ex) {
       /*787: foreign key exception*/
       if (ex.toString().contains('SqliteException(787)')) {
-        _LOGGER.warning(ex);
+        _logger.warning(ex);
 
         return 'Page contains table, can not delete';
       }
@@ -185,6 +186,8 @@ class PageName extends _$PageName {
 
 @riverpod
 class Portion extends _$Portion {
+  final _logger = Logger('Portion Provider');
+
   @override
   Future<int?> build(int cardID, int dishID) async {
     final db = ref.read(dbProvider);
@@ -207,7 +210,8 @@ class Portion extends _$Portion {
   Future<dynamic> _updateSource() {
     int cardID = ref.read(selectedCardProvider)!;
     final db = ref.read(dbProvider);
-    if (state == 0) {
+    if (state.value == 0) {
+      _logger.info('Removing 0 value record from DB');
       final query = db.delete(db.servings)
         ..where((tbl) => tbl.cardID.equals(cardID) & tbl.dishID.equals(dishID));
       return query.go();

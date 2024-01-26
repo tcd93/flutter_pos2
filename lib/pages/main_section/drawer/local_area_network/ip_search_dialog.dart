@@ -20,7 +20,7 @@ Future<(String, String)?> ipAddressDialog(BuildContext context) async {
           children: [
             TextField(
               controller: textController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 constraints: BoxConstraints.tightFor(width: 600),
                 labelText: 'IP address/name of host',
@@ -28,14 +28,14 @@ Future<(String, String)?> ipAddressDialog(BuildContext context) async {
               ),
               minLines: 1,
               maxLines: 1,
-              scrollPhysics: NeverScrollableScrollPhysics(),
+              scrollPhysics: const NeverScrollableScrollPhysics(),
               keyboardType: TextInputType.url,
             ),
-            Divider(),
+            const Divider(),
             TextField(
               controller: passController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 constraints: BoxConstraints.tightFor(width: 600),
                 labelText: 'Passphrase',
@@ -43,10 +43,10 @@ Future<(String, String)?> ipAddressDialog(BuildContext context) async {
               minLines: 1,
               maxLines: 1,
               maxLength: 12,
-              scrollPhysics: NeverScrollableScrollPhysics(),
+              scrollPhysics: const NeverScrollableScrollPhysics(),
               keyboardType: TextInputType.visiblePassword,
             ),
-            Divider(),
+            const Divider(),
             StatefulBuilder(
               builder: (context, setState) {
                 bonjour.onDiscovery = (service) {
@@ -62,7 +62,7 @@ Future<(String, String)?> ipAddressDialog(BuildContext context) async {
                   items: hosts
                       .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                       .toList(),
-                  hint: Text(
+                  hint: const Text(
                     'Searching for services hosting on local network...',
                     textScaler: TextScaler.linear(0.75),
                     textAlign: TextAlign.center,

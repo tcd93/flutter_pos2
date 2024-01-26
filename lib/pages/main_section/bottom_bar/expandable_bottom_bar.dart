@@ -16,9 +16,7 @@ class ExpandableBottomBar extends ConsumerWidget {
 
     return SexyBottomSheet(
       items: [
-        ...pageIDs
-            .map((pageID) => PageTile(context, pageID))
-            .toList(growable: false),
+        ...pageIDs.map((pageID) => PageTile(context, pageID)),
         PageAdder(context),
       ],
       selectedIndex: sheetIndexNotifier,

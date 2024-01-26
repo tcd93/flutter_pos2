@@ -19,7 +19,7 @@ class AppTheme {
       elevation: 0.0,
       clipBehavior: Clip.hardEdge,
       color: Colors.transparent,
-      margin: EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
       shape: BeveledRectangleBorder(
         side: BorderSide(
           color: lightColorScheme.onBackground,
@@ -30,11 +30,11 @@ class AppTheme {
     expansionTileTheme: ExpansionTileThemeData(
       shape: Border.all(color: Colors.transparent, width: 0),
     ),
-    drawerTheme: DrawerThemeData(
+    drawerTheme: const DrawerThemeData(
       shape: BeveledRectangleBorder(),
       endShape: BeveledRectangleBorder(),
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: const DialogTheme(
       shape: BeveledRectangleBorder(),
     ),
   );
@@ -47,7 +47,7 @@ class AppTheme {
       elevation: 0.0,
       clipBehavior: Clip.hardEdge,
       color: Colors.transparent,
-      margin: EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
       shape: BeveledRectangleBorder(
         side: BorderSide(
           color: darkColorScheme.onBackground,
@@ -58,11 +58,11 @@ class AppTheme {
     expansionTileTheme: ExpansionTileThemeData(
       shape: Border.all(color: Colors.transparent, width: 0),
     ),
-    drawerTheme: DrawerThemeData(
+    drawerTheme: const DrawerThemeData(
       shape: BeveledRectangleBorder(),
       endShape: BeveledRectangleBorder(),
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: const DialogTheme(
       shape: BeveledRectangleBorder(),
     ),
   );

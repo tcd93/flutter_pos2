@@ -8,12 +8,12 @@ import 'package:flutter_pos/widgets/sexy_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-final _LOGGER = Logger('Page Body');
+final _logger = Logger('Page Body');
 
 class InnerPageContent extends ConsumerStatefulWidget {
   final ValueNotifier<int> sheetIndexNotifier;
 
-  InnerPageContent(this.sheetIndexNotifier, {super.key});
+  const InnerPageContent(this.sheetIndexNotifier, {super.key});
 
   @override
   createState() => _InnerPageContentState();
@@ -30,7 +30,7 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
     animating = true;
     await pageControl.animateToPage(
       index,
-      duration: Duration(milliseconds: AppTheme.carouselDuration),
+      duration: const Duration(milliseconds: AppTheme.carouselDuration),
       curve: Curves.easeIn,
     );
     animating = false;
@@ -41,7 +41,7 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
     final pageIDs = ref.watch(pageIDProvider).value;
     // final pallete = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
-    if (pageIDs == null) return CircularProgressIndicator();
+    if (pageIDs == null) return const CircularProgressIndicator();
 
     return Stack(
       alignment: Alignment.topCenter,
@@ -69,17 +69,6 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
         //   itemCount: pageIDs.length,
         // ),
         PageView(
-          children: [
-            ...pageIDs.map((pageID) {
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: SexyBottomSheet.minHeight,
-                ),
-                key: ValueKey(pageID),
-                child: CollapsibleCardList(pageID),
-              );
-            })
-          ],
           controller: pageControl,
           scrollBehavior: ScrollConfiguration.of(context).copyWith(
             dragDevices: {
@@ -103,6 +92,17 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
               pageStatus.select(pageIDs[onScreenIndex]);
             }
           },
+          children: [
+            ...pageIDs.map((pageID) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: SexyBottomSheet.minHeight,
+                ),
+                key: ValueKey(pageID),
+                child: CollapsibleCardList(pageID),
+              );
+            })
+          ],
         ),
         Positioned(
           right: 5,
@@ -111,7 +111,7 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
             onPressed: () {
               Scaffold.maybeOf(context)?.openEndDrawer();
             },
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
           ),
         ),
         Positioned(
@@ -122,7 +122,7 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
               final pageID = ref.watch(
                 pageStatusProvider.select((p) => p.current),
               );
-              _LOGGER.info('Current selected page id: $pageID');
+              _logger.info('Current selected page id: $pageID');
               final name = ref.watch(pageNameProvider(pageID)).value;
 
               return Text(name ?? '', style: HeadingStylesMaterial.primary);
@@ -146,8 +146,9 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
       if (pageIDs == null || widget.sheetIndexNotifier.value >= pageIDs.length)
         return;
 
-      ref.read(pageStatusProvider.notifier)
-        ..select(pageIDs[widget.sheetIndexNotifier.value]);
+      ref
+          .read(pageStatusProvider.notifier)
+          .select(pageIDs[widget.sheetIndexNotifier.value]);
 
       animateToItem(widget.sheetIndexNotifier.value);
     });

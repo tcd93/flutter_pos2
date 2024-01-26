@@ -9,7 +9,7 @@ abstract class Channel {
   void Function(RTCDataChannel state)? onChannelState;
   void Function(RTCDataChannel channel, String message)? onMessage;
 
-  List<RTCPeerConnection> _peers = [];
+  final List<RTCPeerConnection> _peers = [];
 
   @visibleForTesting
   @protected
@@ -36,7 +36,7 @@ abstract class Channel {
       if (s == RTCPeerConnectionState.RTCPeerConnectionStateDisconnected) {
         _peers.remove(peer);
       }
-      this.onConnectionState?.call(s);
+      onConnectionState?.call(s);
     };
     return peer;
   }
@@ -57,7 +57,7 @@ abstract class Channel {
   }
 
   void onRawMessage(RTCDataChannel channel, String text) {
-    this.onMessage?.call(channel, text);
+    onMessage?.call(channel, text);
   }
 
   Future send(String text) async {
@@ -97,12 +97,12 @@ class ChannelNotCreatedException implements Exception {
   final String cause;
 
   ChannelNotCreatedException([String? cause])
-      : this.cause = cause ?? 'Data channel has not been created yet';
+      : cause = cause ?? 'Data channel has not been created yet';
 }
 
 class PeerNotCreatedException implements Exception {
   final String cause;
 
   PeerNotCreatedException([String? cause])
-      : this.cause = cause ?? 'Peer has not been created yet';
+      : cause = cause ?? 'Peer has not been created yet';
 }

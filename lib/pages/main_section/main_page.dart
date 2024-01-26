@@ -37,6 +37,8 @@ void _showSnackBarOnStateChanges(BuildContext context, WidgetRef ref) {
 }
 
 class Pages extends ConsumerStatefulWidget {
+  const Pages({super.key});
+
   @override
   createState() => _PagesState();
 }

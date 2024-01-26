@@ -1,24 +1,30 @@
 // source https://github.com/Lzyct/animated_search_bar/blob/master/lib/animated_search_bar.dart
 // fixed bugs...
-import 'package:flutter/material.dart';
-
 import 'dart:async';
 
-/// Throttle the input action
-class _Debouncer {
-  final int milliseconds;
-  Timer? _timer;
-
-  _Debouncer({required this.milliseconds});
-
-  void run(VoidCallback action) {
-    _timer?.cancel();
-    _timer = Timer(Duration(milliseconds: milliseconds), action);
-  }
-}
+import 'package:flutter/material.dart';
 
 /// A customizable animated search bar widget for Flutter applications.
 class AnimatedSearchBar extends StatefulWidget {
+  final String label;
+
+  final Alignment labelAlignment;
+  final TextAlign labelTextAlign;
+  final Function(String) onChanged;
+  final TextStyle labelStyle;
+  final InputDecoration searchDecoration;
+  final Duration animationDuration;
+  final TextStyle? searchStyle;
+  final Color? cursorColor;
+  final Duration duration;
+  final int inputLag;
+  final double height;
+  final Widget closeIcon;
+  final Widget searchIcon;
+  final TextEditingController? controller;
+  final Function(String)? onFieldSubmitted;
+  final TextInputAction textInputAction;
+
   /// Creates an `AnimatedSearchBar` widget.
   ///
   /// [label] is the text to display when the search bar is not active.
@@ -43,7 +49,7 @@ class AnimatedSearchBar extends StatefulWidget {
   ///   the keyboard's done button.
 
   const AnimatedSearchBar({
-    Key? key,
+    super.key,
     this.label = '',
     this.labelAlignment = Alignment.centerLeft,
     this.labelTextAlign = TextAlign.start,
@@ -77,28 +83,10 @@ class AnimatedSearchBar extends StatefulWidget {
     this.controller,
     this.onFieldSubmitted,
     this.textInputAction = TextInputAction.search,
-  }) : super(key: key);
-
-  final String label;
-  final Alignment labelAlignment;
-  final TextAlign labelTextAlign;
-  final Function(String) onChanged;
-  final TextStyle labelStyle;
-  final InputDecoration searchDecoration;
-  final Duration animationDuration;
-  final TextStyle? searchStyle;
-  final Color? cursorColor;
-  final Duration duration;
-  final int inputLag;
-  final double height;
-  final Widget closeIcon;
-  final Widget searchIcon;
-  final TextEditingController? controller;
-  final Function(String)? onFieldSubmitted;
-  final TextInputAction textInputAction;
+  });
 
   @override
-  _AnimatedSearchBarState createState() => _AnimatedSearchBarState();
+  State<AnimatedSearchBar> createState() => _AnimatedSearchBarState();
 }
 
 class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
@@ -107,14 +95,6 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
   late final _Debouncer debouncer;
 
   late TextEditingController _conSearch;
-
-  @override
-  void initState() {
-    super.initState();
-    _conSearch = widget.controller ?? TextEditingController();
-    isSearch = _conSearch.text.isNotEmpty;
-    debouncer = _Debouncer(milliseconds: widget.inputLag);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,5 +215,26 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _conSearch = widget.controller ?? TextEditingController();
+    isSearch = _conSearch.text.isNotEmpty;
+    debouncer = _Debouncer(milliseconds: widget.inputLag);
+  }
+}
+
+/// Throttle the input action
+class _Debouncer {
+  final int milliseconds;
+  Timer? _timer;
+
+  _Debouncer({required this.milliseconds});
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

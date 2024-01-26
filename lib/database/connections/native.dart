@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+// ignore: depend_on_referenced_packages
 import 'package:drift_dev/api/migrations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;

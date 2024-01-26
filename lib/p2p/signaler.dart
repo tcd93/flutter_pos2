@@ -5,12 +5,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_pos/p2p/channel.dart';
 import 'package:flutter_pos/p2p/security.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('Signaler');
 
 class ServerAlreadyRunningException implements Exception {
   final String cause;
 
   ServerAlreadyRunningException([String? cause])
-      : this.cause = cause ?? 'Server is already running';
+      : cause = cause ?? 'Server is already running';
 }
 
 /// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#signaling
@@ -42,7 +45,7 @@ mixin Signaler on Channel {
     onHostingCallback(true);
 
     final sv = _server!;
-    print(
+    _logger.info(
       'Server running on IP : ${sv.address.toString()} on port ${sv.port}',
     );
 
@@ -201,7 +204,7 @@ mixin Signaler on Channel {
       body = {'message': '[label] query parameter not set'};
       status = HttpStatus.badRequest;
     } else if (connections.where((c) => c.label == label).isNotEmpty) {
-      body = {'message': '${label} already set in host\'s connection list'};
+      body = {'message': '$label already set in host\'s connection list'};
       status = HttpStatus.badRequest;
     } else {
       try {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Wrapper for [SliverAnimatedGrid] to fix its stupid APIs
 class SliverAnimatedGridWrapper<T> extends StatefulWidget {
   SliverAnimatedGridWrapper({
-    Key? key,
+    super.key,
     required this.widgetBuilder,
     required this.itemList,
     this.notifier,
@@ -12,9 +12,9 @@ class SliverAnimatedGridWrapper<T> extends StatefulWidget {
     this.inAnimationDuration = 300,
     this.outAnimationDuration = 400,
     this.padding,
-  }) : super(key: key) {
+  }) {
     this.delegate = delegate ??
-        SliverGridDelegateWithMaxCrossAxisExtent(
+        const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 180,
           mainAxisSpacing: 2.0,
           crossAxisSpacing: 2.0,
@@ -104,7 +104,7 @@ class _SliverAnimatedGridWrapperState<T>
     final filtered = data.where(filterer).toList(growable: false);
 
     widget.itemList.where((e) => !filtered.contains(e)).toList()
-      ..forEach(
+      .forEach(
         (toBeRemoved) {
           final index = widget.itemList.indexOf(toBeRemoved);
           widget.itemList.removeAt(index);
@@ -119,7 +119,7 @@ class _SliverAnimatedGridWrapperState<T>
       );
 
     filtered.where((e) => !widget.itemList.contains(e)).toList()
-      ..forEach(
+      .forEach(
         (toBeAdded) {
           final index = filtered.indexOf(toBeAdded);
           widget.itemList.insert(index, toBeAdded);

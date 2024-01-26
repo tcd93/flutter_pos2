@@ -3,6 +3,7 @@ import 'package:flutter_pos/p2p/manager.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'webrtc.g.dart';
@@ -32,6 +33,8 @@ class PeerConnectionState extends _$PeerConnectionState {
 
 @Riverpod(keepAlive: true)
 class Service extends _$Service {
+  final _logger = Logger('Service Provider');
+
   @override
   WebRtcManager build() {
     final bonjour = Bonjour();
@@ -60,7 +63,7 @@ class Service extends _$Service {
         ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
       },
       onAcknowledge: () {
-        print('Sync acknowledged for channel: ${channel.label}');
+        _logger.info('Sync acknowledged for channel: ${channel.label}');
         ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
       },
     );

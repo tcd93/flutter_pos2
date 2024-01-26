@@ -2,6 +2,7 @@ part of 'db.dart';
 
 @Riverpod(keepAlive: true)
 class Login extends _$Login {
+  @override
   bool build() => false;
 
   void login() => state = true;
@@ -11,6 +12,7 @@ class Login extends _$Login {
 
 @riverpod
 class MenuControl extends _$MenuControl {
+  @override
   MenuControl build(int cardID) => this;
 
   Future<int> checkOut(double amount, String? note) async {
@@ -38,7 +40,7 @@ class MenuControl extends _$MenuControl {
 @Riverpod(keepAlive: true)
 class PageStatus extends _$PageStatus {
   @override
-  Status build() => Status();
+  Status build() => const Status();
 
   void current(int pageID) => state = state.copyWith(current: pageID);
 

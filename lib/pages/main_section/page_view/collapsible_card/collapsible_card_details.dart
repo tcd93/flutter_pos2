@@ -19,15 +19,15 @@ class CollapsibleCardDetails extends ConsumerWidget {
     final price = ref.watch(priceProvider(cardID)) ?? 0.0;
 
     return ListTile(
-      title: Text(price.toString() + ' \$'),
+      title: Text('$price \$'),
       trailing: OutlinedButton.icon(
         onPressed: () {
           ref.read(selectedCardProvider.notifier).open(cardID);
           // Navigator.of(context).pushNamed('/menu');
           openContainer();
         },
-        icon: Icon(Icons.menu_open_outlined),
-        label: Text('Menu'),
+        icon: const Icon(Icons.menu_open_outlined),
+        label: const Text('Menu'),
       ),
       subtitle: note.isNotEmpty
           ? Text(note, maxLines: 2, overflow: TextOverflow.ellipsis)

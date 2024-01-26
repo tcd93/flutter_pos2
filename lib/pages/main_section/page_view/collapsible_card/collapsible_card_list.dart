@@ -21,19 +21,19 @@ class CollapsibleCardList extends ConsumerWidget {
             children: [
               ...ids.map((id) {
                 return Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: _Card(pageID, id),
                 );
               }),
               Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CardAdder(this.pageID),
+                padding: const EdgeInsets.all(8.0),
+                child: CardAdder(pageID),
               ),
             ],
           ),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, s) => Center(child: Text('Error: $e')),
     );
   }
@@ -62,7 +62,7 @@ class _Card extends ConsumerWidget {
       openElevation: 0.0,
       openColor: Colors.transparent,
       // openColor: pallette[widget.pageID % pallette.length]!,
-      transitionDuration: Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 500),
       closedBuilder: (context, action) {
         return CollapsibleCard(
           cardID: cardID,
@@ -73,7 +73,7 @@ class _Card extends ConsumerWidget {
       openBuilder: (context, closeContainer) {
         return Menu(closeContainer: closeContainer);
       },
-      routeSettings: RouteSettings(name: '/menu'),
+      routeSettings: const RouteSettings(name: '/menu'),
     );
   }
 

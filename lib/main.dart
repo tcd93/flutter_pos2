@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/main_section/drawer/reports/report.dart';
@@ -14,8 +16,8 @@ void main() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print(
-      '[${record.level.name}] ${record.loggerName} (${record.time}): ' +
-          '${record.message} ${record.error ?? ''}',
+      '[${record.level.name}] ${record.loggerName} (${record.time}): '
+      '${record.message} ${record.error ?? ''}',
     );
     if (record.stackTrace != null) print(record.stackTrace);
   });
@@ -23,13 +25,15 @@ void main() {
   runApp(
     ProviderScope(
       child: EasyDynamicThemeWidget(
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,9 +44,9 @@ class MyApp extends StatelessWidget {
       themeMode: EasyDynamicTheme.of(context).themeMode,
       initialRoute: '/',
       routes: {
-        '/': (context) => Pages(),
-        '/menu': (context) => Menu(),
-        '/report': (context) => Report(),
+        '/': (context) => const Pages(),
+        '/menu': (context) => const Menu(),
+        '/report': (context) => const Report(),
       },
     );
   }

@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:bonsoir/bonsoir.dart';
+import 'package:logging/logging.dart';
 
 class Bonjour {
   static const String _type = '_stun._tcp';
+
+  final _logger = Logger('Bonjour');
   Function(ResolvedBonsoirService service)? onDiscovery;
-  Set<ResolvedBonsoirService> discoveredServices = Set();
+  Set<ResolvedBonsoirService> discoveredServices = {};
 
   BonsoirBroadcast? _broadcast;
   BonsoirDiscovery? _discovery;
@@ -43,7 +46,7 @@ class Bonjour {
         }
       },
       onError: (err, stack) {
-        print(err);
+        _logger.warning(err);
       },
     );
     await _discovery!.start();

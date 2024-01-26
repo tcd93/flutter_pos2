@@ -5,6 +5,9 @@ import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_pos/pages/main_section/drawer/local_area_network/ip_search_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('Networking');
 
 Future<String?> askForPassphrase(BuildContext context) {
   return showAdaptiveDialog(
@@ -14,7 +17,7 @@ Future<String?> askForPassphrase(BuildContext context) {
         return AlertDialog(
           content: TextFormField(
             controller: textController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
               constraints: BoxConstraints.tightFor(width: 600),
               labelText: 'Passphrase',
@@ -23,7 +26,7 @@ Future<String?> askForPassphrase(BuildContext context) {
             maxLines: 1,
             maxLength: 12,
             keyboardType: TextInputType.number,
-            scrollPhysics: NeverScrollableScrollPhysics(),
+            scrollPhysics: const NeverScrollableScrollPhysics(),
           ),
           actions: [
             TextButton(
@@ -51,15 +54,17 @@ class Networking extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ExpansionTile(
       maintainState: true,
-      title: Text('Local Area Network'),
-      leading: Icon(Icons.lan),
+      title: const Text('Local Area Network'),
+      leading: const Icon(Icons.lan),
       children: [
         Consumer(
           builder: (context, ref, icon) {
             final hosting = ref.watch(hostStatusProvider);
 
             return ListTile(
-              title: hosting ? Text('Stop hosting') : Text('Create host'),
+              title: hosting
+                  ? const Text('Stop hosting')
+                  : const Text('Create host'),
               leading: icon,
               onTap: () async {
                 final signaler = ref.read(serviceProvider);
@@ -73,7 +78,7 @@ class Networking extends ConsumerWidget {
               },
             );
           },
-          child: Icon(Icons.computer),
+          child: const Icon(Icons.computer),
         ),
         // connect button
         Consumer(
@@ -102,14 +107,20 @@ class Networking extends ConsumerWidget {
                     final receiver = ref.read(serviceProvider);
                     await receiver.createChannel(ip, label, passphrase);
                   } catch (ex) {
+                    if (!context.mounted) {
+                      _logger.warning(
+                        'BuildContext is dismounted, unable to show snackbar',
+                      );
+                      return;
+                    }
                     _showSnackBar(context, ex.toString());
-                    throw ex;
+                    rethrow;
                   }
                 }
               },
             );
           },
-          child: Icon(Icons.sync),
+          child: const Icon(Icons.sync),
         ),
         // disconnect button
         Consumer(
@@ -121,7 +132,7 @@ class Networking extends ConsumerWidget {
               enabled: state ==
                       RTCPeerConnectionState.RTCPeerConnectionStateConnected &&
                   labels.isNotEmpty,
-              title: Text('Disconnect'),
+              title: const Text('Disconnect'),
               leading: icon,
               onTap: () async {
                 // WebRTC events are not fired in the caller side
@@ -134,7 +145,7 @@ class Networking extends ConsumerWidget {
               },
             );
           },
-          child: Icon(Icons.sync_disabled),
+          child: const Icon(Icons.sync_disabled),
         ),
         // broadcast transaction data for other devices to sync
         Consumer(
@@ -146,7 +157,7 @@ class Networking extends ConsumerWidget {
               enabled: state ==
                       RTCPeerConnectionState.RTCPeerConnectionStateConnected &&
                   labels.isNotEmpty,
-              title: Text('Send transactions to other connected devices'),
+              title: const Text('Send transactions to other connected devices'),
               leading: icon,
               onTap: () async {
                 final db = ref.read(dbProvider);
@@ -159,7 +170,7 @@ class Networking extends ConsumerWidget {
               },
             );
           },
-          child: Icon(Icons.send_and_archive),
+          child: const Icon(Icons.send_and_archive),
         ),
       ],
     );

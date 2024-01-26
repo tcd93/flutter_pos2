@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
+import 'package:logging/logging.dart';
 
 const double safeArea = 60;
 const double _iconEndSize = 110;
@@ -10,16 +11,13 @@ const double _iconEndSize = 110;
 
 const double _iconStartSize = 75;
 
+final _logger = Logger('Sexy Bottom Sheet');
+
 class MenuButton extends StatelessWidget {
   final AnimationController controller;
   final VoidCallback onPressed;
 
-  final MaterialStateProperty<double> Function(double value) resolveDouble =
-      (value) => MaterialStateProperty.resolveWith((_) => value);
-  final MaterialStateProperty<Color?> Function(Color? value) resolveColor =
-      (value) => MaterialStateProperty.resolveWith((_) => value);
-
-  MenuButton(this.controller, {required this.onPressed});
+  const MenuButton(this.controller, {super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +62,12 @@ class MenuButton extends StatelessWidget {
       ),
     );
   }
+
+  MaterialStateProperty<Color?> resolveColor(Color? value) =>
+      MaterialStateProperty.resolveWith((_) => value);
+
+  MaterialStateProperty<double> resolveDouble(value) =>
+      MaterialStateProperty.resolveWith((_) => value);
 }
 
 class SexyBottomSheet extends StatefulWidget {
@@ -76,14 +80,15 @@ class SexyBottomSheet extends StatefulWidget {
 
   final ValueNotifier<int> selectedIndex;
 
-  SexyBottomSheet({
+  const SexyBottomSheet({
+    super.key,
     required this.items,
     required this.selectedIndex,
     this.animationDuration = 300,
   });
 
   @override
-  _SexyBottomSheetState createState() => _SexyBottomSheetState();
+  State<SexyBottomSheet> createState() => _SexyBottomSheetState();
 }
 
 class SexyBottomSheetItem {
@@ -143,7 +148,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
       animation: controller,
       child: MenuButton(controller, onPressed: toggleBottomSheet),
       builder: (context, menuButton) {
-        return Container(
+        return SizedBox(
           height: lerp(SexyBottomSheet.minHeight, screenHeight),
           child: Material(
             // follow BottomAppBar
@@ -171,7 +176,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
 
   Widget icon(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
-    if (index == -1) return SizedBox();
+    if (index == -1) return const SizedBox();
 
     return Positioned(
       height: iconSize,
@@ -180,7 +185,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
       left: iconLeftMargin(index),
       child: IgnorePointer(
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: item.headerBuilder?.call(controller.value),
         ),
       ),
@@ -254,7 +259,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
         panAxis: sheetOpen ? PanAxis.vertical : PanAxis.horizontal,
         child: Stack(
           children: <Widget>[
-            Container(
+            SizedBox(
               width: containerWidth,
               height: containerHeight,
             ),
@@ -268,7 +273,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
 
   Widget tile(SexyBottomSheetItem item) {
     int index = widget.items.indexOf(item);
-    if (index == -1) return SizedBox();
+    if (index == -1) return const SizedBox();
 
     return Positioned(
       top: iconTopMargin(index),
@@ -286,7 +291,7 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
             final selected = index == selectedIndex;
 
             return Container(
-              margin: EdgeInsets.all(4.0),
+              margin: const EdgeInsets.all(4.0),
               decoration: selected && !item.disallowSelection
                   ? BoxDecoration(
                       border: Border.all(
@@ -302,8 +307,6 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
           child: item.onDismiss != null
               ? Dismissible(
                   key: item.key,
-                  child:
-                      item.childBuilder(controller.value) ?? SizedBox.shrink(),
                   background: Container(color: Theme.of(context).disabledColor),
                   behavior: HitTestBehavior.translucent,
                   confirmDismiss: (direction) {
@@ -311,27 +314,37 @@ class _SexyBottomSheetState extends State<SexyBottomSheet>
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text('Delete item?'),
+                          title: const Text('Delete item?'),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.pop(context, false);
                               },
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                             ),
                             TextButton(
                               onPressed: () async {
                                 final result =
                                     await item.onDismiss?.call(context);
+
+                                if (!context.mounted) {
+                                  _logger.warning(
+                                    'BuildContext is dismounted after an async '
+                                    'operation, unable to pop routes',
+                                  );
+                                  return;
+                                }
                                 Navigator.pop(context, result);
                               },
-                              child: Text('OK'),
+                              child: const Text('OK'),
                             ),
                           ],
                         );
                       },
                     );
                   },
+                  child: item.childBuilder(controller.value) ??
+                      const SizedBox.shrink(),
                 )
               : item.childBuilder(controller.value),
         ),

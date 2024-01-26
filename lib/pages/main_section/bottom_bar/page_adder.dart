@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
   final BuildContext context;
 
-  const PageAdder(this.context);
+  const PageAdder(this.context, {super.key});
 
   @override
   Widget? Function(double) get childBuilder {
@@ -37,13 +37,13 @@ class PageAdder extends ConsumerWidget implements SexyBottomSheetItem {
     }
 
     return Container(
-      margin: EdgeInsets.all(15.0),
+      margin: const EdgeInsets.all(15.0),
       child: DottedBorder(
-        dashPattern: [8, 4],
+        dashPattern: const [8, 4],
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
-            child: Center(
+            child: const Center(
               child: Text(
                 'Long Press To +',
                 textScaler: TextScaler.linear(1.2),

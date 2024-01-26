@@ -45,7 +45,7 @@ class _MenuState extends ConsumerState<Menu> {
     final cardID = ref.read(selectedCardProvider);
     // final page = ref.watch(pageStatusProvider);
     if (cardID == null) {
-      return SizedBox();
+      return const SizedBox();
     }
     // final pallette = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
@@ -53,7 +53,7 @@ class _MenuState extends ConsumerState<Menu> {
       // backgroundColor: pallette[page.selected % pallette.length]!,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Navigator.pop() also works but sometimes can throw errors
             // if placed inside OpenContainer
@@ -67,17 +67,17 @@ class _MenuState extends ConsumerState<Menu> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: MenuSearchBar(filterString),
           ),
         ],
       ),
       body: SafeArea(
         child: DecoratedBox(
-          decoration: BoxDecoration(border: Border(top: BorderSide())),
+          decoration: const BoxDecoration(border: Border(top: BorderSide())),
           child: CustomScrollView(
             controller: scrollController,
-            physics: _NoImplicitScrollPhysics(parent: BouncingScrollPhysics()),
+            physics: const _NoImplicitScrollPhysics(parent: BouncingScrollPhysics()),
             scrollBehavior: ScrollConfiguration.of(context).copyWith(
               dragDevices: {
                 PointerDeviceKind.touch,
@@ -116,8 +116,8 @@ class _MenuState extends ConsumerState<Menu> {
                   widget.closeContainer?.call();
                 }
               : null,
-          icon: Icon(Icons.playlist_add_check),
-          label: Text('Checkout'),
+          icon: const Icon(Icons.playlist_add_check),
+          label: const Text('Checkout'),
         );
       },
     );
@@ -132,7 +132,7 @@ class _MenuState extends ConsumerState<Menu> {
 
   @override
   void initState() {
-    gridAllowTimer = Timer(Duration(milliseconds: 450), () {
+    gridAllowTimer = Timer(const Duration(milliseconds: 450), () {
       setState(() => allowGridView = true);
     });
     super.initState();
@@ -150,7 +150,7 @@ class _MenuState extends ConsumerState<Menu> {
             return AlertDialog(
               content: TextFormField(
                 controller: textController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   constraints: BoxConstraints.tightFor(width: 600),
                   labelText: 'Note',
@@ -159,7 +159,7 @@ class _MenuState extends ConsumerState<Menu> {
                 minLines: 3,
                 maxLines: 3,
                 inputFormatters: [enforceThreeLines],
-                scrollPhysics: NeverScrollableScrollPhysics(),
+                scrollPhysics: const NeverScrollableScrollPhysics(),
               ),
               actions: [
                 TextButton(
@@ -180,7 +180,7 @@ class _MenuState extends ConsumerState<Menu> {
           },
         );
       },
-      icon: Icon(Icons.note_add),
+      icon: const Icon(Icons.note_add),
       tooltip: 'Note',
     );
   }

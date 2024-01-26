@@ -7,7 +7,7 @@ import 'package:flutter_pos/widgets/sliver_grid_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-final _LOGGER = Logger('Menu Grid');
+final _logger = Logger('Menu Grid');
 
 class SliverMenuGrid extends ConsumerStatefulWidget {
   final ValueNotifier<String> filterString;
@@ -25,7 +25,7 @@ class _MenuGridState extends ConsumerState<SliverMenuGrid> {
 
   @override
   Widget build(BuildContext context) {
-    _LOGGER.info('Menu grid build');
+    _logger.info('Menu grid build');
     final result = ref.watch(dishIDProvider);
     return result.when(
       data: (dishIDs) {
@@ -64,7 +64,7 @@ class _MenuGridState extends ConsumerState<SliverMenuGrid> {
           padding: EdgeInsets.symmetric(horizontal: margin),
         );
       },
-      loading: () => SliverFillRemaining(
+      loading: () => const SliverFillRemaining(
         child: Center(
           child: CircularProgressIndicator(),
         ),

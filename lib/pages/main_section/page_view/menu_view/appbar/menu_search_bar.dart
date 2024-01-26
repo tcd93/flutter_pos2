@@ -13,23 +13,23 @@ class MenuSearchBar extends StatelessWidget {
       constraints: BoxConstraints.tightFor(width: screenWidth),
       child: AnimatedSearchBar(
         searchDecoration: InputDecoration(
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
             borderRadius: BorderRadius.zero,
           ),
-          label: Text('Search', textScaler: TextScaler.linear(0.75)),
-          labelStyle: TextStyle(fontWeight: FontWeight.w300),
+          label: const Text('Search', textScaler: TextScaler.linear(0.75)),
+          labelStyle: const TextStyle(fontWeight: FontWeight.w300),
           filled: true,
           fillColor: Theme.of(context).dialogBackgroundColor.withOpacity(0.4),
           isDense: true,
         ),
         searchIcon: Icon(
           Icons.search,
-          key: ValueKey('open'),
+          key: const ValueKey('open'),
           color: Theme.of(context).colorScheme.primary,
         ),
         closeIcon: Icon(
           Icons.close,
-          key: ValueKey('close'),
+          key: const ValueKey('close'),
           color: Theme.of(context).colorScheme.primary,
         ),
         onChanged: (filter) {

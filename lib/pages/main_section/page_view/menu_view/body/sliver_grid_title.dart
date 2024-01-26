@@ -10,7 +10,7 @@ class SliverGridTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final toolBarHeight = AppTheme.cardHeightMax *
+    const toolBarHeight = AppTheme.cardHeightMax *
         (AppTheme.endHeightFactor - AppTheme.beginHeightFactor);
 
     return SliverAppBar(
@@ -26,7 +26,7 @@ class SliverGridTitle extends StatelessWidget {
           final note = ref.watch(noteProvider(cardID)).value ?? '';
           return ListTile(
             title: Text(
-                '$title ${price > 0 ? '(' + price.toString() + '\$)' : ''}'),
+                '$title ${price > 0 ? '($price\$)' : ''}'),
             contentPadding: EdgeInsets.zero,
             subtitle: note.isNotEmpty
                 ? Text(note, maxLines: 2, overflow: TextOverflow.ellipsis)

@@ -12,7 +12,7 @@ void main() {
   tearDown(() async => await signaler.closeServer());
 
   test('Test security by sending valid passphrase', () async {
-    final passphrase = '1234567890123456123456789012';
+    const passphrase = '1234567890123456123456789012';
     await signaler.startServer(passphrase: passphrase);
 
     final response = await http.get(Uri.http(
@@ -24,7 +24,7 @@ void main() {
   });
 
   test('Test security by sending invalid passphrase', () async {
-    final passphrase = '1234567890123456123456789012';
+    const passphrase = '1234567890123456123456789012';
     await signaler.startServer(passphrase: passphrase);
 
     final response = await http.get(Uri.http(
