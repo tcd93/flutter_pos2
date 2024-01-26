@@ -7,15 +7,15 @@ import 'package:syncfusion_flutter_core/core.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 /// Renders the range selector with line chart zooming option
-class Report extends ConsumerStatefulWidget {
+class ReportView extends ConsumerStatefulWidget {
   /// Renders the range selector with line chart zooming option
-  const Report({super.key});
+  const ReportView({super.key});
 
   @override
   createState() => _ReportState();
 }
 
-class _ReportState extends ConsumerState<Report> {
+class _ReportState extends ConsumerState<ReportView> {
   final currentYear = DateTime.now().year;
   late final RangeController rangeController;
   late final RangeController sliderController;

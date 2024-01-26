@@ -47,8 +47,8 @@ Future<String?> askForPassphrase(BuildContext context) {
 }
 
 @visibleForTesting
-class Networking extends ConsumerWidget {
-  const Networking({super.key});
+class NetworkItem extends ConsumerWidget {
+  const NetworkItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

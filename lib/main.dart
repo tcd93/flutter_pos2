@@ -2,7 +2,7 @@
 
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/pages/main_section/drawer/reports/report.dart';
+import 'package:flutter_pos/pages/main_section/drawer/reports/report_view.dart';
 import 'package:flutter_pos/pages/main_section/main_page.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const Pages(),
         '/menu': (context) => const Menu(),
-        '/report': (context) => const Report(),
+        '/report': (context) => const ReportView(),
       },
     );
   }
