@@ -14,7 +14,8 @@ void main() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print(
-      '${record.level.name} (${record.time}): ${record.message} ${record.error ?? ''}',
+      '[${record.level.name}] ${record.loggerName} (${record.time}): ' +
+          '${record.message} ${record.error ?? ''}',
     );
     if (record.stackTrace != null) print(record.stackTrace);
   });

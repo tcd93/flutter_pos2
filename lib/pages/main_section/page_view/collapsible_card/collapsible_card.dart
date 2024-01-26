@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card_details.dart';
 import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card_header.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/widgets/flat_collapsible_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'collapsible_card_details.dart';
+import 'package:logging/logging.dart';
 
 class CollapsibleCard extends ConsumerStatefulWidget {
   final int cardID;
@@ -25,7 +25,9 @@ class CollapsibleCard extends ConsumerStatefulWidget {
 
 class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  late final _LOGGER = Logger('CollapsibleCard ${widget.cardID}');
   late AnimationController controller;
+
   bool expanded = false;
 
   // keepAlive this state to not reset animation controller upon
@@ -38,7 +40,7 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
     super.build(context);
 
     return FlatCollapsibleCard(
-      controller: controller,
+      animation: controller,
       header: CollapsibleCardHeader(
         cardID: widget.cardID,
         pageID: widget.pageID,
@@ -48,9 +50,9 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
         cardID: widget.cardID,
         openContainer: widget.openContainer,
       ),
-      onToggle: (expanded) {
+      onToggle: () {
         expanded ? controller.reverse() : controller.forward();
-        this.expanded = expanded;
+        expanded = !expanded;
       },
       beginHeightFactor: AppTheme.beginHeightFactor,
       beginWidthFactor: AppTheme.beginWidthFactor,
@@ -62,6 +64,7 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
 
   @override
   void dispose() {
+    _LOGGER.info('Disposed');
     controller.dispose();
     super.dispose();
   }
@@ -75,9 +78,11 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
 
     ref.listenManual(pageStatusProvider, (previous, next) {
       if (previous?.selected == widget.pageID) {
+        // _LOGGER.info('controller.reverse()');
         controller.reverse();
       }
-      if (this.expanded && next.selected == widget.pageID) {
+      if (expanded && next.selected == widget.pageID) {
+        // _LOGGER.info('controller.forward()');
         controller.forward();
       }
     });
