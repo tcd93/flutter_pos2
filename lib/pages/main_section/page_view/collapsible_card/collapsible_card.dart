@@ -38,9 +38,9 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return FlatCollapsibleCard(
-      animation: controller,
       header: CollapsibleCardHeader(
         cardID: widget.cardID,
         pageID: widget.pageID,
@@ -54,11 +54,14 @@ class _CollapsibleCardState extends ConsumerState<CollapsibleCard>
         expanded ? controller.reverse() : controller.forward();
         expanded = !expanded;
       },
-      beginHeightFactor: AppTheme.beginHeightFactor,
-      beginWidthFactor: AppTheme.beginWidthFactor,
-      endHeightFactor: AppTheme.endHeightFactor,
-      endWidthFactor: AppTheme.endWidthFactor,
-      maxHeight: AppTheme.cardHeightMax,
+      animatableHeight: Tween<double>(
+        begin: AppTheme.beginHeightFactor * AppTheme.cardHeightMax,
+        end: AppTheme.endHeightFactor * AppTheme.cardHeightMax,
+      ).chain(CurveTween(curve: Curves.fastOutSlowIn)).animate(controller),
+      animatableWidth: Tween<double>(
+        begin: AppTheme.beginWidthFactor * screenWidth,
+        end: AppTheme.endWidthFactor * screenWidth,
+      ).chain(CurveTween(curve: Curves.easeOutBack)).animate(controller),
     );
   }
 
