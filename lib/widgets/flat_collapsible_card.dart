@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FlatCollapsibleCard extends StatelessWidget {
+class FlatCollapsibleCard extends StatefulWidget {
   final Animation<double> animatableHeight;
   final Animation<double> animatableWidth;
 
@@ -8,8 +8,6 @@ class FlatCollapsibleCard extends StatelessWidget {
   final Widget details;
 
   final void Function()? onToggle;
-
-  late final double initialHeight = animatableHeight.value;
 
   FlatCollapsibleCard({
     required this.header,
@@ -21,13 +19,21 @@ class FlatCollapsibleCard extends StatelessWidget {
   });
 
   @override
+  State<FlatCollapsibleCard> createState() => _FlatCollapsibleCardState();
+}
+
+class _FlatCollapsibleCardState extends State<FlatCollapsibleCard> {
+  // keep it in state to prevent being affected by rebuilds
+  late final double initialHeight = widget.animatableHeight.value;
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animatableHeight,
+      animation: widget.animatableHeight,
       builder: (context, content) {
         return SizedBox(
-          height: animatableHeight.value,
-          width: animatableWidth.value,
+          height: widget.animatableHeight.value,
+          width: widget.animatableWidth.value,
           child: content,
         );
       },
@@ -37,8 +43,8 @@ class FlatCollapsibleCard extends StatelessWidget {
           SizedBox(
             height: initialHeight,
             child: InkWell(
-              child: header,
-              onTap: onToggle,
+              child: widget.header,
+              onTap: widget.onToggle,
             ),
           ),
           Expanded(
@@ -46,7 +52,7 @@ class FlatCollapsibleCard extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border(top: BorderSide()),
               ),
-              child: details,
+              child: widget.details,
             ),
           ),
         ],
