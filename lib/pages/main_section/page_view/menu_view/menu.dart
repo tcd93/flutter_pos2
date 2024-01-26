@@ -61,7 +61,7 @@ class _MenuState extends ConsumerState<Menu> {
               ref.read(selectedCardProvider.notifier).close();
               widget.closeContainer?.call();
             } else {
-              Navigator.of(context).pop();
+              Navigator.of(context).popUntil(ModalRoute.withName('/'));
             }
           },
         ),
@@ -77,7 +77,8 @@ class _MenuState extends ConsumerState<Menu> {
           decoration: const BoxDecoration(border: Border(top: BorderSide())),
           child: CustomScrollView(
             controller: scrollController,
-            physics: const _NoImplicitScrollPhysics(parent: BouncingScrollPhysics()),
+            physics:
+                const _NoImplicitScrollPhysics(parent: BouncingScrollPhysics()),
             scrollBehavior: ScrollConfiguration.of(context).copyWith(
               dragDevices: {
                 PointerDeviceKind.touch,

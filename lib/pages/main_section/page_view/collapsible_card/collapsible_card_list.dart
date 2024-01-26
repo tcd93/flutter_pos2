@@ -73,6 +73,8 @@ class _Card extends ConsumerWidget {
       openBuilder: (context, closeContainer) {
         return Menu(closeContainer: closeContainer);
       },
+      // this routeSettings is for better URL display on web platform only,
+      // onGenerateRoute is not called in main app
       routeSettings: RouteSettings(name: '/menu?cardId=${cardID.toString()}'),
     );
   }

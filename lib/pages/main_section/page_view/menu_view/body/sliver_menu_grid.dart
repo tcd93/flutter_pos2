@@ -37,7 +37,9 @@ class _MenuGridState extends ConsumerState<SliverMenuGrid> {
           },
           itemList: dishIDs,
           widgetBuilder: (dishID, animation) {
-            final dish = ref.watch(dishItemProvider(dishID)).value!;
+            final dish = ref.watch(dishItemProvider(dishID)).value;
+            if (dish == null) return const SizedBox();
+
             return DecoratedBox(
               key: ValueKey(dish),
               decoration: BoxDecoration(

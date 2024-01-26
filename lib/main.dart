@@ -32,6 +32,8 @@ void main() {
   );
 }
 
+final _logger = Logger('MyApp');
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -51,6 +53,7 @@ class MyApp extends StatelessWidget {
       // use reg exp to find uri parameters for /menu route
       onGenerateRoute: (settings) {
         if (settings.name != null) {
+          _logger.info('onGenerateRoute ${settings.name}');
           final regExp = RegExp(r'\/(menu)+\?*.*cardId=([0-9]+)');
           // the uri '/menu?cardId=100' will match above regExp
           final match = regExp.firstMatch(settings.name!);
@@ -73,10 +76,12 @@ class MyApp extends StatelessWidget {
 
                   return const Menu();
                 },
+                settings: RouteSettings(name: '/menu?cardId=$cardIdString'),
               );
             }
           }
         }
+        return null;
       },
     );
   }
