@@ -73,7 +73,7 @@ class _Card extends ConsumerWidget {
       openBuilder: (context, closeContainer) {
         return Menu(closeContainer: closeContainer);
       },
-      routeSettings: const RouteSettings(name: '/menu'),
+      routeSettings: RouteSettings(name: '/menu?cardId=${cardID.toString()}'),
     );
   }
 

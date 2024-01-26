@@ -2,6 +2,7 @@
 
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/main_section/drawer/reports/report_view.dart';
 import 'package:flutter_pos/pages/main_section/main_page.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
@@ -43,10 +44,42 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
       themeMode: EasyDynamicTheme.of(context).themeMode,
       initialRoute: '/',
+      home: const Pages(),
       routes: {
-        '/': (context) => const Pages(),
-        '/menu': (context) => const Menu(),
+        // '/': (context) => const Pages(),
+        // '/menu': (context) => const Menu(),
         '/report': (context) => const ReportView(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name != null) {
+          // use reg exp to find uri parameters for /menu route
+          final regExp = RegExp(r'\/(menu)+\?*.*cardId=([0-9]+)');
+          // the uri '/menu?cardId=100' will match above regExp
+          final match = regExp.firstMatch(settings.name!);
+
+          if (match != null) {
+            final cardIdString = match.group(2); // 2nd parenthesis in reg exp
+            if (cardIdString != null) {
+              final cardId = int.tryParse(cardIdString);
+              if (cardId == null) return null;
+
+              return MaterialPageRoute(
+                builder: (context) {
+                  ProviderScope.containerOf(context)
+                      .read(selectedCardProvider.notifier)
+                      .open(cardId);
+
+                  return const Menu();
+                },
+              );
+            }
+          }
+        }
+
+        settings.name?.matchAsPrefix('/menu?cardId=');
+        return MaterialPageRoute(
+          builder: (context) => const Menu(),
+        );
       },
     );
   }
