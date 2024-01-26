@@ -46,13 +46,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       home: const Pages(),
       routes: {
-        // '/': (context) => const Pages(),
-        // '/menu': (context) => const Menu(),
         '/report': (context) => const ReportView(),
       },
+      // use reg exp to find uri parameters for /menu route
       onGenerateRoute: (settings) {
         if (settings.name != null) {
-          // use reg exp to find uri parameters for /menu route
           final regExp = RegExp(r'\/(menu)+\?*.*cardId=([0-9]+)');
           // the uri '/menu?cardId=100' will match above regExp
           final match = regExp.firstMatch(settings.name!);
@@ -65,9 +63,13 @@ class MyApp extends StatelessWidget {
 
               return MaterialPageRoute(
                 builder: (context) {
-                  ProviderScope.containerOf(context)
-                      .read(selectedCardProvider.notifier)
-                      .open(cardId);
+                  // can not change provider state when widget tree is building,
+                  // so wrap the action inside post frame callback
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ProviderScope.containerOf(context)
+                        .read(selectedCardProvider.notifier)
+                        .open(cardId);
+                  });
 
                   return const Menu();
                 },
@@ -75,11 +77,6 @@ class MyApp extends StatelessWidget {
             }
           }
         }
-
-        settings.name?.matchAsPrefix('/menu?cardId=');
-        return MaterialPageRoute(
-          builder: (context) => const Menu(),
-        );
       },
     );
   }
