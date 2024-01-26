@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
-import 'package:flutter_pos/pages/menu_section/dish_tile.dart';
+import 'package:flutter_pos/pages/main_section/page_view/menu_view/body/dish_tile.dart';
 import 'package:flutter_pos/widgets/sliver_grid_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';

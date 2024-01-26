@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/main_section/page_view/card_adder.dart';
 import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card.dart';
-import 'package:flutter_pos/pages/menu_section/menu.dart';
+import 'package:flutter_pos/pages/main_section/page_view/menu_view/menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CollapsibleCardList extends ConsumerWidget {

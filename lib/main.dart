@@ -6,7 +6,7 @@ import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-import 'pages/menu_section/menu.dart';
+import 'pages/main_section/page_view/menu_view/menu.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
