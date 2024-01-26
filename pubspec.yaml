@@ -22,10 +22,10 @@ dependencies:
   drift: ^2.13.0
   sqlite3_flutter_libs: ^0.5.0
   path_provider: ^2.0.0
-  path: ^1.8.3
-  syncfusion_flutter_core: ^23.1.43
-  syncfusion_flutter_charts: ^23.1.43
-  syncfusion_flutter_sliders: ^23.1.43
+  path: 1.8.3
+  syncfusion_flutter_core: ^24.1.47
+  syncfusion_flutter_charts: ^24.1.47+2
+  syncfusion_flutter_sliders: ^24.1.47
   dotted_border: ^2.1.0
 
   custom_lint_builder:

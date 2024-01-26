@@ -84,8 +84,8 @@ class _ReportState extends ConsumerState<Report> {
       tooltipBehavior: TooltipBehavior(enable: true),
       primaryXAxis: DateTimeAxis(
         isVisible: false,
-        visibleMinimum: rangeController.start,
-        visibleMaximum: rangeController.end,
+        initialVisibleMinimum: rangeController.start,
+        initialVisibleMaximum: rangeController.end,
         rangeController: rangeController,
         dateFormat: DateFormat.MMMMd(),
       ),

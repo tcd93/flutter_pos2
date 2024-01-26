@@ -4,3 +4,8 @@ analyzer:
   errors:
     invalid_annotation_target: ignore
     duplicate_ignore: ignore
+
+custom_lint:
+  rules:
+    - prefer_const_constructors: true
+    - prefer_const_declarations: true
