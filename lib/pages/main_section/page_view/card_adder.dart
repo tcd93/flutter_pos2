@@ -1,7 +1,8 @@
-import 'package:flutter_pos/pages/data/db.dart';
-import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/repos/cardItems/card_items.dart';
+import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CardAdder extends ConsumerWidget {
