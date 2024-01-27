@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/repos/db.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part '../price.g.dart';
+part 'price.g.dart';
 
 // final _logger = Logger('Repository');
 
