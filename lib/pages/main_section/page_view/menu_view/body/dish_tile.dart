@@ -4,24 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pos/image_type.dart';
 import 'package:flutter_pos/pages/data/ephemeral.dart';
+import 'package:flutter_pos/pages/data/repos/dishes/dishes.dart';
 import 'package:flutter_pos/pages/data/repos/servings/servings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishTile extends ConsumerWidget {
   final int dishID;
-  final ImageType? type;
-  final String? imagePath;
-  final Uint8List? imageData;
-  final Size size;
-
   final Animation<double> animation;
+  final Size size;
 
   const DishTile({
     super.key,
     required this.dishID,
-    required this.type,
-    required this.imagePath,
-    required this.imageData,
     required this.animation,
     required this.size,
   });
@@ -53,7 +47,7 @@ class DishTile extends ConsumerWidget {
                   onLongPressUp: () => updateOrDelete(ref, 0),
                   // wrap image in a SizedBox to prevent it from blocking
                   // GestureDetector while loading
-                  child: SizedBox.expand(child: _imageConverter()),
+                  child: SizedBox.expand(child: _imageConverter(ref)),
                 )),
             const Divider(),
             Expanded(child: _buttonRow(ref, portion)),
@@ -97,38 +91,34 @@ class DishTile extends ConsumerWidget {
     );
   }
 
-  Widget _imageConverter() {
-    return switch (type) {
+  Widget _imageConverter(WidgetRef ref) {
+    final dish = ref.watch(dishItemProvider(dishID)).value;
+    if (dish == null) return const Placeholder();
+
+    return switch (dish.imageType) {
       ImageType.asset => Image.asset(
-          imagePath!,
+          dish.imagePath!,
           fit: BoxFit.fitHeight,
           // cacheWidth: size.width.floor(),
           cacheHeight: size.height.floor(),
           errorBuilder: _imageErrorBuilder,
         ),
       ImageType.bytes => Image.memory(
-          Uint8List.fromList(imageData!),
+          Uint8List.fromList(dish.imageData!),
           fit: BoxFit.fitHeight,
           // cacheWidth: size.width.floor(),
           cacheHeight: size.height.floor(),
           errorBuilder: _imageErrorBuilder,
         ),
       ImageType.file => Image.file(
-          File(imagePath!),
+          File(dish.imagePath!),
           fit: BoxFit.fitHeight,
           // cacheWidth: size.width.floor(),
           cacheHeight: size.height.floor(),
           errorBuilder: _imageErrorBuilder,
         ),
       ImageType.url => Image.network(
-          imagePath!,
-          fit: BoxFit.fitHeight,
-          // cacheWidth: size.width.floor(),
-          cacheHeight: size.height.floor(),
-          errorBuilder: _imageErrorBuilder,
-        ),
-      null => Image.asset(
-          imagePath!,
+          dish.imagePath!,
           fit: BoxFit.fitHeight,
           // cacheWidth: size.width.floor(),
           cacheHeight: size.height.floor(),
