@@ -1735,6 +1735,18 @@ abstract class _$DriftDB extends GeneratedDatabase {
   late final Trigger insertTransactionDetails = Trigger(
       'CREATE TRIGGER insert_transaction_details AFTER INSERT ON transactions BEGIN INSERT INTO transaction_details (transid, dishID, portion) SELECT new.id, servings.dishID, servings.portion FROM servings WHERE servings.cardID = new.cardID;DELETE FROM servings WHERE cardID = new.cardID;DELETE FROM servings_note WHERE cardID = new.cardID;END',
       'insert_transaction_details');
+  Selectable<double?> getPrice(int cardID) {
+    return customSelect(
+        'SELECT SUM(d.price * s.portion) AS price FROM servings AS s INNER JOIN dishes AS d ON s.dishID = d.id WHERE s.cardID = ?1',
+        variables: [
+          Variable<int>(cardID)
+        ],
+        readsFrom: {
+          dishes,
+          servings,
+        }).map((QueryRow row) => row.readNullable<double>('price'));
+  }
+
   Selectable<GetPriceByDateResult> getPriceByDate(DateTime from, DateTime to) {
     return customSelect(
         'SELECT date, SUM(price) AS priceByDate FROM transactions WHERE date BETWEEN ?1 AND ?2 GROUP BY date',

@@ -20,7 +20,7 @@ final dbProvider = Provider<DriftDB>.internal(
 );
 
 typedef DbRef = ProviderRef<DriftDB>;
-String _$priceHash() => r'57fa9a32ad735bd93b175a213535bd3d28359e9e';
+String _$priceHash() => r'f9b13e87e0e9e29bc6cf6f6ca612b4205d7ad524';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -48,7 +48,7 @@ class _SystemHash {
 const priceProvider = PriceFamily();
 
 /// See also [price].
-class PriceFamily extends Family<double?> {
+class PriceFamily extends Family<AsyncValue<double?>> {
   /// See also [price].
   const PriceFamily();
 
@@ -86,7 +86,7 @@ class PriceFamily extends Family<double?> {
 }
 
 /// See also [price].
-class PriceProvider extends AutoDisposeProvider<double?> {
+class PriceProvider extends AutoDisposeFutureProvider<double?> {
   /// See also [price].
   PriceProvider(
     int cardID,
@@ -120,7 +120,7 @@ class PriceProvider extends AutoDisposeProvider<double?> {
 
   @override
   Override overrideWith(
-    double? Function(PriceRef provider) create,
+    FutureOr<double?> Function(PriceRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -137,7 +137,7 @@ class PriceProvider extends AutoDisposeProvider<double?> {
   }
 
   @override
-  AutoDisposeProviderElement<double?> createElement() {
+  AutoDisposeFutureProviderElement<double?> createElement() {
     return _PriceProviderElement(this);
   }
 
@@ -155,12 +155,12 @@ class PriceProvider extends AutoDisposeProvider<double?> {
   }
 }
 
-mixin PriceRef on AutoDisposeProviderRef<double?> {
+mixin PriceRef on AutoDisposeFutureProviderRef<double?> {
   /// The parameter `cardID` of this provider.
   int get cardID;
 }
 
-class _PriceProviderElement extends AutoDisposeProviderElement<double?>
+class _PriceProviderElement extends AutoDisposeFutureProviderElement<double?>
     with PriceRef {
   _PriceProviderElement(super.provider);
 
@@ -1220,7 +1220,7 @@ class _PageNameProviderElement
   int get pageID => (origin as PageNameProvider).pageID;
 }
 
-String _$portionHash() => r'29aa93057a070f021dd83105ec245fcdb2c720fe';
+String _$portionHash() => r'16679f14c7b024bac5cfabf31e595687b0aaae1d';
 
 abstract class _$Portion extends BuildlessAutoDisposeAsyncNotifier<int?> {
   late final int cardID;

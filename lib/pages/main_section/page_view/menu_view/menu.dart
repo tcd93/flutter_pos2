@@ -108,7 +108,7 @@ class _MenuState extends ConsumerState<Menu> {
     return Consumer(
       builder: (context, ref, _) {
         final control = ref.read(menuControlProvider(cardID));
-        final price = ref.watch(priceProvider(cardID)) ?? 0.0;
+        final price = ref.watch(priceProvider(cardID)).value ?? 0.0;
         final note = ref.watch(noteProvider(cardID)).value;
         return ElevatedButton.icon(
           onPressed: price > 0

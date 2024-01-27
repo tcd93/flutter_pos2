@@ -3,7 +3,10 @@ part of 'db.dart';
 final _logger = Logger('Repository');
 
 @riverpod
-double? price(PriceRef ref, int cardID) {
+Future<double?> price(PriceRef ref, int cardID) {
+  final db = ref.read(dbProvider);
+  return db.getPrice(cardID).getSingle();
+  /*
   final menu = ref.watch(dishIDProvider);
   if (!menu.hasValue) return null;
 
@@ -12,6 +15,7 @@ double? price(PriceRef ref, int cardID) {
     final dish = ref.watch(dishItemProvider(dishID)).value;
     return p + (dish?.price ?? 0.0) * (portion ?? 0);
   });
+  */
 }
 
 @riverpod
@@ -203,6 +207,7 @@ class Portion extends _$Portion {
     if (portion < 0) {
       return Future.value(-1);
     }
+    ref.invalidate(priceProvider); // refresh price provider
     state = AsyncData(portion);
     return _updateSource();
   }

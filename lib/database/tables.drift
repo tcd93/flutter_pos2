@@ -32,6 +32,13 @@ CREATE TABLE servings (
     PRIMARY KEY (cardID, dishID)
 );
 
+getPrice: 
+    SELECT SUM(d.price * s.portion) AS price
+    FROM servings s
+    INNER JOIN dishes d
+    ON s.dishID = d.id
+    WHERE s.cardID = :cardID;
+
 CREATE TABLE servings_note (
     cardID INT NOT NULL PRIMARY KEY REFERENCES cardItems(id),
     note TEXT

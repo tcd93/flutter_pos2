@@ -109,7 +109,7 @@ class _CardHeaderState extends ConsumerState<CollapsibleCardHeader>
   @override
   Widget build(BuildContext context) {
     final title = ref.watch(cardTitleProvider(widget.cardID)).value ?? '';
-    final price = ref.watch(priceProvider(widget.cardID)) ?? 0.0;
+    final price = ref.watch(priceProvider(widget.cardID)).value ?? 0.0;
 
     return GestureDetector(
       onLongPress: () {
