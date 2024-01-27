@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pos/image_type.dart';
 import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/repos/servings/servings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishTile extends ConsumerWidget {
@@ -15,7 +16,8 @@ class DishTile extends ConsumerWidget {
 
   final Animation<double> animation;
 
-  const DishTile({super.key, 
+  const DishTile({
+    super.key,
     required this.dishID,
     required this.type,
     required this.imagePath,

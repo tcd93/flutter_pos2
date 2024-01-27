@@ -1,0 +1,186 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'dishes.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$dishIDHash() => r'f64dacbc4e308ae5fe5a35181e25a9223383e0b9';
+
+/// See also [DishID].
+@ProviderFor(DishID)
+final dishIDProvider =
+    AutoDisposeAsyncNotifierProvider<DishID, List<int>>.internal(
+  DishID.new,
+  name: r'dishIDProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$dishIDHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$DishID = AutoDisposeAsyncNotifier<List<int>>;
+String _$dishItemHash() => r'a2c50549166b366d0bceaf1496d205f95ae225fe';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+abstract class _$DishItem extends BuildlessAutoDisposeAsyncNotifier<Dish> {
+  late final int dishID;
+
+  FutureOr<Dish> build(
+    int dishID,
+  );
+}
+
+/// See also [DishItem].
+@ProviderFor(DishItem)
+const dishItemProvider = DishItemFamily();
+
+/// See also [DishItem].
+class DishItemFamily extends Family<AsyncValue<Dish>> {
+  /// See also [DishItem].
+  const DishItemFamily();
+
+  /// See also [DishItem].
+  DishItemProvider call(
+    int dishID,
+  ) {
+    return DishItemProvider(
+      dishID,
+    );
+  }
+
+  @override
+  DishItemProvider getProviderOverride(
+    covariant DishItemProvider provider,
+  ) {
+    return call(
+      provider.dishID,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'dishItemProvider';
+}
+
+/// See also [DishItem].
+class DishItemProvider
+    extends AutoDisposeAsyncNotifierProviderImpl<DishItem, Dish> {
+  /// See also [DishItem].
+  DishItemProvider(
+    int dishID,
+  ) : this._internal(
+          () => DishItem()..dishID = dishID,
+          from: dishItemProvider,
+          name: r'dishItemProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$dishItemHash,
+          dependencies: DishItemFamily._dependencies,
+          allTransitiveDependencies: DishItemFamily._allTransitiveDependencies,
+          dishID: dishID,
+        );
+
+  DishItemProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.dishID,
+  }) : super.internal();
+
+  final int dishID;
+
+  @override
+  FutureOr<Dish> runNotifierBuild(
+    covariant DishItem notifier,
+  ) {
+    return notifier.build(
+      dishID,
+    );
+  }
+
+  @override
+  Override overrideWith(DishItem Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: DishItemProvider._internal(
+        () => create()..dishID = dishID,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        dishID: dishID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<DishItem, Dish> createElement() {
+    return _DishItemProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DishItemProvider && other.dishID == dishID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, dishID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin DishItemRef on AutoDisposeAsyncNotifierProviderRef<Dish> {
+  /// The parameter `dishID` of this provider.
+  int get dishID;
+}
+
+class _DishItemProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<DishItem, Dish>
+    with DishItemRef {
+  _DishItemProviderElement(super.provider);
+
+  @override
+  int get dishID => (origin as DishItemProvider).dishID;
+}
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
