@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_pos/database/drift_database.dart';
-import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/ephemeral.dart';
+import 'package:flutter_pos/pages/data/repos/db.dart';
+import 'package:flutter_pos/pages/data/repos/price.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

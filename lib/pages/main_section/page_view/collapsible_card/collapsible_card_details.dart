@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/pages/data/db.dart';
 import 'package:flutter_pos/pages/data/ephemeral.dart';
+import 'package:flutter_pos/pages/data/repos/price.dart';
 import 'package:flutter_pos/pages/data/repos/servings_note/servings_note.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

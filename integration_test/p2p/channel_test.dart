@@ -5,7 +5,7 @@ import 'package:flutter_pos/database/drift_database.dart';
 import 'package:flutter_pos/database/drift_database_test.dart';
 import 'package:flutter_pos/p2p/manager.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
-import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/repos/db.dart';
 import 'package:flutter_pos/pages/data/webrtc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -159,8 +159,8 @@ void main() {
     /// https://riverpod.dev/docs/essentials/testing
     Future<ProviderContainer> createContainer() async {
       final memdb = TestingDriftDB();
-      await memdb.into(memdb.cardItems).insert(
-          CardItemsCompanion.insert(id: const d.Value(0), pageID: 0, title: 'test'));
+      await memdb.into(memdb.cardItems).insert(CardItemsCompanion.insert(
+          id: const d.Value(0), pageID: 0, title: 'test'));
 
       final container = ProviderContainer(
         overrides: [dbProvider.overrideWith((ref) => memdb)],

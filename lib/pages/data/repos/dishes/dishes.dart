@@ -1,5 +1,5 @@
 import 'package:flutter_pos/database/drift_database.dart';
-import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/repos/db.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dishes.g.dart';

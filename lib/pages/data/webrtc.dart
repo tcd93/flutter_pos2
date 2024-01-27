@@ -1,7 +1,7 @@
 import 'package:flutter_pos/mdns/bonjour.dart';
 import 'package:flutter_pos/p2p/manager.dart';
 import 'package:flutter_pos/p2p/syncer.dart';
-import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/repos/db.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

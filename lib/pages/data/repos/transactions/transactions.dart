@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/database/drift_database.dart';
-import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/repos/db.dart';
 import 'package:flutter_pos/pages/data/repos/dishes/dishes.dart';
 import 'package:flutter_pos/pages/data/repos/servings/servings.dart';
 import 'package:flutter_pos/pages/data/repos/servings_note/servings_note.dart';
