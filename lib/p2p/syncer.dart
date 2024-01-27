@@ -25,11 +25,12 @@ class Syncer {
     return json['record_type'];
   }
 
-  /// When Transaction batch processing is complete, [onTransactionSyncComplete] is called
-  /// When the receiving end done processing Transactions, [onAcknowledge] is called
+  /// When merging on receiver is complete, [onReceiverComplete] is called
+  /// When receiver done processing Transactions a message is sent back
+  /// and [onAcknowledge] is called on sender side
   void processMessage(
     String message, {
-    required void Function() onTransactionSyncComplete,
+    required void Function() onReceiverComplete,
     required void Function() onAcknowledge,
   }) async {
     try {
@@ -40,7 +41,7 @@ class Syncer {
         case 'Transaction':
           await syncTransactions(json);
           final done = json['done'];
-          if (done) onTransactionSyncComplete();
+          if (done) onReceiverComplete();
         case 'Acknowledge':
           onAcknowledge();
       }
@@ -94,7 +95,6 @@ class Syncer {
     return jsonEncode({'record_type': 'Acknowledge'});
   }
 
-  /// [totalSize] > [data.length] then it is part of a batched transfer
   static String wrap(Iterable<Insertable> data, [bool done = true]) {
     assert(data.isNotEmpty);
 

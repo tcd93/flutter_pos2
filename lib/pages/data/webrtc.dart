@@ -58,7 +58,7 @@ class Service extends _$Service {
     final db = ref.read(dbProvider);
     Syncer(db).processMessage(
       message,
-      onTransactionSyncComplete: () {
+      onReceiverComplete: () {
         state.sendTo(channel, Syncer.acknowledge());
         ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
       },
