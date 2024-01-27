@@ -6,7 +6,7 @@ part of 'transactions.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$menuControlHash() => r'885f52ce5d0412c6a07745bea40d3797aa30bb4c';
+String _$transactionHash() => r'847ec9819b41b5ada087f5e6b8f05ee53a18e992';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,35 @@ class _SystemHash {
   }
 }
 
-abstract class _$MenuControl extends BuildlessAutoDisposeNotifier<MenuControl> {
+abstract class _$Transaction extends BuildlessAutoDisposeNotifier<Transaction> {
   late final int cardID;
 
-  MenuControl build(
+  Transaction build(
     int cardID,
   );
 }
 
-/// See also [MenuControl].
-@ProviderFor(MenuControl)
-const menuControlProvider = MenuControlFamily();
+/// See also [Transaction].
+@ProviderFor(Transaction)
+const transactionProvider = TransactionFamily();
 
-/// See also [MenuControl].
-class MenuControlFamily extends Family<MenuControl> {
-  /// See also [MenuControl].
-  const MenuControlFamily();
+/// See also [Transaction].
+class TransactionFamily extends Family<Transaction> {
+  /// See also [Transaction].
+  const TransactionFamily();
 
-  /// See also [MenuControl].
-  MenuControlProvider call(
+  /// See also [Transaction].
+  TransactionProvider call(
     int cardID,
   ) {
-    return MenuControlProvider(
+    return TransactionProvider(
       cardID,
     );
   }
 
   @override
-  MenuControlProvider getProviderOverride(
-    covariant MenuControlProvider provider,
+  TransactionProvider getProviderOverride(
+    covariant TransactionProvider provider,
   ) {
     return call(
       provider.cardID,
@@ -76,30 +76,30 @@ class MenuControlFamily extends Family<MenuControl> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'menuControlProvider';
+  String? get name => r'transactionProvider';
 }
 
-/// See also [MenuControl].
-class MenuControlProvider
-    extends AutoDisposeNotifierProviderImpl<MenuControl, MenuControl> {
-  /// See also [MenuControl].
-  MenuControlProvider(
+/// See also [Transaction].
+class TransactionProvider
+    extends AutoDisposeNotifierProviderImpl<Transaction, Transaction> {
+  /// See also [Transaction].
+  TransactionProvider(
     int cardID,
   ) : this._internal(
-          () => MenuControl()..cardID = cardID,
-          from: menuControlProvider,
-          name: r'menuControlProvider',
+          () => Transaction()..cardID = cardID,
+          from: transactionProvider,
+          name: r'transactionProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$menuControlHash,
-          dependencies: MenuControlFamily._dependencies,
+                  : _$transactionHash,
+          dependencies: TransactionFamily._dependencies,
           allTransitiveDependencies:
-              MenuControlFamily._allTransitiveDependencies,
+              TransactionFamily._allTransitiveDependencies,
           cardID: cardID,
         );
 
-  MenuControlProvider._internal(
+  TransactionProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -112,8 +112,8 @@ class MenuControlProvider
   final int cardID;
 
   @override
-  MenuControl runNotifierBuild(
-    covariant MenuControl notifier,
+  Transaction runNotifierBuild(
+    covariant Transaction notifier,
   ) {
     return notifier.build(
       cardID,
@@ -121,10 +121,10 @@ class MenuControlProvider
   }
 
   @override
-  Override overrideWith(MenuControl Function() create) {
+  Override overrideWith(Transaction Function() create) {
     return ProviderOverride(
       origin: this,
-      override: MenuControlProvider._internal(
+      override: TransactionProvider._internal(
         () => create()..cardID = cardID,
         from: from,
         name: null,
@@ -137,13 +137,13 @@ class MenuControlProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<MenuControl, MenuControl> createElement() {
-    return _MenuControlProviderElement(this);
+  AutoDisposeNotifierProviderElement<Transaction, Transaction> createElement() {
+    return _TransactionProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is MenuControlProvider && other.cardID == cardID;
+    return other is TransactionProvider && other.cardID == cardID;
   }
 
   @override
@@ -155,18 +155,18 @@ class MenuControlProvider
   }
 }
 
-mixin MenuControlRef on AutoDisposeNotifierProviderRef<MenuControl> {
+mixin TransactionRef on AutoDisposeNotifierProviderRef<Transaction> {
   /// The parameter `cardID` of this provider.
   int get cardID;
 }
 
-class _MenuControlProviderElement
-    extends AutoDisposeNotifierProviderElement<MenuControl, MenuControl>
-    with MenuControlRef {
-  _MenuControlProviderElement(super.provider);
+class _TransactionProviderElement
+    extends AutoDisposeNotifierProviderElement<Transaction, Transaction>
+    with TransactionRef {
+  _TransactionProviderElement(super.provider);
 
   @override
-  int get cardID => (origin as MenuControlProvider).cardID;
+  int get cardID => (origin as TransactionProvider).cardID;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

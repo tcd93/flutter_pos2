@@ -109,7 +109,7 @@ class _MenuState extends ConsumerState<Menu> {
   Widget checkOutButton(int cardID) {
     return Consumer(
       builder: (context, ref, _) {
-        final control = ref.read(menuControlProvider(cardID));
+        final control = ref.read(transactionProvider(cardID));
         final price = ref.watch(priceProvider(cardID)).value ?? 0.0;
         final note = ref.watch(noteProvider(cardID)).value;
         return ElevatedButton.icon(

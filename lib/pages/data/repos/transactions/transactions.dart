@@ -10,9 +10,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'transactions.g.dart';
 
 @riverpod
-class MenuControl extends _$MenuControl {
+class Transaction extends _$Transaction {
   @override
-  MenuControl build(int cardID) => this;
+  Transaction build(int cardID) => this;
 
   Future<int> checkOut(double amount, String? note) async {
     final db = ref.read(dbProvider);
