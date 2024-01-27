@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/ephemeral.dart';
 import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card_details.dart';
 import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card_header.dart';
 import 'package:flutter_pos/utils/app_theme.dart';

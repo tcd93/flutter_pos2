@@ -1,4 +1,7 @@
-part of 'db.dart';
+import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'ephemeral.g.dart';
 
 @Riverpod(keepAlive: true)
 class Login extends _$Login {
@@ -29,4 +32,22 @@ class SelectedCard extends _$SelectedCard {
   void close() => state = null;
 
   void open(int cardID) => state = cardID;
+}
+
+@immutable
+class Status {
+  /// The page user selected (may not be in view port yet - still in animation)
+  final int selected;
+
+  /// The page currently in view port
+  final int current;
+
+  const Status({this.selected = 0, this.current = 0});
+
+  Status copyWith({int? selected, int? current}) {
+    return Status(
+      selected: selected ?? this.selected,
+      current: current ?? this.current,
+    );
+  }
 }

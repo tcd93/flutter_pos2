@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pos/image_type.dart';
-import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/data/ephemeral.dart';
 import 'package:flutter_pos/pages/data/repos/servings/servings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
