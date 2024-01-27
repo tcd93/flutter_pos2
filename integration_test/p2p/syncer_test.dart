@@ -21,8 +21,10 @@ void main() {
     setUp(() async {
       memdb = TestingDriftDB();
 
-      await memdb.into(memdb.cardItems).insert(
-          CardItemsCompanion.insert(id: const d.Value(0), pageID: 0, title: 'test'));
+      await memdb.into(memdb.pages).insert(PagesCompanion.insert(
+          id: const d.Value(0), name: const d.Value('Test Page')));
+      await memdb.into(memdb.cardItems).insert(CardItemsCompanion.insert(
+          id: const d.Value(0), pageID: 0, title: 'test'));
       await memdb.into(memdb.transactions).insert(existingTrx);
     });
 
@@ -48,6 +50,25 @@ void main() {
       final row = rows[0];
       expect(row.id, existingTrx.id);
       expect(row.toJson()..remove('id'), mergingTrx.toJson()..remove('id'));
+    });
+
+    test('ability to merge pages in syncer', () async {
+      const mergingPage = Page(id: 0, name: 'Page 1');
+      const mergingPage2 = Page(id: 1, name: 'Page 2');
+      // send....
+      await syncer.syncPages(
+        jsonDecode(Syncer.wrap([mergingPage, mergingPage2])),
+      );
+      final query = memdb.select(memdb.pages)
+        ..where((r) => r.id.isIn([0, 1]))
+        ..orderBy([(u) => d.OrderingTerm.asc(u.id)]);
+      final rows = await query.get();
+      expect(rows.length, 2);
+
+      expect(rows[0].id, 0);
+      expect(rows[0].toJson(), mergingPage.toJson());
+      expect(rows[1].id, 1);
+      expect(rows[1].toJson(), mergingPage2.toJson());
     });
   });
 }

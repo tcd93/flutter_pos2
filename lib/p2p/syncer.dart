@@ -34,6 +34,7 @@ class Syncer {
     required void Function() onAcknowledge,
   }) async {
     try {
+      await db.customStatement('PRAGMA foreign_keys = OFF;');
       final json = jsonDecode(message);
       final type = getType(json);
 
@@ -51,7 +52,107 @@ class Syncer {
       _logger.severe('Error in json decoding', ex, stack);
     } catch (ex, stack) {
       _logger.severe('Unknown error', ex, stack);
+    } finally {
+      await db.customStatement('PRAGMA foreign_keys = ON;');
     }
+  }
+
+  @visibleForTesting
+  Future<int?> syncCards(dynamic json) async {
+    final cards = _tryUnwrap<CardItem>(json);
+
+    await db.cardItems.insertAll(
+      cards,
+      onConflict: DoUpdate.withExcluded(
+        (old, excluded) {
+          return CardItemsCompanion.custom(
+            id: excluded.id,
+            pageID: excluded.pageID,
+            title: excluded.title,
+          );
+        },
+      ),
+    );
+    return cards.length;
+  }
+
+  @visibleForTesting
+  Future<int?> syncDishes(dynamic json) async {
+    final dishes = _tryUnwrap<Dish>(json);
+
+    await db.dishes.insertAll(
+      dishes,
+      onConflict: DoUpdate.withExcluded(
+        (old, excluded) {
+          return DishesCompanion.custom(
+            id: excluded.id,
+            imageData: excluded.imageData,
+            imagePath: excluded.imagePath,
+            imageType: excluded.imageType,
+            name: excluded.name,
+            price: excluded.price,
+          );
+        },
+      ),
+    );
+    return dishes.length;
+  }
+
+  @visibleForTesting
+  Future<int?> syncPages(dynamic json) async {
+    final pages = _tryUnwrap<Page>(json);
+
+    await db.pages.insertAll(
+      pages,
+      onConflict: DoUpdate.withExcluded(
+        (old, excluded) {
+          return PagesCompanion.custom(
+            id: excluded.id,
+            asset: excluded.asset,
+            name: excluded.name,
+          );
+        },
+      ),
+    );
+    return pages.length;
+  }
+
+  @visibleForTesting
+  Future<int?> syncServings(dynamic json) async {
+    final servings = _tryUnwrap<Serving>(json);
+
+    await db.servings.insertAll(
+      servings,
+      onConflict: DoUpdate.withExcluded(
+        (old, excluded) {
+          return ServingsCompanion.custom(
+            cardID: excluded.cardID,
+            dishID: excluded.dishID,
+            portion: excluded.portion,
+          );
+        },
+      ),
+    );
+    return servings.length;
+  }
+
+  @visibleForTesting
+  Future<int?> syncTransactionDetails(dynamic json) async {
+    final trands = _tryUnwrap<TransactionDetail>(json);
+
+    await db.transactionDetails.insertAll(
+      trands,
+      onConflict: DoUpdate.withExcluded(
+        (old, excluded) {
+          return TransactionDetailsCompanion.custom(
+            dishID: excluded.dishID,
+            portion: excluded.portion,
+            transId: excluded.transId,
+          );
+        },
+      ),
+    );
+    return trands.length;
   }
 
   /// Process and persist messages into database, return rowcount
@@ -64,6 +165,7 @@ class Syncer {
       onConflict: DoUpdate.withExcluded(
         (old, excluded) {
           return TransactionsCompanion.custom(
+            id: excluded.id,
             cardID: excluded.cardID,
             date: excluded.date,
             time: excluded.time,
@@ -87,6 +189,22 @@ class Syncer {
     // https://github.com/dart-lang/language/issues/356
     if (T == Transaction) {
       return records.map((r) => Transaction.fromJson(r)).toList() as List<T>;
+    }
+    if (T == TransactionDetail) {
+      return records.map((r) => TransactionDetail.fromJson(r)).toList()
+          as List<T>;
+    }
+    if (T == Page) {
+      return records.map((r) => Page.fromJson(r)).toList() as List<T>;
+    }
+    if (T == CardItem) {
+      return records.map((r) => CardItem.fromJson(r)).toList() as List<T>;
+    }
+    if (T == Serving) {
+      return records.map((r) => Serving.fromJson(r)).toList() as List<T>;
+    }
+    if (T == Dish) {
+      return records.map((r) => Dish.fromJson(r)).toList() as List<T>;
     }
     throw 'Sync type ${T.runtimeType} not supported';
   }
