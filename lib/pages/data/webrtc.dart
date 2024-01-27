@@ -58,11 +58,11 @@ class Service extends _$Service {
     final db = ref.read(dbProvider);
     Syncer(db).processMessage(
       message,
-      onReceiverComplete: () {
+      onReceiveCompleteSignal: () {
         state.sendTo(channel, Syncer.acknowledge());
         ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
       },
-      onAcknowledge: () {
+      onSenderAcknowledgeSignal: () {
         _logger.info('Sync acknowledged for channel: ${channel.label}');
         ref.read(syncDoneNotifierProvider(channel.label!).notifier).done();
       },
@@ -79,5 +79,8 @@ class SyncDoneNotifier extends _$SyncDoneNotifier {
   @override
   bool build(String channelLabel) => false;
 
-  void done() => state = true;
+  void done() {
+    state = true;
+    ref.invalidateSelf();
+  }
 }

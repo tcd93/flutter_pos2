@@ -51,7 +51,7 @@ final peerConnectionStateProvider =
 );
 
 typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
-String _$serviceHash() => r'dbecb8ff915aa1d21561fb3f19e9122b6eeb3662';
+String _$serviceHash() => r'd6af9607378b418db86ff3425322c26635a45dc8';
 
 /// See also [Service].
 @ProviderFor(Service)
@@ -65,7 +65,7 @@ final serviceProvider = NotifierProvider<Service, WebRtcManager>.internal(
 );
 
 typedef _$Service = Notifier<WebRtcManager>;
-String _$syncDoneNotifierHash() => r'0d221204af5204b5ad5db2a4ba4ef73973933940';
+String _$syncDoneNotifierHash() => r'2147b5e762d065b24bbcf3e56131f3d6df863124';
 
 /// Copied from Dart SDK
 class _SystemHash {

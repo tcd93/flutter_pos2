@@ -25,13 +25,46 @@ class Syncer {
     return json['record_type'];
   }
 
-  /// When merging on receiver is complete, [onReceiverComplete] is called
-  /// When receiver done processing Transactions a message is sent back
-  /// and [onAcknowledge] is called on sender side
+  /// Produce database records in string format to send over
+  Stream<String> parseRecords() async* {
+    final pages = await db.select(db.pages).get();
+    yield Syncer.wrap(pages);
+    _logger.info('Sent: pages');
+
+    final cards = await db.select(db.cardItems).get();
+    yield Syncer.wrap(cards);
+    _logger.info('Sent: cardItems');
+
+    final dishes = await db.select(db.dishes).get();
+    yield Syncer.wrap(dishes);
+    _logger.info('Sent: dishes');
+
+    final servings = await db.select(db.servings).get();
+    yield Syncer.wrap(servings);
+    _logger.info('Sent: servings');
+
+    // TODO: select top 10, loop
+    final trans = await db.select(db.transactions).get();
+    await for (final sublist in Syncer.wrapTen(trans)) {
+      yield sublist;
+    }
+    _logger.info('Sent: transactions');
+
+    final tranDetails = await db.select(db.transactionDetails).get();
+    await for (final sublist in Syncer.wrapTen(tranDetails)) {
+      yield sublist;
+    }
+    _logger.info('Sent: transaction details');
+
+    yield jsonEncode({'record_type': 'Complete'});
+  }
+
+  /// Process incoming webrtc messages, content should be Json format and always
+  /// include key 'record_type'
   void processMessage(
     String message, {
-    required void Function() onReceiverComplete,
-    required void Function() onAcknowledge,
+    required void Function() onReceiveCompleteSignal,
+    required void Function() onSenderAcknowledgeSignal,
   }) async {
     try {
       await db.customStatement('PRAGMA foreign_keys = OFF;');
@@ -41,10 +74,24 @@ class Syncer {
       switch (type) {
         case 'Transaction':
           await syncTransactions(json);
-          final done = json['done'];
-          if (done) onReceiverComplete();
+        case 'TransactionDetail':
+          await syncTransactionDetails(json);
+        case 'Page':
+          await syncPages(json);
+        case 'CardItem':
+          await syncCards(json);
+        case 'Serving':
+          await syncServings(json);
+        case 'Dish':
+          await syncDishes(json);
+        case 'Complete':
+          _logger.info('Complete signal received');
+          onReceiveCompleteSignal();
         case 'Acknowledge':
-          onAcknowledge();
+          onSenderAcknowledgeSignal();
+          return;
+        default:
+          _logger.severe("Unknown type from incoming json message: $type");
       }
     } on InvalidJsonFormatException catch (ex) {
       _logger.severe(ex);
@@ -213,16 +260,19 @@ class Syncer {
     return jsonEncode({'record_type': 'Acknowledge'});
   }
 
+  @visibleForTesting
   static String wrap(Iterable<Insertable> data, [bool done = true]) {
     assert(data.isNotEmpty);
 
     final type = data.first.runtimeType.toString();
+    _logger.info('wrapping for type: $type, done status: $done');
     return jsonEncode(
       {'record_type': type, 'done': done, 'record_details': data},
     );
   }
 
   /// wrap 10 transactions at a time
+  @visibleForTesting
   static Stream<String> wrapTen(List<Insertable> data) async* {
     assert(data.isNotEmpty);
     for (int i = 0; i < data.length; i = i + 10) {

@@ -161,11 +161,9 @@ class NetworkItem extends ConsumerWidget {
               leading: icon,
               onTap: () async {
                 final db = ref.read(dbProvider);
-                final service = ref.read(serviceProvider);
-                // TODO: select top 10, loop
-                final trans = await db.select(db.transactions).get();
-                await for (final sublist in Syncer.wrapTen(trans)) {
-                  service.send(sublist);
+                final syncer = Syncer(db);
+                await for (final message in syncer.parseRecords()) {
+                  ref.read(serviceProvider).send(message);
                 }
               },
             );
