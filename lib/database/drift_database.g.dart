@@ -560,8 +560,8 @@ class Dish extends DataClass implements Insertable<Dish> {
     map['price'] = Variable<double>(price);
     map['name'] = Variable<String>(name);
     {
-      final converter = Dishes.$converterimageType;
-      map['imageType'] = Variable<int>(converter.toSql(imageType));
+      map['imageType'] =
+          Variable<int>(Dishes.$converterimageType.toSql(imageType));
     }
     if (!nullToAbsent || imagePath != null) {
       map['imagePath'] = Variable<String>(imagePath);
@@ -730,9 +730,8 @@ class DishesCompanion extends UpdateCompanion<Dish> {
       map['name'] = Variable<String>(name.value);
     }
     if (imageType.present) {
-      final converter = Dishes.$converterimageType;
-
-      map['imageType'] = Variable<int>(converter.toSql(imageType.value));
+      map['imageType'] =
+          Variable<int>(Dishes.$converterimageType.toSql(imageType.value));
     }
     if (imagePath.present) {
       map['imagePath'] = Variable<String>(imagePath.value);

@@ -51,7 +51,7 @@ final peerConnectionStateProvider =
 );
 
 typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
-String _$serviceHash() => r'b740fbaf4f8d19a63c6b23cef452dd4cb80de369';
+String _$serviceHash() => r'f5c5b87d31a0e8ce1582ccb5f990051c422075d4';
 
 /// See also [Service].
 @ProviderFor(Service)

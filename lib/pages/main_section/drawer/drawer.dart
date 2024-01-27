@@ -1,6 +1,7 @@
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/main_section/drawer/edit_menu/edit_menu_item.dart';
 import 'package:flutter_pos/pages/main_section/drawer/local_area_network/network_item.dart';
 import 'package:flutter_pos/pages/main_section/drawer/reports/report_item.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
@@ -31,6 +32,7 @@ class PageDrawer extends ConsumerWidget {
             const NetworkItem(key: ValueKey(4)),
             if (loggedIn) ...[
               const Divider(),
+              const EditMenuItem(),
             ],
           ],
         ),

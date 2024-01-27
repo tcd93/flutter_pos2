@@ -3,6 +3,7 @@
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/db.dart';
+import 'package:flutter_pos/pages/main_section/drawer/edit_menu/edit_menu_view.dart';
 import 'package:flutter_pos/pages/main_section/drawer/reports/report_view.dart';
 import 'package:flutter_pos/pages/main_section/main_page.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
       home: const Pages(),
       routes: {
         '/report': (context) => const ReportView(),
+        '/edit-menu': (context) => const EditMenuView(),
       },
       // use reg exp to find uri parameters for /menu route
       onGenerateRoute: (settings) {

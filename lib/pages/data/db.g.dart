@@ -302,7 +302,7 @@ class _PriceByDateProviderElement extends AutoDisposeFutureProviderElement<
   DateTimeRange get range => (origin as PriceByDateProvider).range;
 }
 
-String _$loginHash() => r'4e0b8b799bf87335c441b74e239ce7920a27d270';
+String _$loginHash() => r'28223e4aec560ae13d2518320c9917a5f2d1812a';
 
 /// See also [Login].
 @ProviderFor(Login)
@@ -316,7 +316,7 @@ final loginProvider = NotifierProvider<Login, bool>.internal(
 );
 
 typedef _$Login = Notifier<bool>;
-String _$menuControlHash() => r'effefd3374f3c4bea3264add9c53a6ebecb9f544';
+String _$menuControlHash() => r'885f52ce5d0412c6a07745bea40d3797aa30bb4c';
 
 abstract class _$MenuControl extends BuildlessAutoDisposeNotifier<MenuControl> {
   late final int cardID;
@@ -458,7 +458,7 @@ class _MenuControlProviderElement
   int get cardID => (origin as MenuControlProvider).cardID;
 }
 
-String _$pageStatusHash() => r'9038297c47c2201f9a0c11c3a9dc1ba9e79de829';
+String _$pageStatusHash() => r'02c116666a15d8e0866f881be0ac4865f64d7391';
 
 /// See also [PageStatus].
 @ProviderFor(PageStatus)
@@ -488,7 +488,7 @@ final selectedCardProvider = NotifierProvider<SelectedCard, int?>.internal(
 );
 
 typedef _$SelectedCard = Notifier<int?>;
-String _$cardIDHash() => r'b25065774c6ad3b44243396a2c55ddea27320639';
+String _$cardIDHash() => r'b41dfa1c2232e5e99e3e08736f046e843c322f03';
 
 abstract class _$CardID extends BuildlessAutoDisposeAsyncNotifier<List<int>> {
   late final int pageID;
@@ -629,7 +629,7 @@ class _CardIDProviderElement
   int get pageID => (origin as CardIDProvider).pageID;
 }
 
-String _$cardTitleHash() => r'af70a2d9f47e872c42bf3dae2e8f1b386db8a4b4';
+String _$cardTitleHash() => r'1f11d9d8d93a208e3d021e2d8fa79434dd270828';
 
 abstract class _$CardTitle extends BuildlessAutoDisposeAsyncNotifier<String?> {
   late final int cardID;
@@ -1064,7 +1064,7 @@ class _NoteProviderElement
   int get cardID => (origin as NoteProvider).cardID;
 }
 
-String _$pageIDHash() => r'c12f6fd5ee109955cafdf9882c239288e93672a7';
+String _$pageIDHash() => r'bfacf1984bf615ded8a9bf2b5a54bdf80e2cd17f';
 
 /// See also [PageID].
 @ProviderFor(PageID)
@@ -1220,7 +1220,7 @@ class _PageNameProviderElement
   int get pageID => (origin as PageNameProvider).pageID;
 }
 
-String _$portionHash() => r'e967c994d36ffbf20ad5958881521ed51a532047';
+String _$portionHash() => r'29aa93057a070f021dd83105ec245fcdb2c720fe';
 
 abstract class _$Portion extends BuildlessAutoDisposeAsyncNotifier<int?> {
   late final int cardID;
