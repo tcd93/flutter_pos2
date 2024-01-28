@@ -45,6 +45,16 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    // this is required to fix the following error in Graddle 8.0
+    // 'compileReleaseJavaWithJavac' task (current target is 1.8) and 
+    // 'compileReleaseKotlin' task (current target is 17) jvm target compatibility 
+    // should be set to the same Java version
+    kotlinOptions {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
 }
 
 flutter {
