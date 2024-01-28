@@ -20,7 +20,7 @@ class HostStatus extends _$HostStatus {
 class Label extends _$Label {
   @override
   List<String?> build() {
-    return ref.watch(serviceProvider.select((srv) => srv.displayLabels));
+    return ref.watch(webRtcServiceProvider.select((srv) => srv.displayLabels));
   }
 }
 
@@ -31,9 +31,20 @@ class PeerConnectionState extends _$PeerConnectionState {
   set(RTCPeerConnectionState newState) => state = newState;
 }
 
+@riverpod
+class SyncDoneNotifier extends _$SyncDoneNotifier {
+  @override
+  bool build(String channelLabel) => false;
+
+  void done() {
+    state = true;
+    ref.invalidateSelf();
+  }
+}
+
 @Riverpod(keepAlive: true)
-class Service extends _$Service {
-  final _logger = Logger('Service Provider');
+class WebRtcService extends _$WebRtcService {
+  final _logger = Logger('WebRtc Service Provider');
 
   @override
   WebRtcManager build() {
@@ -71,16 +82,5 @@ class Service extends _$Service {
 
   void onPeerConnectionState(RTCPeerConnectionState state) {
     ref.read(peerConnectionStateProvider.notifier).set(state);
-  }
-}
-
-@riverpod
-class SyncDoneNotifier extends _$SyncDoneNotifier {
-  @override
-  bool build(String channelLabel) => false;
-
-  void done() {
-    state = true;
-    ref.invalidateSelf();
   }
 }

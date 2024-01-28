@@ -178,10 +178,10 @@ void main() {
       containerForReceiver = await createContainer();
       containerForReceiver2 = await createContainer();
 
-      signaler = containerForSignaler.read(serviceProvider);
+      signaler = containerForSignaler.read(webRtcServiceProvider);
 
       await signaler.startServer(passphrase: 'password123');
-      receiver = containerForReceiver.read(serviceProvider);
+      receiver = containerForReceiver.read(webRtcServiceProvider);
       await receiver.createChannel('localhost', label, 'password123');
 
       final channelStateCompleter1 = Completer();
@@ -195,7 +195,7 @@ void main() {
       listener1.close();
 
       await signaler.startServer(passphrase: 'password123');
-      receiver2 = containerForReceiver2.read(serviceProvider);
+      receiver2 = containerForReceiver2.read(webRtcServiceProvider);
       await receiver2.createChannel('localhost', label2, 'password123');
 
       final channelStateCompleter2 = Completer();

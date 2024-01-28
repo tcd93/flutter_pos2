@@ -20,7 +20,7 @@ final hostStatusProvider = NotifierProvider<HostStatus, bool>.internal(
 );
 
 typedef _$HostStatus = Notifier<bool>;
-String _$labelHash() => r'445b9d7224430001adc8bdf6e8b3209a70cc07f7';
+String _$labelHash() => r'30fefad2fea35026e942cdf9652497763a8be2ce';
 
 /// See also [Label].
 @ProviderFor(Label)
@@ -51,20 +51,6 @@ final peerConnectionStateProvider =
 );
 
 typedef _$PeerConnectionState = Notifier<RTCPeerConnectionState?>;
-String _$serviceHash() => r'd6af9607378b418db86ff3425322c26635a45dc8';
-
-/// See also [Service].
-@ProviderFor(Service)
-final serviceProvider = NotifierProvider<Service, WebRtcManager>.internal(
-  Service.new,
-  name: r'serviceProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$serviceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$Service = Notifier<WebRtcManager>;
 String _$syncDoneNotifierHash() => r'2147b5e762d065b24bbcf3e56131f3d6df863124';
 
 /// Copied from Dart SDK
@@ -228,5 +214,22 @@ class _SyncDoneNotifierProviderElement
   @override
   String get channelLabel => (origin as SyncDoneNotifierProvider).channelLabel;
 }
+
+String _$webRtcServiceHash() => r'daed772b7f8b85c4c9eb47478101855b8b0a3aa0';
+
+/// See also [WebRtcService].
+@ProviderFor(WebRtcService)
+final webRtcServiceProvider =
+    NotifierProvider<WebRtcService, WebRtcManager>.internal(
+  WebRtcService.new,
+  name: r'webRtcServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$webRtcServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$WebRtcService = Notifier<WebRtcManager>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

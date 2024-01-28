@@ -67,7 +67,7 @@ class NetworkItem extends ConsumerWidget {
                   : const Text('Create host'),
               leading: icon,
               onTap: () async {
-                final signaler = ref.read(serviceProvider);
+                final signaler = ref.read(webRtcServiceProvider);
                 if (!hosting) {
                   final pass = await askForPassphrase(context);
                   if (pass != null)
@@ -104,7 +104,7 @@ class NetworkItem extends ConsumerWidget {
                   final passphrase = result.$2;
                   try {
                     final label = 'channel-${_idGenerator()}';
-                    final receiver = ref.read(serviceProvider);
+                    final receiver = ref.read(webRtcServiceProvider);
                     await receiver.createChannel(ip, label, passphrase);
                   } catch (ex) {
                     if (!context.mounted) {
@@ -140,7 +140,7 @@ class NetworkItem extends ConsumerWidget {
                 ref.read(peerConnectionStateProvider.notifier).set(
                       RTCPeerConnectionState.RTCPeerConnectionStateDisconnected,
                     );
-                final service = ref.read(serviceProvider);
+                final service = ref.read(webRtcServiceProvider);
                 service.disconnect();
               },
             );
@@ -163,7 +163,7 @@ class NetworkItem extends ConsumerWidget {
                 final db = ref.read(dbProvider);
                 final syncer = Syncer(db);
                 await for (final message in syncer.parseRecords()) {
-                  ref.read(serviceProvider).send(message);
+                  ref.read(webRtcServiceProvider).send(message);
                 }
               },
             );
