@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_pos/image_type.dart';
 import 'package:flutter_pos/pages/data/ephemeral.dart';
-import 'package:flutter_pos/pages/data/repos/dishes/dishes.dart';
 import 'package:flutter_pos/pages/data/repos/servings/servings.dart';
+import 'package:flutter_pos/pages/main_section/common/dish_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishTile extends ConsumerWidget {
@@ -47,7 +43,12 @@ class DishTile extends ConsumerWidget {
                   onLongPressUp: () => updateOrDelete(ref, 0),
                   // wrap image in a SizedBox to prevent it from blocking
                   // GestureDetector while loading
-                  child: SizedBox.expand(child: _imageConverter(ref)),
+                  child: SizedBox.expand(
+                    child: DishImage(
+                      dishID,
+                      preferredHeight: size.height.floor(),
+                    ),
+                  ),
                 )),
             const Divider(),
             Expanded(child: _buttonRow(ref, portion)),
@@ -88,49 +89,6 @@ class DishTile extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _imageConverter(WidgetRef ref) {
-    final dish = ref.watch(dishItemProvider(dishID)).value;
-    if (dish == null) return const Placeholder();
-
-    return switch (dish.imageType) {
-      ImageType.asset => Image.asset(
-          dish.imagePath!,
-          fit: BoxFit.fitHeight,
-          // cacheWidth: size.width.floor(),
-          cacheHeight: size.height.floor(),
-          errorBuilder: _imageErrorBuilder,
-        ),
-      ImageType.bytes => Image.memory(
-          Uint8List.fromList(dish.imageData!),
-          fit: BoxFit.fitHeight,
-          // cacheWidth: size.width.floor(),
-          cacheHeight: size.height.floor(),
-          errorBuilder: _imageErrorBuilder,
-        ),
-      ImageType.file => Image.file(
-          File(dish.imagePath!),
-          fit: BoxFit.fitHeight,
-          // cacheWidth: size.width.floor(),
-          cacheHeight: size.height.floor(),
-          errorBuilder: _imageErrorBuilder,
-        ),
-      ImageType.url => Image.network(
-          dish.imagePath!,
-          fit: BoxFit.fitHeight,
-          // cacheWidth: size.width.floor(),
-          cacheHeight: size.height.floor(),
-          errorBuilder: _imageErrorBuilder,
-        ),
-    };
-  }
-
-  Widget _imageErrorBuilder(BuildContext context, Object error, StackTrace? _) {
-    return Image.asset(
-      'assets/unavailable.png',
-      semanticLabel: 'Image unavailable',
     );
   }
 }

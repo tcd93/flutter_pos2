@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/repos/dishes/dishes.dart';
-import 'package:flutter_pos/utils/app_theme.dart';
+import 'package:flutter_pos/pages/main_section/drawer/edit_menu/menu_list_item.dart';
+import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
@@ -15,31 +16,26 @@ class MenuList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final screenHeight = MediaQuery.of(context).size.longestSide;
+    final extent = calculateExtent(screenHeight);
     final asyncData = ref.watch(dishIDProvider);
 
     return asyncData.when(
       data: (dishIDs) {
         return ListView.builder(
           itemBuilder: (context, index) {
-            return Padding(
-              key: ValueKey(index),
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                title: Text(index.toString()),
-                onTap: () {
-                  pageControl.animateToPage(
-                    1,
-                    duration: const Duration(
-                      milliseconds: AppTheme.carouselDuration,
-                    ),
-                    curve: Curves.easeIn,
-                  );
-                },
-              ),
+            if (index >= dishIDs.length) {
+              return const SizedBox();
+            }
+            final id = dishIDs[index];
+            return MenuListItem(
+              id,
+              pageControl: pageControl,
+              key: ValueKey(id),
             );
           },
           itemCount: dishIDs.length,
-          itemExtent: 100,
+          itemExtent: extent,
           physics: const BouncingScrollPhysics(),
         );
       },

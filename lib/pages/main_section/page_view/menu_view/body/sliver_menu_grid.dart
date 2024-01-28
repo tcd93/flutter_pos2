@@ -1,8 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/repos/dishes/dishes.dart';
 import 'package:flutter_pos/pages/main_section/page_view/menu_view/body/dish_tile.dart';
+import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/sliver_grid_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -73,20 +72,7 @@ class _MenuGridState extends ConsumerState<SliverMenuGrid> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.shortestSide;
-    extent = switch (screenWidth) {
-      < 600 /*phone*/ => screenWidth / 3,
-      >= 600 && < 905 /*tablet*/ => screenWidth / 6,
-      >= 905 && < 1240 => screenWidth / 8,
-      >= 1240 && < 1440 => screenWidth / 10,
-      _ => screenWidth / 12,
-    };
-    margin = switch (screenWidth) {
-      < 600 => 16,
-      >= 600 && < 905 => 32,
-      >= 905 && < 1240 =>
-        lerpDouble(32, 200, (screenWidth - 905) / (1240 - 905))!,
-      >= 1240 && < 1440 => 200,
-      _ => 232,
-    };
+    extent = calculateExtent(screenWidth);
+    margin = calculateMargin(screenWidth);
   }
 }

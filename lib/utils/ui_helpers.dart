@@ -1,4 +1,28 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+
+/// Get a prefered width for an item in a horizontal list
+double calculateExtent(double width) {
+  return switch (width) {
+    < 600 /*phone*/ => width / 3,
+    >= 600 && < 905 /*tablet*/ => width / 6,
+    >= 905 && < 1240 => width / 8,
+    >= 1240 && < 1440 => width / 10,
+    _ => width / 12,
+  };
+}
+
+/// Get a prefered margins between items in a horizontal list
+double calculateMargin(double width) {
+  return switch (width) {
+    < 600 => 16,
+    >= 600 && < 905 => 32,
+    >= 905 && < 1240 => lerpDouble(32, 200, (width - 905) / (1240 - 905))!,
+    >= 1240 && < 1440 => 200,
+    _ => 232,
+  };
+}
 
 bool isIOS(BuildContext context) {
   if (Theme.of(context).platform == TargetPlatform.iOS) {
