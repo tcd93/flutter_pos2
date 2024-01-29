@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/pages/main_section/drawer/edit_menu/edit_form.dart';
-import 'package:flutter_pos/pages/main_section/drawer/edit_menu/menu_list.dart';
+import 'package:flutter_pos/pages/main_section/common/search_bar.dart';
+import 'package:flutter_pos/pages/main_section/drawer/edit_menu/body/edit_form.dart';
+import 'package:flutter_pos/pages/main_section/drawer/edit_menu/body/edit_menu_sliver_grid.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditMenuView extends ConsumerWidget {
@@ -8,16 +9,27 @@ class EditMenuView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final filterString = ValueNotifier('');
     final pageControl = PageController();
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: MySearchBar(filterString),
+          ),
+        ],
+      ),
       body: PageView(
         // disable dragging to next page manually
         physics: const NeverScrollableScrollPhysics(),
         controller: pageControl,
         children: [
-          MenuList(pageControl),
+          EditMenuSliverGrid(
+            pageControl: pageControl,
+            filterString: filterString,
+          ),
           EditForm(pageControl),
         ],
       ),

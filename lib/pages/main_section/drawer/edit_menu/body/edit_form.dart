@@ -13,8 +13,7 @@ class EditForm extends ConsumerWidget {
       canPop: false,
       child: const Placeholder(color: Colors.blue),
       onPopInvoked: (didPop) {
-        pageControl.animateToPage(
-          0,
+        pageControl.previousPage(
           duration: const Duration(
             milliseconds: AppTheme.carouselDuration,
           ),

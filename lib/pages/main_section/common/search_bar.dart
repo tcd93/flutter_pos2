@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/widgets/anim_search_widget.dart';
 
-class MenuSearchBar extends StatelessWidget {
+class MySearchBar extends StatelessWidget {
   final ValueNotifier<String> filterString;
 
-  const MenuSearchBar(this.filterString, {super.key});
+  const MySearchBar(this.filterString, {super.key});
 
   @override
   Widget build(BuildContext context) {

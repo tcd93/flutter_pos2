@@ -36,20 +36,21 @@ class DishTile extends ConsumerWidget {
         child: Column(
           children: [
             Expanded(
-                flex: 3,
-                child: GestureDetector(
-                  onTapDown: (_) => updateOrDelete(ref, portion + 1),
-                  // onDoubleTap: () => updateOrDelete(ref, portion - 1),
-                  onLongPressUp: () => updateOrDelete(ref, 0),
-                  // wrap image in a SizedBox to prevent it from blocking
-                  // GestureDetector while loading
-                  child: SizedBox.expand(
-                    child: DishImage(
-                      dishID,
-                      preferredHeight: size.height.floor(),
-                    ),
+              flex: 3,
+              child: GestureDetector(
+                onTapDown: (_) => updateOrDelete(ref, portion + 1),
+                // onDoubleTap: () => updateOrDelete(ref, portion - 1),
+                onLongPressUp: () => updateOrDelete(ref, 0),
+                // wrap image in a SizedBox to prevent it from blocking
+                // GestureDetector while loading
+                child: SizedBox.expand(
+                  child: DishImage(
+                    dishID,
+                    preferredHeight: size.height.floor(),
                   ),
-                )),
+                ),
+              ),
+            ),
             const Divider(),
             Expanded(child: _buttonRow(ref, portion)),
           ],

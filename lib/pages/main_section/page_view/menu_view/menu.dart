@@ -7,11 +7,10 @@ import 'package:flutter_pos/pages/data/ephemeral.dart';
 import 'package:flutter_pos/pages/data/repos/price.dart';
 import 'package:flutter_pos/pages/data/repos/servings_note/servings_note.dart';
 import 'package:flutter_pos/pages/data/repos/transactions/transactions.dart';
+import 'package:flutter_pos/pages/main_section/common/search_bar.dart';
+import 'package:flutter_pos/pages/main_section/page_view/menu_view/body/sliver_grid_title.dart';
 import 'package:flutter_pos/pages/main_section/page_view/menu_view/body/sliver_menu_grid.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'appbar/menu_search_bar.dart';
-import 'body/sliver_grid_title.dart';
 
 class Menu extends ConsumerStatefulWidget {
   /// Callback if placed inside an [OpenContainer]
@@ -71,7 +70,7 @@ class _MenuState extends ConsumerState<Menu> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: MenuSearchBar(filterString),
+            child: MySearchBar(filterString),
           ),
         ],
       ),
