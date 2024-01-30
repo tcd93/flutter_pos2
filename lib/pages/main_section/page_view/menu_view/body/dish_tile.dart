@@ -54,6 +54,8 @@ class DishTile extends ConsumerWidget {
                         child: DishImage(
                           dishID,
                           preferredHeight: size.height.floor(),
+                          opacityAnimation: animation,
+                          padding: 0.0,
                         ),
                       ),
                       Expanded(child: Text(dish?.name ?? '')),

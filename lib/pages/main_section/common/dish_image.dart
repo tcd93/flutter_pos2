@@ -9,12 +9,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class DishImage extends ConsumerWidget {
   final int dishID;
   final BoxFit fit;
+
+  /// Simulate FadeTransition
+  final Animation<double>? opacityAnimation;
+
+  /// Opacity applied to [Image]
+  final double fixedOpacity;
+  final double padding;
   final int? preferredHeight;
   final int? preferredWidth;
 
   const DishImage(
     this.dishID, {
     this.fit = BoxFit.fitHeight,
+    this.fixedOpacity = 1.0,
+    this.opacityAnimation,
+    this.padding = 8.0,
     this.preferredHeight,
     this.preferredWidth,
     super.key,
@@ -33,6 +43,16 @@ class DishImage extends ConsumerWidget {
           cacheHeight: preferredHeight,
           cacheWidth: preferredWidth,
           errorBuilder: _imageErrorBuilder,
+          opacity: opacityAnimation,
+          // use BlendMode modulate and color white with opacity to optimize perf
+          colorBlendMode: BlendMode.modulate,
+          color: Color.fromRGBO(255, 255, 255, fixedOpacity),
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            return Padding(
+              padding: EdgeInsets.all(padding),
+              child: child,
+            );
+          },
         ),
       ImageType.bytes => Image.memory(
           Uint8List.fromList(dish.imageData!),
@@ -40,6 +60,15 @@ class DishImage extends ConsumerWidget {
           cacheHeight: preferredHeight,
           cacheWidth: preferredWidth,
           errorBuilder: _imageErrorBuilder,
+          opacity: opacityAnimation,
+          colorBlendMode: BlendMode.modulate,
+          color: Color.fromRGBO(255, 255, 255, fixedOpacity),
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            return Padding(
+              padding: EdgeInsets.all(padding),
+              child: child,
+            );
+          },
         ),
       ImageType.file => Image.file(
           File(dish.imagePath!),
@@ -47,6 +76,15 @@ class DishImage extends ConsumerWidget {
           cacheHeight: preferredHeight,
           cacheWidth: preferredWidth,
           errorBuilder: _imageErrorBuilder,
+          opacity: opacityAnimation,
+          colorBlendMode: BlendMode.modulate,
+          color: Color.fromRGBO(255, 255, 255, fixedOpacity),
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            return Padding(
+              padding: EdgeInsets.all(padding),
+              child: child,
+            );
+          },
         ),
       ImageType.url => Image.network(
           dish.imagePath!,
@@ -54,6 +92,15 @@ class DishImage extends ConsumerWidget {
           cacheHeight: preferredHeight,
           cacheWidth: preferredWidth,
           errorBuilder: _imageErrorBuilder,
+          opacity: opacityAnimation,
+          colorBlendMode: BlendMode.modulate,
+          color: Color.fromRGBO(255, 255, 255, fixedOpacity),
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            return Padding(
+              padding: EdgeInsets.all(padding),
+              child: child,
+            );
+          },
         ),
     };
   }

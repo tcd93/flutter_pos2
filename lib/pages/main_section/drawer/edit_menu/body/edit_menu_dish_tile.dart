@@ -20,7 +20,6 @@ class EditMenuDishTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
-      padding: const EdgeInsets.all(8.0),
       child: ScaleTransition(
         scale: animation.drive(
           CurveTween(
@@ -31,14 +30,17 @@ class EditMenuDishTile extends ConsumerWidget {
         ),
         child: Stack(
           children: [
-            Expanded(
-              flex: 3,
-              child: SizedBox.expand(
-                child: DishImage(
-                  dishID,
-                  preferredHeight: size.height.floor(),
-                ),
+            SizedBox.expand(
+              child: DishImage(
+                dishID,
+                preferredHeight: size.height.floor(),
+                fixedOpacity: 0.4,
+                opacityAnimation: animation,
+                fit: BoxFit.cover,
               ),
+            ),
+            const Center(
+              child: Text('123 123'),
             ),
             // use this trick to allow inkwell ripples effect above image
             Positioned.fill(
