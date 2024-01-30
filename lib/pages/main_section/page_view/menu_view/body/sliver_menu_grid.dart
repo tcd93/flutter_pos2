@@ -30,18 +30,11 @@ class SliverMenuGrid extends ConsumerWidget {
           },
           itemList: dishIDs,
           widgetBuilder: (dishID, animation) {
-            return DecoratedBox(
+            return DishTile(
               key: ValueKey(dishID),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ),
-              ),
-              child: DishTile(
-                dishID: dishID,
-                size: Size.square(extent),
-                animation: animation,
-              ),
+              dishID: dishID,
+              size: Size.square(extent),
+              animation: animation,
             );
           },
           delegate: SliverGridDelegateWithMaxCrossAxisExtent(

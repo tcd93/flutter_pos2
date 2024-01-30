@@ -22,19 +22,38 @@ class DishTile extends ConsumerWidget {
     final cardID = ref.watch(selectedCardProvider);
     final portion = ref.watch(portionProvider(cardID!, dishID)).value ?? 0;
     final dish = ref.watch(dishItemProvider(dishID)).value;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 350),
-      color:
-          portion > 0 ? Theme.of(context).highlightColor : Colors.transparent,
-      padding: const EdgeInsets.all(8.0),
-      child: ScaleTransition(
-        alignment: Alignment.topLeft,
-        scale: animation.drive(
-          CurveTween(
-            curve: animation.status == AnimationStatus.reverse
-                ? Curves.easeIn /*removing from grid animation*/
-                : Curves.bounceOut, /*creation animation*/
+    return ScaleTransition(
+      alignment: Alignment.topLeft,
+      scale: animation.drive(
+        CurveTween(
+          curve: animation.status == AnimationStatus.reverse
+              ? Curves.easeIn /*removing from grid animation*/
+              : Curves.bounceOut, /*creation animation*/
+        ),
+      ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: portion > 0
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline,
+            width: portion > 0 ? 2.0 : 1.0,
           ),
+          color: Theme.of(context).cardColor,
+          boxShadow: portion > 0
+              ? [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2.0 + portion / 2,
+                    blurRadius: 6.0 + portion / 2,
+                    offset: Offset(
+                      0.0,
+                      6.0 + portion / 2,
+                    ), // changes position of shadow
+                  ),
+                ]
+              : null,
         ),
         child: Column(
           children: [
@@ -56,7 +75,7 @@ class DishTile extends ConsumerWidget {
                           dishID,
                           preferredHeight: size.height.floor(),
                           opacityAnimation: animation,
-                          padding: 0.0,
+                          padding: 2.0,
                         ),
                       ),
                       Expanded(child: Text(dish?.name ?? '')),
