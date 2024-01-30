@@ -96,26 +96,19 @@ class _SliverMenuGrid extends ConsumerWidget {
           },
           itemList: dishIDs,
           widgetBuilder: (dishID, animation) {
-            return DecoratedBox(
+            return EditMenuDishTile(
               key: ValueKey(dishID),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ),
-              ),
-              child: EditMenuDishTile(
-                dishID: dishID,
-                size: Size.square(extent),
-                animation: animation,
-                onTap: () {
-                  pageControl.nextPage(
-                    duration: const Duration(
-                      milliseconds: AppTheme.carouselDuration,
-                    ),
-                    curve: Curves.easeIn,
-                  );
-                },
-              ),
+              dishID: dishID,
+              size: Size.square(extent),
+              animation: animation,
+              onTap: () {
+                pageControl.nextPage(
+                  duration: const Duration(
+                    milliseconds: AppTheme.carouselDuration,
+                  ),
+                  curve: Curves.easeIn,
+                );
+              },
             );
           },
           delegate: SliverGridDelegateWithMaxCrossAxisExtent(

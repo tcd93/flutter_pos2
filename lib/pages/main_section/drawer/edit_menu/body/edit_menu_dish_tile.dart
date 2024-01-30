@@ -18,14 +18,19 @@ class EditMenuDishTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 350),
-      child: ScaleTransition(
-        scale: animation.drive(
-          CurveTween(
-            curve: animation.status == AnimationStatus.reverse
-                ? Curves.easeIn /*removing from grid animation*/
-                : Curves.bounceOut, /*creation animation*/
+    return ScaleTransition(
+      alignment: Alignment.topLeft,
+      scale: animation.drive(
+        CurveTween(
+          curve: animation.status == AnimationStatus.reverse
+              ? Curves.easeIn /*removing from grid animation*/
+              : Curves.bounceOut, /*creation animation*/
+        ),
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: Stack(

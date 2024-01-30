@@ -28,6 +28,7 @@ class DishTile extends ConsumerWidget {
           portion > 0 ? Theme.of(context).highlightColor : Colors.transparent,
       padding: const EdgeInsets.all(8.0),
       child: ScaleTransition(
+        alignment: Alignment.topLeft,
         scale: animation.drive(
           CurveTween(
             curve: animation.status == AnimationStatus.reverse
