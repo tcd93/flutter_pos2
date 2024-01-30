@@ -8,31 +8,25 @@ import 'package:logging/logging.dart';
 
 final _logger = Logger('Menu Grid');
 
-class SliverMenuGrid extends ConsumerStatefulWidget {
+class SliverMenuGrid extends ConsumerWidget {
   final ValueNotifier<String> filterString;
 
   const SliverMenuGrid(this.filterString, {super.key});
 
   @override
-  ConsumerState<SliverMenuGrid> createState() => _MenuGridState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenWidth = MediaQuery.of(context).size.shortestSide;
+    final extent = calculateExtent(screenWidth);
+    final margin = calculateMargin(screenWidth);
 
-class _MenuGridState extends ConsumerState<SliverMenuGrid> {
-  double screenWidth = 0.0;
-  double extent = 0.0;
-  double margin = 0.0;
-
-  @override
-  Widget build(BuildContext context) {
-    _logger.info('Menu grid build');
     final result = ref.watch(dishIDProvider);
     return result.when(
       data: (dishIDs) {
         return SliverAnimatedGridWrapper(
-          notifier: widget.filterString,
+          notifier: filterString,
           filterer: (dishID) {
             final dish = ref.watch(dishItemProvider(dishID)).value!;
-            return dish.name.contains(widget.filterString.value);
+            return dish.name.contains(filterString.value);
           },
           itemList: dishIDs,
           widgetBuilder: (dishID, animation) {
@@ -52,7 +46,7 @@ class _MenuGridState extends ConsumerState<SliverMenuGrid> {
           },
           delegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: extent,
-            mainAxisExtent: extent,
+            mainAxisExtent: extent + extent * 0.4,
             crossAxisSpacing: margin / 2,
             mainAxisSpacing: margin / 2,
           ),
@@ -66,13 +60,5 @@ class _MenuGridState extends ConsumerState<SliverMenuGrid> {
       ),
       error: (e, s) => SliverToBoxAdapter(child: Text('Error: $e')),
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    screenWidth = MediaQuery.of(context).size.shortestSide;
-    extent = calculateExtent(screenWidth);
-    margin = calculateMargin(screenWidth);
   }
 }

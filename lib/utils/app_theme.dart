@@ -65,5 +65,8 @@ class AppTheme {
     dialogTheme: const DialogTheme(
       shape: BeveledRectangleBorder(),
     ),
+    dividerTheme: DividerThemeData(
+      color: darkColorScheme.outline,
+    ),
   );
 }
