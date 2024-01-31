@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('Login Item');
 
 class LoginItem extends ConsumerWidget {
   const LoginItem({super.key});
@@ -20,14 +23,18 @@ class LoginItem extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          SnackBar(
-            content: Text(
-              error.toString(),
-              overflow: TextOverflow.ellipsis,
+        _logger.severe(error);
+        _logger.severe(stackTrace);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+            SnackBar(
+              content: Text(
+                error.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        );
+          );
+        });
         return const ListTile(
           leading: Icon(Icons.error),
           title: Text('Error'),
