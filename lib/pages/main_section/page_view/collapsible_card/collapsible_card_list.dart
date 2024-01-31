@@ -13,28 +13,23 @@ class CollapsibleCardList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final result = ref.watch(cardIDProvider(pageID));
-    return result.when(
-      data: (ids) {
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              ...ids.map((id) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _Card(pageID, id),
-                );
-              }),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CardAdder(pageID),
-              ),
-            ],
+    final ids = ref.watch(cardIDProvider(pageID)).value ?? [];
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ...ids.map((id) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _Card(pageID, id),
+            );
+          }),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CardAdder(pageID),
           ),
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, s) => Center(child: Text('Error: $e')),
+        ],
+      ),
     );
   }
 }

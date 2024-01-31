@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/pages/data/ephemeral.dart';
 import 'package:flutter_pos/pages/data/repos/pages/pages.dart';
+import 'package:flutter_pos/pages/main_section/common/loading_bar.dart';
 import 'package:flutter_pos/pages/main_section/page_view/collapsible_card/collapsible_card_list.dart';
 import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/text_styles.dart';
@@ -42,7 +43,7 @@ class _InnerPageContentState extends ConsumerState<InnerPageContent> {
     final pageIDs = ref.watch(pageIDProvider).value;
     // final pallete = isThemeCurrentlyDark(context) ? darkPallete : lightPallete;
 
-    if (pageIDs == null) return const CircularProgressIndicator();
+    if (pageIDs == null) return const LoadingBar();
 
     return Stack(
       alignment: Alignment.topCenter,
