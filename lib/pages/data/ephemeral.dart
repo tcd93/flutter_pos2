@@ -4,16 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'ephemeral.g.dart';
 
 @Riverpod(keepAlive: true)
-class Login extends _$Login {
-  @override
-  bool build() => false;
-
-  void login() => state = true;
-
-  void logout() => state = false;
-}
-
-@Riverpod(keepAlive: true)
 class PageStatus extends _$PageStatus {
   @override
   Status build() => const Status();

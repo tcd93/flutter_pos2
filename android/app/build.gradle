@@ -36,6 +36,11 @@ android {
         compileSdk flutter.compileSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders += [
+            auth0Domain: "$System.env.AUTH0_DOMAIN",
+            auth0Scheme: "$System.env.AUTH0_SCHEME"
+        ]
     }
 
     buildTypes {

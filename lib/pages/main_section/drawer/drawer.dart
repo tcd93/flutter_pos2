@@ -1,11 +1,13 @@
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/pages/data/ephemeral.dart';
+import 'package:flutter_pos/pages/data/login.dart';
 import 'package:flutter_pos/pages/main_section/drawer/edit_menu/edit_menu_item.dart';
 import 'package:flutter_pos/pages/main_section/drawer/local_area_network/network_item.dart';
 import 'package:flutter_pos/pages/main_section/drawer/reports/report_item.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'login/login_item.dart';
 
 class PageDrawer extends ConsumerWidget {
   const PageDrawer({super.key});
@@ -25,7 +27,7 @@ class PageDrawer extends ConsumerWidget {
           children: [
             const _SwitchTheme(key: ValueKey(1)),
             const Divider(),
-            const _LogInOut(key: ValueKey(2)),
+            const LoginItem(key: ValueKey(2)),
             const Divider(),
             const ReportItem(key: ValueKey(3)),
             const Divider(),
@@ -37,21 +39,6 @@ class PageDrawer extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _LogInOut extends ConsumerWidget {
-  const _LogInOut({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final loggedIn = ref.watch(loginProvider);
-    final lctrl = ref.read(loginProvider.notifier);
-    return ListTile(
-      title: loggedIn ? const Text('Logout') : const Text('Login'),
-      leading: loggedIn ? const Icon(Icons.logout) : const Icon(Icons.login),
-      onTap: () => loggedIn ? lctrl.logout() : lctrl.login(),
     );
   }
 }

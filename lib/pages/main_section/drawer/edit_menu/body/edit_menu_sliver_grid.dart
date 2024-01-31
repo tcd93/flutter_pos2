@@ -8,9 +8,6 @@ import 'package:flutter_pos/utils/app_theme.dart';
 import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/sliver_grid_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logging/logging.dart';
-
-final _logger = Logger('Edit Menu Grid');
 
 // page 0
 

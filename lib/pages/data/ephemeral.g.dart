@@ -6,20 +6,6 @@ part of 'ephemeral.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$loginHash() => r'28223e4aec560ae13d2518320c9917a5f2d1812a';
-
-/// See also [Login].
-@ProviderFor(Login)
-final loginProvider = NotifierProvider<Login, bool>.internal(
-  Login.new,
-  name: r'loginProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$loginHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$Login = Notifier<bool>;
 String _$pageStatusHash() => r'02c116666a15d8e0866f881be0ac4865f64d7391';
 
 /// See also [PageStatus].
