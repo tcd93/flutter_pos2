@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/pages/data/ephemeral.dart';
 import 'package:flutter_pos/pages/main_section/common/search_bar.dart';
 import 'package:flutter_pos/pages/main_section/drawer/edit_menu/body/edit_form.dart';
 import 'package:flutter_pos/pages/main_section/drawer/edit_menu/body/edit_menu_sliver_grid.dart';
@@ -9,6 +10,14 @@ class EditMenuView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final loggedIn = ref.watch(loginProvider);
+    if (!loggedIn) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.pushReplacementNamed(context, '/');
+      });
+      return const SizedBox();
+    }
+
     final filterString = ValueNotifier('');
     final pageControl = PageController();
 
