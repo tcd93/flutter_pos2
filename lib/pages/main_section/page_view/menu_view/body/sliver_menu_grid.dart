@@ -4,9 +4,6 @@ import 'package:flutter_pos/pages/main_section/page_view/menu_view/body/dish_til
 import 'package:flutter_pos/utils/ui_helpers.dart';
 import 'package:flutter_pos/widgets/sliver_grid_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logging/logging.dart';
-
-final _logger = Logger('Menu Grid');
 
 class SliverMenuGrid extends ConsumerWidget {
   final ValueNotifier<String> filterString;
