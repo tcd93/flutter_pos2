@@ -2,6 +2,7 @@
 
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_pos/pages/data/ephemeral.dart';
 import 'package:flutter_pos/pages/main_section/drawer/edit_menu/edit_menu_view.dart';
 import 'package:flutter_pos/pages/main_section/drawer/reports/report_view.dart';
@@ -12,7 +13,7 @@ import 'package:logging/logging.dart';
 
 import 'pages/main_section/page_view/menu_view/menu.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -23,6 +24,8 @@ void main() {
     );
     if (record.stackTrace != null) print(record.stackTrace);
   });
+
+  await dotenv.load(fileName: '.env');
 
   runApp(
     ProviderScope(

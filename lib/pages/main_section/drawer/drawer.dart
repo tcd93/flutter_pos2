@@ -14,7 +14,7 @@ class PageDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loggedIn = ref.watch(loginProvider);
+    final cred = ref.watch(loginProvider).unwrapPrevious().valueOrNull;
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -32,7 +32,7 @@ class PageDrawer extends ConsumerWidget {
             const ReportItem(key: ValueKey(3)),
             const Divider(),
             const NetworkItem(key: ValueKey(4)),
-            if (loggedIn) ...[
+            if (cred != null) ...[
               const Divider(),
               const EditMenuItem(),
             ],

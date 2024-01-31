@@ -38,8 +38,8 @@ android {
         versionName flutterVersionName
 
         manifestPlaceholders += [
-            auth0Domain: "$System.env.AUTH0_DOMAIN",
-            auth0Scheme: "$System.env.AUTH0_SCHEME"
+            auth0Domain: "$System.env.ANDROID_AUTH0_DOMAIN",
+            auth0Scheme: "$System.env.ANDROID_AUTH0_SCHEME"
         ]
     }
 

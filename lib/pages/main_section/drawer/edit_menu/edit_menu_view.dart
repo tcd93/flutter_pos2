@@ -10,8 +10,8 @@ class EditMenuView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loggedIn = ref.watch(loginProvider);
-    if (!loggedIn) {
+    final cred = ref.watch(loginProvider).unwrapPrevious().valueOrNull;
+    if (cred == null) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.pushReplacementNamed(context, '/');
       });

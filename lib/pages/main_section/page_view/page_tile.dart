@@ -55,8 +55,11 @@ class PageTile extends ConsumerWidget implements SexyBottomSheetItem {
 
   @override
   Future<bool> Function(BuildContext)? get onDismiss {
-    final loggedIn = ProviderScope.containerOf(context).read(loginProvider);
-    if (!loggedIn) return null;
+    final cred = ProviderScope.containerOf(context)
+        .read(loginProvider)
+        .unwrapPrevious()
+        .value;
+    if (cred == null) return null;
 
     return (context) async {
       final result = await ProviderScope.containerOf(context)

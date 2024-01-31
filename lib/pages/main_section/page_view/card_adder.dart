@@ -12,8 +12,8 @@ class CardAdder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loggedIn = ref.watch(loginProvider);
-    if (!loggedIn) {
+    final cred = ref.watch(loginProvider).unwrapPrevious().valueOrNull;
+    if (cred == null) {
       return const SizedBox();
     }
 
