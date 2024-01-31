@@ -9,7 +9,7 @@ part 'login.g.dart';
 
 final _logger = Logger('Login');
 
-@Riverpod(keepAlive: true)
+@riverpod
 class Login extends _$Login {
   @override
   Future<Credentials?> build() {
@@ -42,7 +42,17 @@ class Login extends _$Login {
         dotenv.env['WEB_AUTH0_CLIENTID']!,
       );
       state = const AsyncLoading();
-      state = AsyncData(await auth0.loginWithPopup());
+      try {
+        // bring up login webpage, after successful login this provider will
+        // rebuilds, `auth0.onLoad()` now returns user credentials
+        await auth0.loginWithRedirect(redirectUrl: 'http://localhost:3000');
+      } on Exception catch (error, stackTrace) {
+        if (!error.toString().contains('POPUP_CLOSED')) {
+          _logger.severe(error);
+          _logger.severe(stackTrace);
+          rethrow;
+        }
+      }
     } else {
       //TODO: configure android
       Auth0(
@@ -59,8 +69,8 @@ class Login extends _$Login {
         dotenv.env['WEB_AUTH0_CLIENTID']!,
       );
       state = const AsyncLoading();
-      auth0.logout(returnToUrl: 'http://localhost:3000');
-      state = AsyncData(await auth0.credentials());
+      await auth0.logout();
+      state = const AsyncData(null);
     } else {
       Auth0(
         dotenv.env['ANDROID_AUTH0_DOMAIN']!,

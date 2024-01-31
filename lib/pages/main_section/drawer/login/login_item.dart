@@ -7,14 +7,38 @@ class LoginItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cred = ref.watch(loginProvider).unwrapPrevious().valueOrNull;
+    final asyncValue = ref.watch(loginProvider);
     final lctrl = ref.read(loginProvider.notifier);
-    return ListTile(
-      title: cred != null ? const Text('Logout') : const Text('Login'),
-      leading:
-          cred != null ? const Icon(Icons.logout) : const Icon(Icons.login),
-      onTap: () async =>
-          cred != null ? await lctrl.logout() : await lctrl.login(),
+    return asyncValue.when(
+      data: (cred) {
+        return ListTile(
+          title: cred != null ? const Text('Logout') : const Text('Login'),
+          leading:
+              cred != null ? const Icon(Icons.logout) : const Icon(Icons.login),
+          onTap: () async =>
+              cred != null ? await lctrl.logout() : await lctrl.login(),
+        );
+      },
+      error: (error, stackTrace) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(
+            content: Text(
+              error.toString(),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        );
+        return const ListTile(
+          leading: Icon(Icons.error),
+          title: Text('Error'),
+        );
+      },
+      loading: () {
+        return const ListTile(
+          leading: Icon(Icons.login),
+          title: Text('Waiting'),
+        );
+      },
     );
   }
 }
