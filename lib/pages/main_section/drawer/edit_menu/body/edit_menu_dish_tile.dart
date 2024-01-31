@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/pages/data/repos/dishes/dishes.dart';
 import 'package:flutter_pos/pages/main_section/common/dish_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,8 +45,27 @@ class EditMenuDishTile extends ConsumerWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            const Center(
-              child: Text('123 123'),
+            Center(
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final dish = ref.watch(dishItemProvider(dishID)).value;
+                  return Text.rich(
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    TextSpan(
+                      children: [
+                        TextSpan(text: dish?.name ?? ''),
+                        const TextSpan(text: '\n'),
+                        TextSpan(
+                          text: dish?.price != null
+                              ? '${dish?.price.toString()}\$'
+                              : '',
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
             // use this trick to allow inkwell ripples effect above image
             Positioned.fill(
