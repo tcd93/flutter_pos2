@@ -21,6 +21,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_WEB_AUTH0_DOMAIN: dev-in44m58yeh11aj1h.us.auth0.com
+          envkey_WEB_AUTH0_CLIENTID: BjPtDKYZXiSaBBGr2z24N3Mb81JkGeKC
+          envkey_WEB_AUTH0_REDIRECT_URL: https://tcd93.github.io/flutter_pos2/
       - name: Build 🔧 
         uses: subosito/flutter-action@v2
         with:
@@ -32,7 +38,7 @@ jobs:
       # https://github.com/flutter/flutter/issues/69760
       - name: Post Build 🛸
         run: |
-            sed -i 's/<base href="\/">/<base href="\/flutter-pos\/">/g' ./build/web/index.html
+            sed -i 's/<base href="\/">/<base href="\/flutter_pos2\/">/g' ./build/web/index.html
             cat ./build/web/index.html
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3
