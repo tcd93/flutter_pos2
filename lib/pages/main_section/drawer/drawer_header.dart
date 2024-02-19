@@ -14,10 +14,13 @@ class DrawerHeaderItem extends ConsumerWidget {
 
     if (cred == null) return const CircleAvatar();
     _logger.info(cred.user.pictureUrl.toString());
+    _logger.info(cred.user.customClaims.toString());
+    // used Auth0's login flow to add custom claim
+    // this uses alternate pic url instead of default one
+    final picUrl = cred.user.customClaims?['alt_picture'] ??
+        cred.user.pictureUrl.toString();
     return CircleAvatar(
-      backgroundImage: cred.user.pictureUrl != null
-          ? NetworkImage(cred.user.pictureUrl.toString())
-          : null,
+      backgroundImage: NetworkImage(picUrl),
       child: Align(
         alignment: Alignment.bottomRight,
         child: Text(
