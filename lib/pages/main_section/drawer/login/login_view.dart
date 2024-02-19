@@ -82,9 +82,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       passwordFocusNode.requestFocus();
                     }
                   },
-                  onTapOutside: (event) {
-                    emailFormKey.currentState?.validate();
-                  },
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -111,9 +108,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                         passwordFormKey.currentState?.validate() == true) {
                       login();
                     }
-                  },
-                  onTapOutside: (event) {
-                    passwordFormKey.currentState?.validate();
                   },
                 ),
               ),
