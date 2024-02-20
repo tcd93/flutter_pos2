@@ -101673,7 +101673,7 @@ A.b_N.prototype={
 $0(){return new A.Kp()},
 $S:230}
 A.a_Z.prototype={
-H(a){return new A.Ky(B.Y7,"/",new A.ay4(a),"Dashboard Reborn",$.beW(),$.beX(),a.an(t.Si).f.d,!1,null)}}
+H(a){return new A.Ky(B.Y7,"/",new A.ay4(a),"Flutter POS 2",$.beW(),$.beX(),a.an(t.Si).f.d,!1,null)}}
 A.ay4.prototype={
 $1(a){var s,r,q,p,o,n,m=null,l=a.a
 if(l==null)return m
