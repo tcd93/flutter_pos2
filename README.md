@@ -1,16 +1,26 @@
-# flutter_pos
+# Simple-POS
 
-A new Flutter project.
+### ❤️❤️ [Online Demo](https://tcd93.github.io/flutter_pos2)❤️❤️
 
-## Getting Started
+A mobile POS written in _Flutter_, suitable for small cafe/restaurant, fully offline.
 
-This project is a starting point for a Flutter application.
+**Tested & printable on **Sunmi V1S** device.**
 
-A few resources to get you started if this is your first Flutter project:
+![sunmi_v1s](.github/resource/print.jpg)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**Support:**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Android
+- Windows & Web (unable to print)
+
+---
+
+## Install & Run
+
+Get [flutter](https://flutter.dev/)
+**Tested on FLutter 3.16.9**
+
+```
+flutter pub get
+flutter run
+```
