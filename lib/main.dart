@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dashboard Reborn',
+      title: 'Flutter POS 2',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.bright,
       darkTheme: AppTheme.dark,
